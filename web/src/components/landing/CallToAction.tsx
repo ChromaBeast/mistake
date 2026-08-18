@@ -1,17 +1,12 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, ShieldCheck, FileSpreadsheet } from "lucide-react";
+import { ArrowRight, FileSpreadsheet } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 export function CallToAction() {
   return (
     <section className="py-20 border-b border-border bg-muted/20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-        <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded border border-border bg-card text-foreground font-mono text-[11px] uppercase tracking-wider">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-          Zero-Risk 30-Day Evaluation
-        </div>
-
         <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight">
           Ready to Recover Undetected Capital Across Your Supply Chain?
         </h2>

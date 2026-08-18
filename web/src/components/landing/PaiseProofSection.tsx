@@ -6,10 +6,6 @@ export function PaiseProofSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         <div className="max-w-3xl space-y-3">
-          <div className="text-xs font-mono tracking-widest text-muted-foreground uppercase">
-            Mathematical Precision
-          </div>
-
           <h2 className="text-3xl font-bold tracking-tight text-foreground">
             Why spreadsheets and legacy ERPs lose money.
           </h2>
@@ -23,7 +19,7 @@ export function PaiseProofSection() {
           {/* Legacy ERP Column */}
           <div className="p-6 md:p-8 space-y-4">
             <div className="space-y-1">
-              <div className="text-[10px] font-mono text-rose-600 dark:text-rose-400 uppercase">Legacy Systems</div>
+              <div className="text-[10px] font-mono text-rose-600 dark:text-rose-400 uppercase font-semibold">Legacy Systems</div>
               <h3 className="font-bold text-base text-foreground">Standard Floating-Point Calculation</h3>
             </div>
 
@@ -46,7 +42,7 @@ export function PaiseProofSection() {
           {/* Mistake Engine Column */}
           <div className="p-6 md:p-8 space-y-4 bg-muted/10">
             <div className="space-y-1">
-              <div className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 uppercase">Mistake Engine</div>
+              <div className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 uppercase font-semibold">Mistake Engine</div>
               <h3 className="font-bold text-base text-foreground">Exact 64-Bit Integer Paise Math</h3>
             </div>
 

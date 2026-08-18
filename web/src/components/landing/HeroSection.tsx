@@ -69,13 +69,8 @@ export function HeroSection() {
     <section className="pt-16 pb-20 border-b border-border bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
-        {/* Typographic Thesis Header */}
+        {/* Typographic Thesis Header - Pure Minimalist Title & Para */}
         <div className="max-w-3xl space-y-6">
-          <div className="text-xs font-mono tracking-widest text-muted-foreground uppercase">
-            Autonomous 3-Way Reconciliation
-          </div>
-
-
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground leading-[1.1]">
             Catch vendor overbilling before payment release.
           </h1>
@@ -122,50 +117,37 @@ export function HeroSection() {
                 ))}
               </div>
             </div>
-
-            <div className="font-mono tabular-nums text-xs font-bold text-rose-600 dark:text-rose-400">
-              VARIANCE: {current.variance}
+            <div className="font-mono text-xs text-rose-600 dark:text-rose-400 font-bold">
+              Detected Leakage: {current.variance}
             </div>
           </div>
 
-          {/* Data Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full text-left font-mono text-xs">
-              <thead className="border-b border-border bg-muted/10 text-muted-foreground text-[11px]">
-                <tr>
-                  <th className="px-4 py-2.5 font-medium">MATERIAL DESCRIPTION</th>
-                  <th className="px-4 py-2.5 font-medium">PO CONTRACT TERMS</th>
-                  <th className="px-4 py-2.5 font-medium">GATE RECEIPT (GRN)</th>
-                  <th className="px-4 py-2.5 font-medium">BILLED INVOICE</th>
-                  <th className="px-4 py-2.5 font-medium text-right">AUDIT DELTA</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                <tr>
-                  <td className="px-4 py-3.5 font-sans font-medium text-foreground">
-                    {current.item}
-                    <div className="text-[10px] text-muted-foreground font-mono tabular-nums mt-0.5">
-                      HSN: {current.hsn} • {current.vendor} ({current.gstin})
-                    </div>
-                  </td>
-                  <td className="px-4 py-3.5 text-muted-foreground tabular-nums">{current.poTerms}</td>
-                  <td className="px-4 py-3.5 text-muted-foreground tabular-nums">{current.grnGate}</td>
-                  <td className="px-4 py-3.5 text-rose-600 dark:text-rose-400 font-semibold tabular-nums">{current.invoiceBilled}</td>
-                  <td className="px-4 py-3.5 text-right font-bold text-rose-600 dark:text-rose-400 tabular-nums">
-                    {current.variance}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* Footer Row */}
-          <div className="px-4 py-2.5 border-t border-border bg-muted/20 flex flex-wrap items-center justify-between text-[11px] font-mono text-muted-foreground gap-2">
-            <div>
-              FINDING: <span className="text-foreground font-semibold">{current.finding}</span>
+          {/* 3-Way Comparative Grid */}
+          <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border p-4 md:p-6 gap-4 md:gap-0">
+            {/* Step 1: PO Terms */}
+            <div className="md:pr-6 space-y-2">
+              <div className="text-[11px] font-mono text-muted-foreground uppercase">1. Master Purchase Order</div>
+              <div className="font-bold text-sm text-foreground">{current.vendor}</div>
+              <div className="font-mono text-xs text-muted-foreground">GSTIN: {current.gstin}</div>
+              <div className="pt-2 border-t border-border/50 text-xs font-mono text-foreground">{current.poTerms}</div>
             </div>
-            <div>
-              ACTION: <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{current.resolution}</span>
+
+            {/* Step 2: Gate GRN / Physical Receipts */}
+            <div className="md:px-6 space-y-2">
+              <div className="text-[11px] font-mono text-muted-foreground uppercase">2. Warehouse Gate Entry (GRN)</div>
+              <div className="font-bold text-sm text-foreground">{current.item}</div>
+              <div className="font-mono text-xs text-muted-foreground">HSN: {current.hsn}</div>
+              <div className="pt-2 border-t border-border/50 text-xs font-mono text-foreground">{current.grnGate}</div>
+            </div>
+
+            {/* Step 3: Billed Invoice & Discrepancy */}
+            <div className="md:pl-6 space-y-2">
+              <div className="text-[11px] font-mono text-rose-600 dark:text-rose-400 uppercase">3. Supplier Invoice Discrepancy</div>
+              <div className="font-mono text-xs font-bold text-foreground">{current.invoiceBilled}</div>
+              <div className="text-xs text-rose-600 dark:text-rose-400 font-medium">{current.finding}</div>
+              <div className="pt-2 border-t border-border/50 text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
+                ✓ {current.resolution}
+              </div>
             </div>
           </div>
 

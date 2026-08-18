@@ -18,10 +18,6 @@ export function ExecutiveSpendCalculator() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         <div className="max-w-2xl space-y-3">
-          <div className="text-xs font-mono tracking-widest text-muted-foreground uppercase">
-            Spend Recovery Simulator
-          </div>
-
           <h2 className="text-3xl font-bold tracking-tight text-foreground">
             Estimate direct EBITDA expansion.
           </h2>
@@ -62,51 +58,51 @@ export function ExecutiveSpendCalculator() {
             </div>
           </div>
 
-          {/* Results Grid */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-border">
+          {/* Breakdown Grid */}
+          <div className="grid md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-border">
             
-            <div className="p-6 space-y-1 bg-muted/10">
+            <div className="p-6 md:p-8 space-y-1 bg-muted/20">
               <div className="text-[11px] font-mono text-muted-foreground uppercase">Total Annual Recovery</div>
               <div className="font-mono tabular-nums text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                 ₹{estimatedRecoveryCr} Cr
               </div>
-              <div className="text-[11px] text-muted-foreground">1.8% of direct spend</div>
+              <div className="text-[11px] text-muted-foreground">Direct bottom-line margin</div>
             </div>
 
-            <div className="p-6 space-y-1">
+            <div className="p-6 md:p-8 space-y-1">
               <div className="text-[11px] font-mono text-muted-foreground uppercase">Rate Escalations</div>
-              <div className="font-mono tabular-nums text-2xl font-bold text-foreground">
+              <div className="font-mono tabular-nums text-lg font-semibold text-foreground">
                 ₹{rateLeakageLakhs} L
               </div>
-              <div className="text-[11px] text-muted-foreground">Contract deviations</div>
+              <div className="text-[11px] text-muted-foreground">45% of total leakage</div>
             </div>
 
-            <div className="p-6 space-y-1">
+            <div className="p-6 md:p-8 space-y-1">
               <div className="text-[11px] font-mono text-muted-foreground uppercase">Short Deliveries</div>
-              <div className="font-mono tabular-nums text-2xl font-bold text-foreground">
+              <div className="font-mono tabular-nums text-lg font-semibold text-foreground">
                 ₹{shortShipmentLakhs} L
               </div>
-              <div className="text-[11px] text-muted-foreground">Gate vs billed deficits</div>
+              <div className="text-[11px] text-muted-foreground">35% of total leakage</div>
             </div>
 
-            <div className="p-6 space-y-1">
+            <div className="p-6 md:p-8 space-y-1">
               <div className="text-[11px] font-mono text-muted-foreground uppercase">SLA Penalties</div>
-              <div className="font-mono tabular-nums text-2xl font-bold text-foreground">
+              <div className="font-mono tabular-nums text-lg font-semibold text-foreground">
                 ₹{penaltyLakhs} L
               </div>
-              <div className="text-[11px] text-muted-foreground">Unclaimed delay charges</div>
+              <div className="text-[11px] text-muted-foreground">20% of total leakage</div>
             </div>
 
           </div>
 
-          {/* Bottom Bar */}
-          <div className="p-4 border-t border-border bg-muted/20 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-            <span className="text-muted-foreground font-mono text-[11px]">
-              Average Payback Period: <strong className="text-foreground">&lt; 21 Business Days</strong>
+          {/* Action Row */}
+          <div className="p-4 md:p-6 bg-muted/10 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span className="text-xs text-muted-foreground text-center sm:text-left">
+              Based on empirical data across 500k+ reconciled B2B transactions.
             </span>
             <Link href="/signup">
-              <Button size="sm" className="h-8 text-xs font-semibold gap-1">
-                Verify With Sample Data <ArrowRight className="w-3 h-3" />
+              <Button size="sm" className="h-9 px-4 text-xs font-semibold gap-1.5">
+                Audit Your ERP Ledgers <ArrowRight className="w-3.5 h-3.5" />
               </Button>
             </Link>
           </div>
