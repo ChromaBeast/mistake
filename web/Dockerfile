@@ -1,11 +1,11 @@
-# Stage 1: Dependencies
-FROM node:20-alpine AS deps
+# Stage 1: Dependencies with Bun (Ultra Fast)
+FROM oven/bun:1-alpine AS deps
 WORKDIR /app
-COPY package.json package-lock.json* ./
-RUN npm ci
+COPY package.json bun.lock* package-lock.json* ./
+RUN bun install
 
-# Stage 2: Builder
-FROM node:20-alpine AS builder
+# Stage 2: Builder with Bun
+FROM oven/bun:1-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -14,9 +14,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
 RUN mkdir -p /app/public
-RUN npm run build
+RUN bun run build
 
-# Stage 3: Runner
+# Stage 3: Minimal Production Runner
 FROM node:20-alpine AS runner
 WORKDIR /app
 

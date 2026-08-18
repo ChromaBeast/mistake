@@ -58,11 +58,11 @@ go run ./cmd/server
 # API listening at http://localhost:8080
 ```
 
-#### 2. Web (Next.js 16 & React 19)
+#### 2. Web (Next.js 16 & React 19 via Bun)
 ```bash
 cd web
-npm install
-npm run dev
+bun install
+bun run dev
 # Dashboard at http://localhost:3000
 ```
 
@@ -82,8 +82,8 @@ flutter run -d android    # Run on connected Android device/emulator
 # 1. Backend Tests (13 test suites)
 cd backend && go test -v ./test/...
 
-# 2. Web Unit & Contract Tests (14 Vitest tests + TSC check)
-cd web && npx vitest run && npx tsc --noEmit
+# 2. Web Unit & Contract Tests (14 Vitest tests + TSC check via Bun)
+cd web && bun run test && bun x tsc --noEmit
 
 # 3. Mobile Tests & Lints (28 Flutter tests + analyze)
 cd mobile && flutter test && flutter analyze
