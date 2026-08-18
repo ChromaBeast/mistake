@@ -11,7 +11,7 @@ import { Select } from "@/components/ui/Select";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { formatPaiseToINR } from "@/lib/formatters/inr";
 import { formatDate } from "@/lib/formatters/date";
-import { FileSearch, ArrowRight, AlertTriangle } from "lucide-react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 
 export default function WorkspaceListPage() {
   const [mistakes, setMistakes] = useState<Mistake[]>([]);
@@ -48,14 +48,13 @@ export default function WorkspaceListPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-foreground flex items-center space-x-2">
-            <FileSearch className="h-5 w-5 text-primary" />
-            <span>Investigation Workspace</span>
+          <h1 className="text-xl font-bold tracking-tight text-foreground">
+            Investigation Workspace
           </h1>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Audit, triage, and reconcile flagged discrepancies with deterministic proof.
+          <p className="text-xs text-muted-foreground mt-0.5 font-mono">
+            3-WAY MATCH DISCREPANCY RECONCILIATION
           </p>
         </div>
 
@@ -76,31 +75,40 @@ export default function WorkspaceListPage() {
       <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
 
       {isLoading ? (
-        <Skeleton className="h-64 w-full rounded-xl" />
+        <div className="border border-border p-8 space-y-4">
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+      ) : mistakes.length === 0 ? (
+        <div className="border border-border p-12 text-center space-y-3 bg-card">
+          <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto" />
+          <h3 className="text-sm font-semibold text-foreground">Zero Active Discrepancies Found</h3>
+          <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+            All ingested Purchase Orders, Invoices, and Gate Receipts are currently fully reconciled.
+          </p>
+        </div>
       ) : (
-        <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="border border-border bg-card overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Finding Title & Entity</TableHead>
+                <TableHead>Finding & Supplier</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead>Severity</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Financial Impact</TableHead>
                 <TableHead>Detected At</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="text-right">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {mistakes.map((m) => (
                 <TableRow key={m.id}>
-                  <TableCell className="font-semibold text-xs text-foreground">
-                    <div className="flex items-start space-x-2">
-                      <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-foreground">{m.title}</p>
-                        <p className="text-[10px] text-muted-foreground">{m.entity_name}</p>
-                      </div>
+                  <TableCell className="font-medium text-xs text-foreground">
+                    <div>
+                      <p className="font-semibold text-foreground">{m.title}</p>
+                      <p className="text-[10px] text-muted-foreground font-mono">{m.entity_name}</p>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -127,7 +135,7 @@ export default function WorkspaceListPage() {
                       {m.status}
                     </span>
                   </TableCell>
-                  <TableCell className="font-mono text-xs font-bold text-rose-500">
+                  <TableCell className="font-mono text-xs font-bold text-rose-600 dark:text-rose-400">
                     {formatPaiseToINR(m.financial_impact_minor)}
                   </TableCell>
                   <TableCell className="font-mono text-xs text-muted-foreground">
@@ -136,10 +144,10 @@ export default function WorkspaceListPage() {
                   <TableCell className="text-right">
                     <Link
                       href={`/workspace/${m.id}`}
-                      className="inline-flex items-center space-x-1 text-xs font-semibold text-primary hover:underline"
+                      className="inline-flex items-center space-x-1 text-xs font-semibold text-foreground hover:underline"
                     >
-                      <span>Investigate</span>
-                      <ArrowRight className="h-3.5 w-3.5" />
+                      <span>Inspect</span>
+                      <ArrowRight className="h-3 w-3" />
                     </Link>
                   </TableCell>
                 </TableRow>
