@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, ShieldCheck } from "lucide-react";
+import { ArrowRight, ShieldCheck, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 export function CallToAction() {
@@ -12,22 +12,22 @@ export function CallToAction() {
         </div>
 
         <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight max-w-2xl mx-auto">
-          Ready to Reclaim Lost Margin Across Your Supply Chain?
+          Start Recovering Lost Margin on Your Next Inbound Shipment
         </h2>
 
         <p className="text-muted-foreground text-base max-w-xl mx-auto leading-relaxed">
-          Deploy Mistake on your infrastructure in minutes. Start matching invoices, delivery notes, and purchase orders with zero float drift.
+          Upload a sample batch of historical POs, Invoices, and GRNs. See exact line-item leakage identified within minutes.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
           <Link href="/signup" className="w-full sm:w-auto">
             <Button size="lg" className="w-full sm:w-auto gap-2 shadow-lg shadow-primary/20">
-              Create Free Workspace <ArrowRight className="w-4 h-4" />
+              Request Free Spend Audit <ArrowRight className="w-4 h-4" />
             </Button>
           </Link>
           <Link href="/login" className="w-full sm:w-auto">
-            <Button variant="outline" size="lg" className="w-full sm:w-auto">
-              Sign In to Existing Workspace
+            <Button variant="outline" size="lg" className="w-full sm:w-auto gap-2">
+              <PhoneCall className="w-4 h-4" /> Schedule Executive Walkthrough
             </Button>
           </Link>
         </div>

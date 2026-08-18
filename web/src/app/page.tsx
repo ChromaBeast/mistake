@@ -3,6 +3,7 @@ import { LandingNavbar } from "@/components/landing/LandingNavbar";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { LiveMetricsStats } from "@/components/landing/LiveMetricsStats";
 import { DetectionEngineShowcase } from "@/components/landing/DetectionEngineShowcase";
+import { IndustrySolutionsSection } from "@/components/landing/IndustrySolutionsSection";
 import { PaiseProofSection } from "@/components/landing/PaiseProofSection";
 import { FeatureGrid } from "@/components/landing/FeatureGrid";
 import { CallToAction } from "@/components/landing/CallToAction";
@@ -16,8 +17,11 @@ export default function LandingPage() {
         <HeroSection />
         <LiveMetricsStats />
         <DetectionEngineShowcase />
+        <IndustrySolutionsSection />
         <PaiseProofSection />
-        <FeatureGrid />
+        <div id="governance">
+          <FeatureGrid />
+        </div>
         <CallToAction />
       </main>
       <LandingFooter />

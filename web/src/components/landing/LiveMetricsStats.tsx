@@ -1,31 +1,31 @@
 import React from "react";
-import { TrendingDown, Zap, ShieldCheck, Scale } from "lucide-react";
+import { TrendingUp, Clock, ShieldCheck, FileCheck } from "lucide-react";
 
 export function LiveMetricsStats() {
-  const stats = [
+  const metrics = [
     {
-      icon: TrendingDown,
-      value: "₹14.8 Cr+",
-      label: "Financial Leakage Identified",
-      desc: "Recovered across tier-1 & tier-2 supply chains",
+      icon: TrendingUp,
+      value: "1.8% to 3.2%",
+      label: "Direct Margin Recovery",
+      desc: "Average bottom-line EBITDA expansion recovered from undetected vendor overbilling.",
+    },
+    {
+      icon: Clock,
+      value: "85% Faster",
+      label: "Invoice Audit Cycle",
+      desc: "Replaces days of manual paperwork with automated sub-second 3-way reconciliation.",
     },
     {
       icon: ShieldCheck,
-      value: "99.8%",
-      label: "Deterministic Precision",
-      desc: "Zero hallucinated or arbitrary false alarms",
+      value: "100% Pre-Payment",
+      label: "Discrepancy Capture",
+      desc: "Flag variances and generate debit notes before accounts payable releases funds.",
     },
     {
-      icon: Zap,
-      value: "< 50ms",
-      label: "3-Way Cross-Match Engine",
-      desc: "Instant matching across thousands of line items",
-    },
-    {
-      icon: Scale,
-      value: "0 Errors",
-      label: "IEEE-754 Precision Loss",
-      desc: "Pure 64-bit integer paise minor units (ADR-0002)",
+      icon: FileCheck,
+      value: "Zero Disputes",
+      label: "Vendor Resolution Clarity",
+      desc: "Clear visual line-item proofs that suppliers and auditors agree upon immediately.",
     },
   ];
 
@@ -33,8 +33,8 @@ export function LiveMetricsStats() {
     <section id="metrics" className="py-16 border-y border-border/60 bg-muted/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {stats.map((stat, i) => {
-            const Icon = stat.icon;
+          {metrics.map((metric, i) => {
+            const Icon = metric.icon;
             return (
               <div
                 key={i}
@@ -43,14 +43,14 @@ export function LiveMetricsStats() {
                 <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
                   <Icon className="w-5 h-5" />
                 </div>
-                <div className="font-mono text-3xl font-extrabold text-foreground tracking-tight">
-                  {stat.value}
+                <div className="text-3xl font-extrabold text-foreground tracking-tight">
+                  {metric.value}
                 </div>
                 <div className="font-semibold text-sm text-foreground">
-                  {stat.label}
+                  {metric.label}
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  {stat.desc}
+                  {metric.desc}
                 </p>
               </div>
             );

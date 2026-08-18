@@ -1,37 +1,37 @@
 import React from "react";
-import { Smartphone, History, Users, GitMerge, Lock, Search } from "lucide-react";
+import { Smartphone, GitMerge, Lock, FileText, RefreshCw, ShieldCheck } from "lucide-react";
 
 export function FeatureGrid() {
   const features = [
     {
       icon: Smartphone,
-      title: "Factory Floor Mobile Capture",
-      desc: "Flutter mobile app for warehouse operators. Edge lux metering, camera document alignment, laser barcode scanning, and offline-first queue.",
+      title: "Warehouse Gate Mobile App",
+      desc: "Empower dock receiving operators with a dedicated Flutter app to scan bills of lading, verify physical quantities, and flag damaged goods before unloading.",
     },
     {
       icon: GitMerge,
-      title: "Fuzzy Entity Resolution",
-      desc: "Handles vendor name typos and multiple alias variations (e.g. 'Bharat Steel' vs 'Bharat Steel & Tubes Ltd') with human review queues.",
-    },
-    {
-      icon: History,
-      title: "Immutable Temporal Audit Trail",
-      desc: "Every status transition, resolution, waiver, and penalty deduction is immutably logged with timestamp, user ID, and diff snapshots.",
+      title: "Intelligent Vendor & GSTIN Grouping",
+      desc: "Seamlessly links multi-state supplier branches, trade aliases, and parent corporate entities to master contract price agreements.",
     },
     {
       icon: Lock,
-      title: "5-Tier RBAC & Dual-Token Auth",
-      desc: "Granular access control (Owner, Admin, Manager, Analyst, Viewer) paired with 15-minute JWTs and rotated 7-day cryptographic refresh tokens.",
+      title: "Maker-Checker Financial Controls",
+      desc: "Enforce strict separation of duties between dock receiving, procurement contract managers, and accounts payable controllers.",
     },
     {
-      icon: Search,
-      title: "Instant Global Search (Cmd + K)",
-      desc: "Full-text indexing across all purchase orders, invoices, evidence documents, and discrepancy findings with instant keyboard navigation.",
+      icon: FileText,
+      title: "Automated Dispute Proof Packages",
+      desc: "Generates one-click debit notes with visual line-item comparisons and backing documents attached, enabling fast vendor sign-off.",
     },
     {
-      icon: Users,
-      title: "Collaborative Dispute Resolution",
-      desc: "Built-in vendor communication notes, waiver thresholds, and debit note generators to resolve supplier variances without leaving the platform.",
+      icon: RefreshCw,
+      title: "Works Alongside Your Existing ERP",
+      desc: "Operates non-invasively alongside SAP, TallyPrime, Oracle, and Microsoft Dynamics without complex ERP migrations.",
+    },
+    {
+      icon: ShieldCheck,
+      title: "Statutory & Internal Audit Ready",
+      desc: "Complete immutable audit history of every approved variance, waiver threshold, and recovery debit note for internal & external auditors.",
     },
   ];
 
@@ -39,10 +39,10 @@ export function FeatureGrid() {
     <section id="security" className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
       <div className="text-center max-w-3xl mx-auto space-y-4">
         <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight">
-          Built for High-Velocity B2B Operations
+          Enterprise Financial Controls & Governance
         </h2>
         <p className="text-muted-foreground text-base leading-relaxed">
-          From factory loading bays to the Chief Financial Officer's desk, Mistake connects every step of the physical-to-financial verification chain.
+          Comprehensive oversight from physical factory gate receiving all the way to bank disbursement authorization.
         </p>
       </div>
 

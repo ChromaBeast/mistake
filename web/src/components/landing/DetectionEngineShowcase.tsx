@@ -1,58 +1,58 @@
 import React from "react";
-import { Layers, DollarSign, Clock, AlertOctagon, HelpCircle } from "lucide-react";
+import { TrendingDown, PackageCheck, Clock, ShieldX, HelpCircle } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 
 export function DetectionEngineShowcase() {
-  const engines = [
+  const categories = [
     {
-      icon: DollarSign,
-      title: "Master Rate & Price Arbitrage",
-      badge: "High Impact",
-      desc: "Cross-checks line-item unit rates on vendor invoices against the master purchase order contract. Prevents silent margin erosion and unapproved rate hikes.",
+      icon: TrendingDown,
+      title: "Contract Rate Deviations",
+      badge: "Price Protection",
+      desc: "Supplier invoices frequently sneak in unapproved raw material surcharges or higher spot rates. We cross-verify every invoice line item against signed master contracts.",
     },
     {
-      icon: Layers,
-      title: "Quantity & Volume Variance",
-      badge: "3-Way Match",
-      desc: "Compares ordered quantity vs gate-inspected GRN volume vs final billed count. Automatically flags short shipments billed at full volume.",
+      icon: PackageCheck,
+      title: "Short Deliveries Billed in Full",
+      badge: "Quantity Audit",
+      desc: "Suppliers bill for 1,000 units, but the warehouse gate only received 850. Mistake flags the 150-unit deficit instantly and calculates the exact overcharge.",
     },
     {
       icon: Clock,
-      title: "SLA & Delivery Penalty Breaches",
-      badge: "Automated",
-      desc: "Correlates bill of lading timestamps with contract SLA delivery windows. Computes exact contractual liquidated damages and delay penalties.",
+      title: "Missed SLA & Delivery Penalties",
+      badge: "Contract Enforcement",
+      desc: "Contracts stipulate 0.5% penalty per week of dispatch delay. We audit transit dates against agreed delivery windows to recover legitimate liquidated damages.",
     },
     {
-      icon: AlertOctagon,
-      title: "Status & Lifecycle Contradictions",
-      badge: "Fraud Guard",
-      desc: "Prevents double-billing for items that were rejected during floor quality inspection, cancelled, or returned to supplier.",
+      icon: ShieldX,
+      title: "Billing for Rejected Materials",
+      badge: "Quality Guard",
+      desc: "Materials rejected during floor quality inspection often get processed through accounts payable by mistake. We freeze payment until quality clearances are matched.",
     },
     {
       icon: HelpCircle,
-      title: "Orphan Evidence Detector",
-      badge: "Reconciliation",
-      desc: "Identifies phantom invoices lacking a backing PO, unlinked GRN goods receipts, or missing tax delivery challans.",
+      title: "Orphan & Unbacked Invoices",
+      badge: "Fraud Prevention",
+      desc: "Invoices received without a backing Purchase Order or verified Goods Receipt Note (GRN) are isolated before they can be routed for executive sign-off.",
     },
   ];
 
   return (
     <section id="features" className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
       <div className="text-center max-w-3xl mx-auto space-y-4">
-        <Badge variant="outline" className="font-mono text-xs uppercase tracking-wider">
-          Detection Architecture
+        <Badge variant="outline" className="font-semibold text-xs uppercase tracking-wider">
+          Leakage Prevention
         </Badge>
         <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight">
-          5 Deterministic Engines Working in Parallel
+          Where Does Your Procurement Spend Silently Leak?
         </h2>
         <p className="text-muted-foreground text-base leading-relaxed">
-          Every ingested invoice, PO, and goods receipt note passes through all five specialized detection pipelines in under 50 milliseconds.
+          High transaction volumes make manual invoice checking practically impossible. Mistake monitors the five critical leak points across every single supplier transaction.
         </p>
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {engines.map((engine, i) => {
-          const Icon = engine.icon;
+        {categories.map((cat, i) => {
+          const Icon = cat.icon;
           return (
             <div
               key={i}
@@ -62,12 +62,12 @@ export function DetectionEngineShowcase() {
                 <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
                   <Icon className="w-5 h-5" />
                 </div>
-                <Badge variant="info" className="text-[11px] font-mono">
-                  {engine.badge}
+                <Badge variant="info" className="text-[11px] font-medium">
+                  {cat.badge}
                 </Badge>
               </div>
-              <h3 className="font-bold text-base text-foreground">{engine.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{engine.desc}</p>
+              <h3 className="font-bold text-base text-foreground">{cat.title}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">{cat.desc}</p>
             </div>
           );
         })}

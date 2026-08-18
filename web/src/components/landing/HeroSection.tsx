@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, AlertTriangle, CheckCircle2, ShieldAlert, Sparkles, FileSpreadsheet } from "lucide-react";
+import { ArrowRight, CheckCircle2, ShieldAlert, Building2, TrendingUp, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 
@@ -10,88 +10,86 @@ export function HeroSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           
-          {/* Left Column: Copy & CTAs */}
+          {/* Left Column: Client-Focused Copy */}
           <div className="lg:col-span-7 space-y-8 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-medium">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>India-First • Exact Integer Paise Arithmetic</span>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-semibold">
+              <TrendingUp className="w-3.5 h-3.5" />
+              <span>For CFOs, Supply Chain Heads & Procurement Leaders</span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground leading-[1.15]">
-              Catch Financial Leakage <br />
-              <span className="text-primary">Before It Hits Your P&L.</span>
+              Stop Procurement Leakage. <br />
+              <span className="text-primary">Protect Your EBITDA Margins.</span>
             </h1>
 
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-              Automated 3-way reconciliation across Purchase Orders, Goods Receipt Notes, and Invoices. 
-              Deterministic detection for price variances, short deliveries, and duplicate billings with audit-ready proof.
+              Manufacturers and distributors silently lose <strong>1% to 3% of procurement spend</strong> to rate discrepancies, short shipments, and duplicate charges. Mistake automates 3-way matching across Invoices, POs, and Goods Receipts to recover every rupee before payment.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
               <Link href="/signup" className="w-full sm:w-auto">
                 <Button size="lg" className="w-full sm:w-auto gap-2 shadow-lg shadow-primary/20">
-                  Start Free Trial <ArrowRight className="w-4 h-4" />
+                  Request Free Spend Audit <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
               <Link href="/login" className="w-full sm:w-auto">
                 <Button variant="outline" size="lg" className="w-full sm:w-auto gap-2">
-                  <FileSpreadsheet className="w-4 h-4" /> Live Investigation Deck
+                  <Building2 className="w-4 h-4" /> Explore Interactive Workspace
                 </Button>
               </Link>
             </div>
 
-            <div className="flex items-center justify-center lg:justify-start gap-6 pt-4 text-xs text-muted-foreground font-mono">
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 pt-4 text-xs text-muted-foreground font-medium">
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Zero Float Errors
+                <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Guaranteed ROI within 30 Days
               </span>
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" /> 5-Tier RBAC
+                <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Non-Invasive ERP Integration
               </span>
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Immutable Audit Trail
+                <CheckCircle2 className="w-4 h-4 text-emerald-500" /> 100% Audit-Grade Proofs
               </span>
             </div>
           </div>
 
-          {/* Right Column: Interactive Discrepancy Evidence Card */}
+          {/* Right Column: Visual Case Example */}
           <div className="lg:col-span-5">
-            <div className="relative rounded-2xl border border-border bg-card p-6 shadow-2xl backdrop-blur-sm space-y-5">
+            <div className="relative rounded-2xl border border-border bg-card p-6 shadow-2xl space-y-5">
               <div className="flex items-center justify-between border-b border-border/60 pb-4">
                 <div className="flex items-center gap-2.5">
                   <div className="p-2 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400">
                     <ShieldAlert className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-sm text-foreground">Critical Price Mismatch</h3>
-                    <p className="text-xs text-muted-foreground font-mono">PO-2026-8812 ⟷ INV-9042</p>
+                    <h3 className="font-semibold text-sm text-foreground">Vendor Rate Overcharge Detected</h3>
+                    <p className="text-xs text-muted-foreground">Heavy Forged Flanges (Batch #4410)</p>
                   </div>
                 </div>
-                <Badge variant="danger" className="text-xs font-mono">₹1,24,000 Leak</Badge>
+                <Badge variant="danger" className="text-xs font-bold">₹1,24,000 Saved</Badge>
               </div>
 
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div className="p-3 rounded-xl bg-muted/50 border border-border/40 space-y-1">
-                  <span className="text-muted-foreground font-medium">Purchase Order Rate</span>
-                  <div className="font-mono font-bold text-sm text-foreground">₹4,200.00 / Unit</div>
-                  <div className="text-[10px] text-muted-foreground">PO-2026-8812 (Line 4)</div>
+                  <span className="text-muted-foreground font-medium">Agreed PO Contract Rate</span>
+                  <div className="font-bold text-sm text-foreground">₹4,200.00 / Unit</div>
+                  <div className="text-[10px] text-muted-foreground">Approved by Procurement</div>
                 </div>
                 <div className="p-3 rounded-xl bg-rose-500/5 border border-rose-500/20 space-y-1">
                   <span className="text-rose-600 dark:text-rose-400 font-medium">Billed Invoice Rate</span>
-                  <div className="font-mono font-bold text-sm text-rose-600 dark:text-rose-400">₹4,820.00 / Unit</div>
-                  <div className="text-[10px] text-rose-500/80">+₹620.00 (+14.7%) Overbilled</div>
+                  <div className="font-bold text-sm text-rose-600 dark:text-rose-400">₹4,820.00 / Unit</div>
+                  <div className="text-[10px] text-rose-500/80">+₹620.00 / Unit Unapproved Surcharge</div>
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-2.5">
-                <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
-                <div className="text-xs text-amber-900 dark:text-amber-200">
-                  <span className="font-semibold">Deterministic Proof:</span> 200 units billed at ₹4,820 vs agreed master PO rate ₹4,200. Total excess claim: <strong>12,400,000 paise (₹1,24,000.00)</strong>.
-                </div>
+              <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-900 dark:text-emerald-200 leading-relaxed">
+                <strong>Automated Recovery Action:</strong> Invoice flagged before finance approval. Automated debit note and vendor variance statement generated for accounts payable.
               </div>
 
-              <div className="pt-2 flex items-center justify-between text-xs font-mono text-muted-foreground border-t border-border/40">
-                <span>Vendor: Bharat Forgings Ltd.</span>
-                <span className="text-emerald-500 font-semibold">Confidence: 99.8%</span>
+              <div className="pt-2 flex items-center justify-between text-xs text-muted-foreground border-t border-border/40">
+                <span>Supplier: Bharat Forgings Ltd.</span>
+                <span className="text-emerald-500 font-semibold flex items-center gap-1">
+                  <DollarSign className="w-3.5 h-3.5" /> Recovered Before Payout
+                </span>
               </div>
             </div>
           </div>

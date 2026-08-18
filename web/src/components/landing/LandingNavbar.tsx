@@ -20,24 +20,24 @@ export function LandingNavbar() {
             <span className="font-bold tracking-tight text-foreground text-lg leading-none">
               MISTAKE
             </span>
-            <span className="text-[10px] text-muted-foreground font-mono tracking-wider">
-              FINANCIAL AUDIT
+            <span className="text-[10px] text-muted-foreground font-semibold tracking-wider">
+              FINANCIAL AUDIT & LEAKAGE
             </span>
           </div>
         </Link>
 
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
           <a href="#features" className="hover:text-foreground transition-colors">
-            Detectors
-          </a>
-          <a href="#math-proof" className="hover:text-foreground transition-colors">
-            Paise Arithmetic
+            Leakage Sources
           </a>
           <a href="#metrics" className="hover:text-foreground transition-colors">
-            Impact
+            ROI Impact
           </a>
-          <a href="#security" className="hover:text-foreground transition-colors">
-            Security & RBAC
+          <a href="#math-proof" className="hover:text-foreground transition-colors">
+            Audit Precision
+          </a>
+          <a href="#governance" className="hover:text-foreground transition-colors">
+            Enterprise Controls
           </a>
         </nav>
 
@@ -57,7 +57,7 @@ export function LandingNavbar() {
           </Link>
           <Link href="/signup">
             <Button size="sm" className="gap-1.5">
-              Start Free <ArrowRight className="w-3.5 h-3.5" />
+              Free Audit <ArrowRight className="w-3.5 h-3.5" />
             </Button>
           </Link>
         </div>
