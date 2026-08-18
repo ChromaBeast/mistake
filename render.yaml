@@ -33,6 +33,10 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 3000
+      - key: HOSTNAME
+        value: "0.0.0.0"
       - key: API_URL
         value: http://mistake-backend:8080/api/v1
 
