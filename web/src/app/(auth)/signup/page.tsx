@@ -4,9 +4,9 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/context/AuthContext";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { AlertCircle, ShieldCheck } from "lucide-react";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -26,70 +26,87 @@ export default function SignupPage() {
       await signup({ name, company_name: companyName, email, password });
       router.push("/dashboard");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to create tenant account");
+      setError(err instanceof Error ? err.message : "Failed to create tenant organization");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <Card className="border-border shadow-xl">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-lg">Create your tenant account</CardTitle>
-        <CardDescription>
-          Onboard your company to start detecting discrepancies in under 5 minutes.
-        </CardDescription>
-      </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-3">
-          {error && (
-            <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs">
-              {error}
-            </div>
-          )}
-          <Input
-            label="Your Full Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Aditya Verma"
-            required
-          />
-          <Input
-            label="Company / Legal Entity Name"
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
-            placeholder="Bharat Heavy Engineering Ltd"
-            required
-          />
-          <Input
-            label="Work Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="name@company.in"
-            required
-          />
-          <Input
-            label="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
-            required
-          />
-        </CardContent>
-        <CardFooter className="flex flex-col space-y-3">
-          <Button type="submit" className="w-full" isLoading={isLoading}>
-            Create Account & Tenant
-          </Button>
-          <p className="text-xs text-center text-muted-foreground">
-            Already have an account?{" "}
-            <Link href="/login" className="text-primary hover:underline font-semibold">
-              Sign In
-            </Link>
-          </p>
-        </CardFooter>
+    <div className="space-y-6 animate-fade-in">
+      {/* Header */}
+      <div className="space-y-2">
+        <h1 className="text-2xl sm:text-3xl font-bold font-serif tracking-tight text-foreground">
+          Create Tenant Workspace
+        </h1>
+        <p className="text-xs sm:text-sm text-muted-foreground">
+          Set up autonomous reconciliation for your supply chain in under 2 minutes.
+        </p>
+      </div>
+
+      {/* Trust Callout */}
+      <div className="p-3 rounded-lg border border-border/80 bg-muted/20 flex items-center gap-2.5 text-xs text-muted-foreground">
+        <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
+        <span>Includes isolated tenant database & full 22-table audit schema.</span>
+      </div>
+
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="space-y-3.5">
+        {error && (
+          <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
+
+        <Input
+          label="Your Full Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Aditya Verma"
+          required
+        />
+
+        <Input
+          label="Company / Legal Entity Name"
+          value={companyName}
+          onChange={(e) => setCompanyName(e.target.value)}
+          placeholder="Bharat Heavy Engineering Ltd"
+          required
+        />
+
+        <Input
+          label="Corporate Work Email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="name@company.in"
+          required
+        />
+
+        <Input
+          label="Master Password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="••••••••"
+          required
+        />
+
+        <Button type="submit" className="w-full h-10 font-semibold mt-2" isLoading={isLoading}>
+          Create Account & Tenant
+        </Button>
       </form>
-    </Card>
+
+      {/* Switch to Login */}
+      <div className="text-center pt-2">
+        <p className="text-xs text-muted-foreground">
+          Already have tenant credentials?{" "}
+          <Link href="/login" className="text-foreground hover:underline font-semibold">
+            Sign In
+          </Link>
+        </p>
+      </div>
+    </div>
   );
 }
