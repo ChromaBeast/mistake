@@ -1,0 +1,193 @@
+import { Mistake } from "@/types";
+
+export const initialMistakes: Mistake[] = [
+  {
+    id: "mst-001",
+    tenant_id: "ten-001",
+    title: "Excess Billed Quantity on Hot Rolled Steel Coils",
+    type: "quantity_mismatch",
+    severity: "critical",
+    status: "detected",
+    financial_impact_minor: 25000000, // ₹ 2,50,000.00
+    entity_id: "ent-tata-01",
+    entity_name: "Tata Steel B2B Division",
+    assigned_to_user_id: "usr-002",
+    assigned_to_name: "Rohan Sharma (Analyst)",
+    explanation:
+      "Purchase Order PO-9921 authorised 500 Metric Tonnes of HR Coils at ₹50,000/MT, but Invoice INV-8812 billed 550 MT without an approved Purchase Amendment order.",
+    remediation_advice: [
+      "Issue debit note for ₹2,50,000 to vendor Tata Steel B2B Division.",
+      "Verify weighbridge GRN-4421 records to check actual physical tonnage received.",
+      "Block payment release on INV-8812 until credit reconciliation.",
+    ],
+    confidence_score: 98,
+    math_proof: {
+      formula: "financial_impact_minor = |PO_Qty - Inv_Qty| * Unit_Price",
+      unit_price_minor: 5000000, // ₹ 50,000.00 per MT
+      expected_quantity: 500,
+      actual_quantity: 550,
+      quantity_delta: 50,
+      expected_amount_minor: 2500000000,
+      actual_amount_minor: 2750000000,
+      financial_impact_minor: 25000000,
+    },
+    evidence_items: [
+      {
+        id: "ev-001",
+        document_id: "doc-po-9921",
+        document_name: "PO_9921_TataSteel.pdf",
+        document_type: "Purchase Order",
+        field_name: "line_items[0].quantity",
+        extracted_value: "500 MT",
+        confidence: 99,
+        bounding_box: { page_number: 1, top: 42, left: 15, width: 70, height: 12 },
+        raw_snippet: "Item: HR Steel Coils 2.5mm | Qty: 500 MT | Rate: 50,000.00 INR/MT",
+        observed_at: "2026-08-15T09:30:00Z",
+      },
+      {
+        id: "ev-002",
+        document_id: "doc-inv-8812",
+        document_name: "Invoice_INV_8812.pdf",
+        document_type: "Tax Invoice",
+        field_name: "line_items[0].quantity",
+        extracted_value: "550 MT",
+        confidence: 97,
+        bounding_box: { page_number: 1, top: 58, left: 15, width: 70, height: 14 },
+        raw_snippet: "HR Steel Coils | Billed Qty: 550 MT | Rate: 50,000.00 | Total: 2,75,00,000.00 INR",
+        observed_at: "2026-08-17T11:45:00Z",
+      },
+    ],
+    transitions: [
+      {
+        id: "tr-001",
+        mistake_id: "mst-001",
+        from_status: "detected",
+        to_status: "under_review",
+        user_id: "usr-001",
+        user_name: "Aditya Verma (Manager)",
+        reason: "Initial audit triage started for high-value metal procurement variance.",
+        created_at: "2026-08-17T14:10:00Z",
+      },
+    ],
+    detected_at: "2026-08-17T11:50:00Z",
+  },
+  {
+    id: "mst-002",
+    tenant_id: "ten-001",
+    title: "Freight Unit Rate Overcharge on Mumbai-Delhi Corridor",
+    type: "price_mismatch",
+    severity: "high",
+    status: "under_review",
+    financial_impact_minor: 18000000, // ₹ 1,80,000.00
+    entity_id: "ent-rel-02",
+    entity_name: "Reliance Freight & Logistics",
+    assigned_to_user_id: "usr-002",
+    assigned_to_name: "Rohan Sharma (Analyst)",
+    explanation:
+      "Contract rate agreed at ₹4,200 per MT across 300 MT haulage, but freight invoice billed at non-contracted surge rate of ₹4,800 per MT.",
+    remediation_advice: [
+      "Enforce MSA rate annexure B-12 with Reliance Logistics.",
+      "Withhold ₹1,80,000 delta on pending invoice settlement.",
+    ],
+    confidence_score: 95,
+    math_proof: {
+      formula: "financial_impact_minor = |Agreed_Rate - Billed_Rate| * Shipped_Qty",
+      unit_price_minor: 60000, // ₹ 600.00 delta
+      expected_quantity: 300,
+      actual_quantity: 300,
+      quantity_delta: 0,
+      expected_amount_minor: 126000000,
+      actual_amount_minor: 144000000,
+      financial_impact_minor: 18000000,
+    },
+    evidence_items: [
+      {
+        id: "ev-003",
+        document_id: "doc-con-104",
+        document_name: "Freight_Rate_Contract_2026.pdf",
+        document_type: "Rate Contract",
+        field_name: "corridors.mumbai_delhi.rate",
+        extracted_value: "₹ 4,200 / MT",
+        confidence: 98,
+        bounding_box: { page_number: 3, top: 35, left: 10, width: 80, height: 10 },
+        observed_at: "2026-08-10T10:00:00Z",
+      },
+    ],
+    detected_at: "2026-08-17T12:15:00Z",
+  },
+  {
+    id: "mst-003",
+    tenant_id: "ten-001",
+    title: "Orphan Vendor Invoice Missing Delivery Receipt (GRN)",
+    type: "missing_evidence",
+    severity: "critical",
+    status: "detected",
+    financial_impact_minor: 125000000, // ₹ 12,50,000.00
+    entity_id: "ent-jsw-03",
+    entity_name: "JSW Infrastructure Ltd",
+    assigned_to_user_id: "usr-001",
+    assigned_to_name: "Aditya Verma (Manager)",
+    explanation:
+      "Vendor submitted Invoice JSW-7719 for ₹12,50,000 for plant machinery spare parts without a corresponding Gate Inward Pass or GRN in SAP.",
+    remediation_advice: [
+      "Request plant security inward register log from Vijayanagar unit.",
+      "Do not process ERP voucher until 3-way match is confirmed.",
+    ],
+    confidence_score: 92,
+    evidence_items: [
+      {
+        id: "ev-004",
+        document_id: "doc-jsw-7719",
+        document_name: "Invoice_JSW_7719.pdf",
+        document_type: "Tax Invoice",
+        field_name: "invoice_total",
+        extracted_value: "₹ 12,50,000.00",
+        confidence: 96,
+        observed_at: "2026-08-16T15:20:00Z",
+      },
+    ],
+    detected_at: "2026-08-16T16:00:00Z",
+  },
+  {
+    id: "mst-004",
+    tenant_id: "ten-001",
+    title: "SLA Delay Penalty Applicable on IT Asset Delivery",
+    type: "date_mismatch",
+    severity: "medium",
+    status: "verified",
+    financial_impact_minor: 7500000, // ₹ 75,000.00
+    entity_id: "ent-inf-04",
+    entity_name: "Infosys BPM Procurement",
+    assigned_to_user_id: "usr-002",
+    assigned_to_name: "Rohan Sharma (Analyst)",
+    explanation:
+      "Contractually committed delivery date was Aug 02, 2026. Actual warehouse receipt recorded on Aug 16, 2026 (14-day delay). 0.5% per week penalty applies.",
+    remediation_advice: [
+      "Apply 1.0% late delivery liquidated damages to final settlement.",
+    ],
+    confidence_score: 99,
+    evidence_items: [],
+    detected_at: "2026-08-17T08:00:00Z",
+  },
+  {
+    id: "mst-005",
+    tenant_id: "ten-001",
+    title: "Cancelled Order Shipped & Billed in Warehouse Management",
+    type: "status_mismatch",
+    severity: "high",
+    status: "resolved",
+    financial_impact_minor: 34000000, // ₹ 3,40,000.00
+    entity_id: "ent-hav-05",
+    entity_name: "Havells India Electricals",
+    assigned_to_user_id: "usr-001",
+    assigned_to_name: "Aditya Verma (Manager)",
+    explanation:
+      "Order SO-8820 was officially marked CANCELLED on Aug 08 in CRM, but warehouse WMS dispatched inventory on Aug 11.",
+    remediation_advice: [
+      "Initiate return logistics pickup (RTO) for shipped consignments.",
+    ],
+    confidence_score: 94,
+    evidence_items: [],
+    detected_at: "2026-08-12T14:30:00Z",
+  },
+];

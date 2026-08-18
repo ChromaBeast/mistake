@@ -1,0 +1,79 @@
+"use client";
+
+import React, { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/context/AuthContext";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
+
+export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { login } = useAuth();
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+    try {
+      await login({ email, password });
+      router.push("/dashboard");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to log in");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Card className="border-border shadow-xl">
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-lg">Sign in to your account</CardTitle>
+        <CardDescription>
+          Enter your business email and password to access the platform.
+        </CardDescription>
+      </CardHeader>
+      <form onSubmit={handleSubmit}>
+        <CardContent className="space-y-4">
+          {error && (
+            <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs">
+              {error}
+            </div>
+          )}
+          <Input
+            label="Work Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="name@company.in"
+            required
+          />
+          <Input
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            required
+          />
+        </CardContent>
+        <CardFooter className="flex flex-col space-y-3">
+          <Button type="submit" className="w-full" isLoading={isLoading}>
+            Sign In
+          </Button>
+          <p className="text-xs text-center text-muted-foreground">
+            Don&apos;t have an account?{" "}
+            <Link href="/signup" className="text-primary hover:underline font-semibold">
+              Create tenant account
+            </Link>
+          </p>
+        </CardFooter>
+      </form>
+    </Card>
+  );
+}
