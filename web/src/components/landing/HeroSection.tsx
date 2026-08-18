@@ -72,8 +72,9 @@ export function HeroSection() {
         {/* Typographic Thesis Header */}
         <div className="max-w-3xl space-y-6">
           <div className="text-xs font-mono tracking-widest text-muted-foreground uppercase">
-            Platform / Autonomous 3-Way Reconciliation
+            Autonomous 3-Way Reconciliation
           </div>
+
 
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground leading-[1.1]">
             Catch vendor overbilling before payment release.
