@@ -5,16 +5,17 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"mistake-backend/internal/config"
-	"mistake-backend/internal/pipeline"
-	"mistake-backend/internal/router"
-	"mistake-backend/internal/seed"
-	"mistake-backend/internal/storage"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"mistake-backend/internal/config"
+	"mistake-backend/internal/pipeline"
+	"mistake-backend/internal/router"
+	"mistake-backend/internal/seed"
+	"mistake-backend/internal/storage"
 )
 
 func main() {
@@ -24,19 +25,41 @@ func main() {
 	cfg := config.LoadConfig()
 	log.Printf("Starting Mistake Backend on port %d (%s)...", cfg.Port, cfg.Environment)
 
-	store := storage.NewMemoryStore()
+	var store storage.Store
+	if cfg.DatabaseURL != "" {
+		log.Println("DATABASE_URL detected. Connecting to PostgreSQL...")
+		pgStore, err := storage.NewPostgresStore(context.Background(), cfg.DatabaseURL)
+		if err != nil {
+			log.Fatalf("Failed to connect to PostgreSQL: %v", err)
+		}
+		defer pgStore.Close()
+
+		if err := pgStore.AutoMigrate(context.Background()); err != nil {
+			log.Fatalf("PostgreSQL migration failed: %v", err)
+		}
+		store = pgStore
+	} else {
+		log.Println("DATABASE_URL not set. Running with In-Memory store.")
+		store = storage.NewMemoryStore()
+	}
+
 	pipe := pipeline.NewPipeline(store)
 	workerPool := pipeline.NewWorkerPool(pipe, cfg.WorkerCount, 100)
 	workerPool.Start()
 	defer workerPool.Stop()
 
 	if *seedFlag {
-		log.Println("Seeding initial B2B sample data...")
-		_, _, err := seed.SeedDatabase(context.Background(), store)
-		if err != nil {
-			log.Printf("Warning: Seeding failed: %v", err)
+		log.Println("Checking database seed status...")
+		tenant, _ := store.GetTenant(context.Background(), "tenant-apex-101")
+		if tenant == nil {
+			log.Println("Seeding initial B2B sample data...")
+			if _, _, err := seed.SeedDatabase(context.Background(), store); err != nil {
+				log.Printf("Warning: Seeding failed: %v", err)
+			} else {
+				log.Println("Seeding completed successfully.")
+			}
 		} else {
-			log.Println("Seeding completed successfully.")
+			log.Println("Seed tenant already exists, skipping initial seed.")
 		}
 	}
 

@@ -18,6 +18,7 @@ type Config struct {
 	StorageDir     string
 	WorkerCount    int
 	AllowedOrigins       []string
+	DatabaseURL          string
 	GeminiAPIKey         string
 	GeminiFrontierModel  string
 	GeminiStandardModel  string
@@ -54,6 +55,7 @@ func LoadConfig() *Config {
 		}
 	}
 
+	dbURL := os.Getenv("DATABASE_URL")
 	geminiAPIKey := os.Getenv("GEMINI_API_KEY")
 	frontierModel := os.Getenv("GEMINI_FRONTIER_MODEL")
 	if frontierModel == "" {
@@ -71,6 +73,7 @@ func LoadConfig() *Config {
 		StorageDir:          storageDir,
 		WorkerCount:         workerCount,
 		AllowedOrigins:      []string{"http://localhost:3000"},
+		DatabaseURL:         dbURL,
 		GeminiAPIKey:        geminiAPIKey,
 		GeminiFrontierModel: frontierModel,
 		GeminiStandardModel: standardModel,
@@ -81,4 +84,5 @@ func LoadConfig() *Config {
 		},
 	}
 }
+
 
