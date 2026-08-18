@@ -12,7 +12,6 @@
     --popover-foreground: #0f172a;
     --primary: #0f172a;
     --primary-foreground: #ffffff;
-    --primary-hover: #1e293b;
     --secondary: #f1f5f9;
     --secondary-foreground: #0f172a;
     --muted: #f1f5f9;
@@ -36,7 +35,6 @@
     --popover-foreground: #f8fafc;
     --primary: #f8fafc;
     --primary-foreground: #090d16;
-    --primary-hover: #e2e8f0;
     --secondary: #1e293b;
     --secondary-foreground: #f8fafc;
     --muted: #162032;
@@ -53,10 +51,27 @@
 }
 
 body {
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   color: var(--foreground);
   background: var(--background);
   font-feature-settings: "cv02", "cv03", "cv04", "cv11", "tnum";
   min-height: 100vh;
+}
+
+h1, h2, .font-serif, .font-display {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-variation-settings: "opsz" 36, "wght" 600;
+  letter-spacing: -0.02em;
+}
+
+h3, h4, h5, h6 {
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+code, pre, .font-mono {
+  font-family: var(--font-ibm-plex-mono), ui-monospace, SFMono-Regular, monospace;
+  font-feature-settings: "tnum" on, "zero" on;
 }
 
 /* Custom subtle scrollbar */
