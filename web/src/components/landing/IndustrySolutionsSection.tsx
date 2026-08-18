@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
 import { VERTICALS } from "./industryData";
 
@@ -8,13 +8,17 @@ export function IndustrySolutionsSection() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
+  const handleSelect = useCallback((idx: number) => {
+    setActiveIdx(idx);
+  }, []);
+
   useEffect(() => {
     if (isPaused) return;
     const timer = setInterval(() => {
       setActiveIdx((prev) => (prev + 1) % VERTICALS.length);
-    }, 6000);
+    }, 7000);
     return () => clearInterval(timer);
-  }, [isPaused]);
+  }, [isPaused, activeIdx]);
 
   const current = VERTICALS[activeIdx];
   const Icon = current.icon;
@@ -23,7 +27,7 @@ export function IndustrySolutionsSection() {
     <section id="industries" className="py-20 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         
-        {/* Minimalist Header with Organic Pagination */}
+        {/* Header with Navigation Controls */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="max-w-2xl space-y-3">
             <h2 className="text-3xl font-bold tracking-tight text-foreground">
@@ -36,18 +40,18 @@ export function IndustrySolutionsSection() {
 
           <div className="flex items-center gap-2 shrink-0">
             <button
-              onClick={() => setActiveIdx((prev) => (prev === 0 ? VERTICALS.length - 1 : prev - 1))}
-              className="p-2 rounded-lg border border-border/80 bg-card hover:bg-muted text-foreground transition-all duration-150 active:scale-95"
+              onClick={() => handleSelect(activeIdx === 0 ? VERTICALS.length - 1 : activeIdx - 1)}
+              className="p-2 rounded-lg border border-border/80 bg-card hover:bg-muted text-foreground transition-colors duration-75 active:scale-95"
               aria-label="Previous Industry"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <span className="font-mono text-xs text-muted-foreground px-2">
+            <span className="font-mono text-xs text-muted-foreground px-2 tabular-nums">
               0{activeIdx + 1} / 0{VERTICALS.length}
             </span>
             <button
-              onClick={() => setActiveIdx((prev) => (prev + 1) % VERTICALS.length)}
-              className="p-2 rounded-lg border border-border/80 bg-card hover:bg-muted text-foreground transition-all duration-150 active:scale-95"
+              onClick={() => handleSelect((activeIdx + 1) % VERTICALS.length)}
+              className="p-2 rounded-lg border border-border/80 bg-card hover:bg-muted text-foreground transition-colors duration-75 active:scale-95"
               aria-label="Next Industry"
             >
               <ChevronRight className="w-4 h-4" />
@@ -55,7 +59,7 @@ export function IndustrySolutionsSection() {
           </div>
         </div>
 
-        {/* Natural Floating Tab Selector (No Bottom Divider) */}
+        {/* Instant-Switch Floating Tab Selector */}
         <div className="flex overflow-x-auto no-scrollbar gap-2 pb-1">
           {VERTICALS.map((v, i) => {
             const VIcon = v.icon;
@@ -63,11 +67,11 @@ export function IndustrySolutionsSection() {
             return (
               <button
                 key={v.id}
-                onClick={() => setActiveIdx(i)}
-                className={`flex items-center gap-2.5 px-4 py-2.5 text-xs font-medium rounded-lg whitespace-nowrap transition-all duration-200 ${
+                onClick={() => handleSelect(i)}
+                className={`flex items-center gap-2.5 px-4 py-2.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors duration-75 ${
                   isActive
-                    ? "bg-foreground text-background font-semibold shadow-sm"
-                    : "bg-muted/40 hover:bg-muted/80 text-muted-foreground hover:text-foreground border border-transparent"
+                    ? "bg-foreground text-background font-semibold shadow-xs"
+                    : "bg-muted/40 hover:bg-muted/80 text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <VIcon className="w-4 h-4 shrink-0" />
@@ -77,14 +81,14 @@ export function IndustrySolutionsSection() {
           })}
         </div>
 
-        {/* Organic Unified Stage (No Artificial Dividers) */}
+        {/* Instant Content Showcase */}
         <div
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
-          className="rounded-2xl border border-border/70 bg-card p-6 md:p-8 space-y-8 shadow-xs hover:border-foreground/20 transition-all duration-300"
+          className="rounded-2xl border border-border/70 bg-card p-6 md:p-8 space-y-8 shadow-xs"
         >
           {/* Top Headline & Context Flow */}
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div key={`header-${current.id}`} className="animate-fade-in flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 rounded-xl bg-muted/50 border border-border/60 flex items-center justify-center text-foreground shrink-0 mt-1">
                 <Icon className="w-6 h-6" />
@@ -110,18 +114,16 @@ export function IndustrySolutionsSection() {
           </div>
 
           {/* Natural 3-Card Rule Grid */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
+          <div key={`rules-${current.id}`} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-2 animate-fade-in">
             {current.checks.map((c, j) => (
               <div
                 key={j}
-                className="p-5 rounded-xl border border-border/60 bg-muted/20 hover:bg-muted/40 hover:border-foreground/20 transition-all duration-200 space-y-3 flex flex-col justify-between"
+                className="p-5 rounded-xl border border-border/60 bg-muted/20 hover:bg-muted/40 hover:border-foreground/20 transition-colors duration-100 space-y-3 flex flex-col justify-between"
               >
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-bold text-sm text-foreground leading-snug">
-                      {c.title}
-                    </span>
-                  </div>
+                  <span className="font-bold text-sm text-foreground leading-snug block">
+                    {c.title}
+                  </span>
                   <p className="text-xs text-muted-foreground leading-relaxed">
                     {c.detail}
                   </p>
