@@ -91,6 +91,20 @@ cd mobile && flutter test && flutter analyze
 
 ---
 
+## 🪝 Automated Git Hooks (Pre-Commit & Pre-Push)
+
+This repository includes automated validation hooks in [`.githooks/`](.githooks) to prevent broken commits and failed cloud deployments:
+
+```bash
+# Enable repository hooks (one-time setup)
+git config core.hooksPath .githooks
+```
+
+- **`pre-commit`**: Automatically runs TypeScript type validation (`bun x tsc --noEmit`) and Go static analysis (`go vet ./...`) before any commit is created.
+- **`pre-push`**: Automatically compiles the complete Next.js production build (`bun run build`), runs all Web Vitest tests (`bun run test`), and executes the Go backend test suite before allowing any push to GitHub.
+
+---
+
 ## ☁️ All-in-One Cloud Deployment (Render.com)
 
 The entire full-stack platform (Go REST API + Next.js Web Dashboard + Managed PostgreSQL) is pre-configured to deploy together on [Render.com](https://render.com) using the included [`render.yaml`](render.yaml) Blueprint:
