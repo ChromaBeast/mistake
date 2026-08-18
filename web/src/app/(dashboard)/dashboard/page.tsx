@@ -9,7 +9,7 @@ import { LeakageCategoryChart } from "@/components/dashboard/LeakageCategoryChar
 import { DiscrepancyTrendChart } from "@/components/dashboard/DiscrepancyTrendChart";
 import { RecentFindingsList } from "@/components/dashboard/RecentFindingsList";
 import { Button } from "@/components/ui/Button";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { DashboardSkeleton } from "@/components/ui/skeletons/DashboardSkeleton";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { RefreshCw, Sparkles } from "lucide-react";
 
@@ -73,19 +73,9 @@ export default function DashboardPage() {
         </div>
 
         {isLoading || !summary ? (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-              {[...Array(5)].map((_, i) => (
-                <Skeleton key={`skeleton-kpi-${i}`} className="h-28 w-full rounded-xl" />
-              ))}
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <Skeleton className="h-80 w-full rounded-xl" />
-              <Skeleton className="h-80 w-full rounded-xl lg:col-span-2" />
-            </div>
-          </div>
+          <DashboardSkeleton />
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-6 animate-fade-in">
             <KpiSummaryGrid kpi={summary.kpi_summary} />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

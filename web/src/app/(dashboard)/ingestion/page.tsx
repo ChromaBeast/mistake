@@ -10,7 +10,7 @@ import { ErrorDiagnosticsCard } from "@/components/ingestion/ErrorDiagnosticsCar
 import { sampleIngestionErrors } from "@/lib/api/mock/data-sources";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { IngestionSkeleton } from "@/components/ui/skeletons/IngestionSkeleton";
 import { UploadCloud, Layers } from "lucide-react";
 
 export default function IngestionPage() {
@@ -46,7 +46,6 @@ export default function IngestionPage() {
       setDataSources((prev) => [newDs, ...prev.filter((d) => d.id !== newDs.id)]);
       setActiveJob(newDs);
 
-      // Poll until completed or failed
       const intervalId = setInterval(async () => {
         try {
           const updated = await api.getDataSource(newDs.id);
@@ -76,10 +75,13 @@ export default function IngestionPage() {
     }
   };
 
+  if (isLoading) {
+    return <IngestionSkeleton />;
+  }
 
   return (
     <ErrorBoundary fallbackTitle="Could not load Ingestion Hub">
-      <div className="space-y-6">
+      <div className="space-y-6 animate-fade-in">
         <div>
           <h1 className="text-xl font-bold tracking-tight text-foreground flex items-center space-x-2">
             <UploadCloud className="h-5 w-5 text-primary" />
@@ -115,15 +117,11 @@ export default function IngestionPage() {
 
             <div>
               <h3 className="text-sm font-semibold text-foreground mb-3">Ingested Documents & Batch History</h3>
-              {isLoading ? (
-                <Skeleton className="h-48 w-full rounded-xl" />
-              ) : (
-                <DataSourceList
-                  dataSources={dataSources}
-                  onRetry={handleRetry}
-                  onSelect={(ds) => setActiveJob(ds)}
-                />
-              )}
+              <DataSourceList
+                dataSources={dataSources}
+                onRetry={handleRetry}
+                onSelect={(ds) => setActiveJob(ds)}
+              />
             </div>
           </div>
 

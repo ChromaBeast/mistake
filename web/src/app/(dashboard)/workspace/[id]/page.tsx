@@ -14,7 +14,7 @@ import { TransitionModal } from "@/components/workspace/TransitionModal";
 import { TransitionHistoryLog } from "@/components/workspace/TransitionHistoryLog";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { WorkspaceSkeleton } from "@/components/ui/skeletons/WorkspaceSkeleton";
 import { formatPaiseToINR } from "@/lib/formatters/inr";
 import { ArrowLeft, Building2 } from "lucide-react";
 
@@ -63,16 +63,11 @@ export default function WorkspaceDetailPage() {
   };
 
   if (isLoading || !mistake) {
-    return (
-      <div className="space-y-4">
-        <Skeleton className="h-10 w-48 rounded-lg" />
-        <Skeleton className="h-64 w-full rounded-xl" />
-      </div>
-    );
+    return <WorkspaceSkeleton />;
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex items-center space-x-3">
         <Button size="sm" variant="ghost" onClick={() => router.push("/workspace")}>
           <ArrowLeft className="h-4 w-4 mr-1" />

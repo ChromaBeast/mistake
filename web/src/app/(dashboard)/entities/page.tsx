@@ -8,8 +8,8 @@ import { EntityDirectoryGrid } from "@/components/entities/EntityDirectoryGrid";
 import { Input } from "@/components/ui/Input";
 import { Tabs } from "@/components/ui/Tabs";
 import { Button } from "@/components/ui/Button";
-import { Skeleton } from "@/components/ui/Skeleton";
-import { Users, GitMerge, Search } from "lucide-react";
+import { EntitiesSkeleton } from "@/components/ui/skeletons/EntitiesSkeleton";
+import { Users, GitMerge } from "lucide-react";
 
 export default function EntityExplorerPage() {
   const [entities, setEntities] = useState<Entity[]>([]);
@@ -42,7 +42,7 @@ export default function EntityExplorerPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold tracking-tight text-foreground flex items-center space-x-2">
@@ -74,9 +74,11 @@ export default function EntityExplorerPage() {
       </div>
 
       {isLoading ? (
-        <Skeleton className="h-64 w-full rounded-xl" />
+        <EntitiesSkeleton />
       ) : (
-        <EntityDirectoryGrid entities={entities} />
+        <div className="animate-fade-in">
+          <EntityDirectoryGrid entities={entities} />
+        </div>
       )}
     </div>
   );

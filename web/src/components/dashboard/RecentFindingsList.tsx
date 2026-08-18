@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Mistake } from "@/types";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { ReconciliationPulse } from "@/components/ui/loaders/ReconciliationPulse";
 import { formatPaiseToINR } from "@/lib/formatters/inr";
 import { formatRelativeTime } from "@/lib/formatters/date";
 import { ArrowRight, AlertTriangle } from "lucide-react";
@@ -79,7 +80,13 @@ export function RecentFindingsList({ findings }: { findings: Mistake[] }) {
                     <div className="text-xs font-bold text-rose-500 font-mono tabular-nums">
                       {formatPaiseToINR(item.financial_impact_minor)}
                     </div>
-                    <span className="text-[10px] text-muted-foreground uppercase">{item.status}</span>
+                    <div className="flex items-center justify-end gap-1.5 mt-0.5">
+                      {item.status === "detected" ? (
+                        <ReconciliationPulse status="disputed" label="DETECTED" />
+                      ) : (
+                        <span className="text-[10px] text-muted-foreground uppercase">{item.status.replace("_", " ")}</span>
+                      )}
+                    </div>
                   </div>
                   {severityBadge(item.severity)}
                 </div>
@@ -91,4 +98,3 @@ export function RecentFindingsList({ findings }: { findings: Mistake[] }) {
     </Card>
   );
 }
-

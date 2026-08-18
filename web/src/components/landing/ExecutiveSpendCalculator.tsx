@@ -4,11 +4,12 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { NumberTicker } from "@/components/ui/loaders/NumberTicker";
 
 export function ExecutiveSpendCalculator() {
   const [spendCr, setSpendCr] = useState<number>(150);
 
-  const estimatedRecoveryCr = (spendCr * 0.018).toFixed(2);
+  const estimatedRecoveryCr = Number((spendCr * 0.018).toFixed(2));
   const rateLeakageLakhs = Math.round(spendCr * 0.018 * 0.45 * 100);
   const shortShipmentLakhs = Math.round(spendCr * 0.018 * 0.35 * 100);
   const penaltyLakhs = Math.round(spendCr * 0.018 * 0.20 * 100);
@@ -26,7 +27,7 @@ export function ExecutiveSpendCalculator() {
           </p>
         </div>
 
-        <div className="border border-border bg-card">
+        <div className="border border-border bg-card rounded-lg overflow-hidden shadow-sm hover:border-foreground/20 transition-all duration-300">
           
           {/* Top Control Bar */}
           <div className="p-6 md:p-8 border-b border-border space-y-6">
@@ -58,13 +59,13 @@ export function ExecutiveSpendCalculator() {
             </div>
           </div>
 
-          {/* Breakdown Grid */}
+          {/* Breakdown Grid with NumberTickers */}
           <div className="grid md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-border">
             
             <div className="p-6 md:p-8 space-y-1 bg-muted/20">
               <div className="text-[11px] font-mono text-muted-foreground uppercase">Total Annual Recovery</div>
               <div className="font-mono tabular-nums text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                ₹{estimatedRecoveryCr} Cr
+                <NumberTicker value={estimatedRecoveryCr} decimals={2} prefix="₹" suffix=" Cr" durationMs={300} />
               </div>
               <div className="text-[11px] text-muted-foreground">Direct bottom-line margin</div>
             </div>
@@ -72,7 +73,7 @@ export function ExecutiveSpendCalculator() {
             <div className="p-6 md:p-8 space-y-1">
               <div className="text-[11px] font-mono text-muted-foreground uppercase">Rate Escalations</div>
               <div className="font-mono tabular-nums text-lg font-semibold text-foreground">
-                ₹{rateLeakageLakhs} L
+                <NumberTicker value={rateLeakageLakhs} prefix="₹" suffix=" L" durationMs={300} />
               </div>
               <div className="text-[11px] text-muted-foreground">45% of total leakage</div>
             </div>
@@ -80,7 +81,7 @@ export function ExecutiveSpendCalculator() {
             <div className="p-6 md:p-8 space-y-1">
               <div className="text-[11px] font-mono text-muted-foreground uppercase">Short Deliveries</div>
               <div className="font-mono tabular-nums text-lg font-semibold text-foreground">
-                ₹{shortShipmentLakhs} L
+                <NumberTicker value={shortShipmentLakhs} prefix="₹" suffix=" L" durationMs={300} />
               </div>
               <div className="text-[11px] text-muted-foreground">35% of total leakage</div>
             </div>
@@ -88,7 +89,7 @@ export function ExecutiveSpendCalculator() {
             <div className="p-6 md:p-8 space-y-1">
               <div className="text-[11px] font-mono text-muted-foreground uppercase">SLA Penalties</div>
               <div className="font-mono tabular-nums text-lg font-semibold text-foreground">
-                ₹{penaltyLakhs} L
+                <NumberTicker value={penaltyLakhs} prefix="₹" suffix=" L" durationMs={300} />
               </div>
               <div className="text-[11px] text-muted-foreground">20% of total leakage</div>
             </div>
