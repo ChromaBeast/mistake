@@ -91,8 +91,23 @@ cd mobile && flutter test && flutter analyze
 
 ---
 
-## ☁️ Deployment
+## ☁️ All-in-One Cloud Deployment (Render.com)
 
-- **Render Blueprint**: Connect repository to [render.com](https://render.com) using [`render.yaml`](render.yaml) for 1-click free deployment (Go REST API + Free Managed PostgreSQL + Next.js).
-- **Vercel**: Deploy the `web/` folder directly to [vercel.com](https://vercel.com).
-- **Mobile Release**: Build standalone Android APK via `flutter build apk --release` or Google Play App Bundle via `flutter build appbundle --release`.
+The entire full-stack platform (Go REST API + Next.js Web Dashboard + Managed PostgreSQL) is pre-configured to deploy together on [Render.com](https://render.com) using the included [`render.yaml`](render.yaml) Blueprint:
+
+1. Log into **[dashboard.render.com](https://dashboard.render.com)**.
+2. Click **New +** ➔ **Blueprint**.
+3. Select your repository.
+4. Render will read [`render.yaml`](render.yaml) and deploy:
+   - 🗄️ **`mistake-db`** — Free Managed PostgreSQL Database
+   - ⚙️ **`mistake-backend`** — Go 1.26 REST API Docker Service
+   - 🌐 **`mistake-web`** — Next.js 16 Web Dashboard Docker Service
+5. Click **Apply**.
+
+---
+
+## 📱 Mobile Distribution (Flutter)
+
+- **Android Standalone APK**: `cd mobile && flutter build apk --release --split-per-abi` (distribute via GitHub Releases)
+- **Google Play Bundle**: `cd mobile && flutter build appbundle --release`
+- **iOS IPA**: `cd mobile && flutter build ipa --release`
