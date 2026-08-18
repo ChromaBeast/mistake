@@ -2,7 +2,7 @@ import React from "react";
 
 const PIPELINE_STAGES = [
   {
-    step: "STAGE 01",
+    layer: "Data Ingestion Layer",
     name: "Multi-Source Ingestion",
     role: "Non-Invasive Data Capture",
     details:
@@ -10,16 +10,16 @@ const PIPELINE_STAGES = [
     stack: ["SAP S/4HANA", "TallyPrime", "Dock Mobile App", "OCR / CSV"],
   },
   {
-    step: "STAGE 02",
-    name: "Deterministic Audit Engine",
-    role: "Exact Paisa 3-Way Match",
+    layer: "Reconciliation Layer",
+    name: "Deterministic Match Engine",
+    role: "Exact Paisa 3-Way Cross-Check",
     details:
       "Executes parallel mathematical cross-matching across thousands of line items in <50ms. Identifies rate mismatches, partial delivery deficits, and SLA delivery date breaches with exact integer paise math.",
     stack: ["Zero Float Drift", "Integer Paise", "Fuzzy GSTIN Match", "Audit Log"],
   },
   {
-    step: "STAGE 03",
-    name: "Pre-Disbursement Action",
+    layer: "Disbursement & Action Layer",
+    name: "Pre-Disbursement Control",
     role: "Automated Capital Recovery",
     details:
       "Applies automated payment holds on disputed invoice line items before finance release. Generates mathematical dispute proof packages and automated vendor debit notes for accounts payable.",
@@ -34,7 +34,7 @@ export function EnterpriseArchitectureSection() {
         
         <div className="max-w-3xl space-y-3">
           <div className="text-xs font-mono tracking-widest text-muted-foreground uppercase">
-            Integration / System Architecture
+            System Architecture
           </div>
           <h2 className="text-3xl font-bold tracking-tight text-foreground">
             Operates non-invasively with your ERP.
@@ -47,9 +47,11 @@ export function EnterpriseArchitectureSection() {
         <div className="border-t border-b border-border grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border">
           {PIPELINE_STAGES.map((s, i) => (
             <div key={i} className="p-6 md:p-8 space-y-4">
-              <div className="space-y-1">
-                <div className="text-[10px] font-mono text-muted-foreground uppercase">{s.step}</div>
-                <h3 className="font-bold text-base text-foreground">{s.name}</h3>
+              <div className="space-y-1.5">
+                <span className="inline-block text-[10px] font-mono font-medium px-2 py-0.5 border border-border/80 bg-muted/30 text-foreground/80 rounded-sm">
+                  {s.layer}
+                </span>
+                <h3 className="font-bold text-base text-foreground pt-1">{s.name}</h3>
                 <div className="text-xs text-muted-foreground">{s.role}</div>
               </div>
 

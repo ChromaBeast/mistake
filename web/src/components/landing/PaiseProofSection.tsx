@@ -7,8 +7,9 @@ export function PaiseProofSection() {
         
         <div className="max-w-3xl space-y-3">
           <div className="text-xs font-mono tracking-widest text-muted-foreground uppercase">
-            Accuracy / Mathematical Integrity
+            Mathematical Precision
           </div>
+
           <h2 className="text-3xl font-bold tracking-tight text-foreground">
             Why spreadsheets and legacy ERPs lose money.
           </h2>

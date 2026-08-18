@@ -2,6 +2,7 @@ import React from "react";
 
 const VERTICALS = [
   {
+    badge: "Automotive & Tier-1",
     sector: "Automotive & Engineering",
     focus: "Forgings, Castings & Tier-1 Assemblies",
     risks: [
@@ -11,6 +12,7 @@ const VERTICALS = [
     ],
   },
   {
+    badge: "Metals & Mining",
     sector: "Steel, Metals & Fabrication",
     focus: "Foundries, Slitters & Structural Mills",
     risks: [
@@ -20,7 +22,8 @@ const VERTICALS = [
     ],
   },
   {
-    sector: "Chemicals & Process Industries",
+    badge: "Process Industries",
+    sector: "Chemicals & Process Plants",
     focus: "Bulk Liquids, Polymers & Packaging",
     risks: [
       "Tanker volume ambient temperature expansion loss",
@@ -29,8 +32,9 @@ const VERTICALS = [
     ],
   },
   {
-    sector: "FMCG, Wholesale & Distribution",
-    focus: "Multi-Warehouse Distribution Hubs",
+    badge: "Wholesale & Logistics",
+    sector: "FMCG & Distribution Hubs",
+    focus: "Multi-Warehouse Distribution Networks",
     risks: [
       "Turnover and quarterly volume rebate realization",
       "Transit shortages across multi-city delivery drops",
@@ -46,7 +50,7 @@ export function IndustrySolutionsSection() {
         
         <div className="max-w-3xl space-y-3">
           <div className="text-xs font-mono tracking-widest text-muted-foreground uppercase">
-            Sectors / Industry-Specific Risk Vectors
+            Target Industries
           </div>
           <h2 className="text-3xl font-bold tracking-tight text-foreground">
             Built for heavy industrial operations.
@@ -59,9 +63,11 @@ export function IndustrySolutionsSection() {
         <div className="border-t border-b border-border grid sm:grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 sm:divide-x divide-border">
           {VERTICALS.map((v, i) => (
             <div key={i} className="p-6 space-y-4">
-              <div className="space-y-1">
-                <div className="text-[10px] font-mono text-muted-foreground uppercase">Vertical 0{i + 1}</div>
-                <h3 className="font-bold text-base text-foreground">{v.sector}</h3>
+              <div className="space-y-1.5">
+                <span className="inline-block text-[10px] font-mono font-medium px-2 py-0.5 border border-border/80 bg-muted/30 text-foreground/80 rounded-sm">
+                  {v.badge}
+                </span>
+                <h3 className="font-bold text-base text-foreground pt-1">{v.sector}</h3>
                 <p className="text-xs text-muted-foreground">{v.focus}</p>
               </div>
 
