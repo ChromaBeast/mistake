@@ -32,7 +32,9 @@ services:
     autoDeploy: false
     plan: free
     region: oregon
+    healthCheckPath: /api/health
     envVars:
+
       - key: NODE_ENV
         value: production
       - key: PORT
