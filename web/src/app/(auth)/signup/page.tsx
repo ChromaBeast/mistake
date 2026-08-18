@@ -45,7 +45,7 @@ export default function SignupPage() {
       </div>
 
       {/* Trust Callout */}
-      <div className="p-3 rounded-lg border border-border/80 bg-muted/20 flex items-center gap-2.5 text-xs text-muted-foreground">
+      <div className="p-3 rounded-xl border border-border/60 bg-muted/20 flex items-center gap-2.5 text-xs text-muted-foreground">
         <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
         <span>Includes isolated tenant database & full 22-table audit schema.</span>
       </div>

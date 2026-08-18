@@ -28,6 +28,9 @@ export const metadata: Metadata = {
   title: "Mistake — B2B Discrepancy & Financial Leakage Detection",
   description:
     "Evidence-backed B2B discrepancy and financial leakage detection platform for manufacturers, distributors, and wholesalers.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

@@ -30,7 +30,7 @@ export default function LoginPage() {
         router.push("/dashboard");
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Invalid credentials or tenant access");
+      setError(err instanceof Error ? err.message : "Invalid corporate credentials or unauthorized tenant");
     } finally {
       setIsLoading(false);
     }
@@ -76,15 +76,15 @@ export default function LoginPage() {
       {/* Header */}
       <div className="space-y-2">
         <h1 className="text-2xl sm:text-3xl font-bold font-serif tracking-tight text-foreground">
-          Welcome back
+          Sign in to your ledger
         </h1>
         <p className="text-xs sm:text-sm text-muted-foreground">
-          Enter your corporate credentials to access the investigation workspace.
+          Enter your corporate credentials to access the audit investigation workspace.
         </p>
       </div>
 
-      {/* 1-Click Fast-Track Demo Button */}
-      <div className="p-3.5 rounded-xl border border-border/80 bg-muted/20 space-y-2">
+      {/* 1-Click Fast-Track Demo Access */}
+      <div className="p-3.5 rounded-xl border border-border/60 bg-muted/20 space-y-2">
         <div className="flex items-center justify-between text-xs">
           <span className="font-semibold text-foreground flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Evaluation Mode
@@ -94,7 +94,7 @@ export default function LoginPage() {
         <button
           type="button"
           onClick={() => handleDemoLogin("aditya.verma@acmemfg.in")}
-          className="w-full py-2 px-3 rounded-lg border border-border bg-card hover:bg-muted/80 text-foreground text-xs font-medium flex items-center justify-between transition-colors"
+          className="w-full py-2 px-3 rounded-lg border border-border/60 bg-card hover:bg-muted/80 text-foreground text-xs font-medium flex items-center justify-between transition-colors"
         >
           <span>Sign in as <strong className="font-semibold">Lead Auditor</strong> (Acme Mfg)</span>
           <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />
@@ -102,7 +102,7 @@ export default function LoginPage() {
       </div>
 
       <div className="relative flex items-center justify-center">
-        <div className="border-t border-border w-full" />
+        <div className="border-t border-border/50 w-full" />
         <span className="bg-background px-3 text-[11px] font-mono text-muted-foreground uppercase absolute">
           or continue with email
         </span>
