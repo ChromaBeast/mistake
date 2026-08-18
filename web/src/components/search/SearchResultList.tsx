@@ -46,7 +46,7 @@ export function SearchResultList({ results }: { results: SearchResult[] }) {
 
             <div className="flex items-center space-x-4">
               {item.financial_impact_minor && (
-                <span className="text-xs font-bold text-rose-500 font-mono">
+                <span className="text-xs font-bold text-rose-500 font-mono tabular-nums">
                   {formatPaiseToINR(item.financial_impact_minor)}
                 </span>
               )}

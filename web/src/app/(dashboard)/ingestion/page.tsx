@@ -43,26 +43,39 @@ export default function IngestionPage() {
     setIsUploading(true);
     try {
       const newDs = await api.uploadDataSource(file);
-      setDataSources((prev) => [newDs, ...prev]);
+      setDataSources((prev) => [newDs, ...prev.filter((d) => d.id !== newDs.id)]);
       setActiveJob(newDs);
-      // Simulate progression
-      setTimeout(() => {
-        setDataSources((prev) =>
-          prev.map((d) => (d.id === newDs.id ? { ...d, status: "Extracting", progress_percent: 60 } : d))
-        );
-      }, 1500);
+
+      // Poll until completed or failed
+      const intervalId = setInterval(async () => {
+        try {
+          const updated = await api.getDataSource(newDs.id);
+          setDataSources((prev) => prev.map((d) => (d.id === updated.id ? updated : d)));
+          setActiveJob((current) => (current?.id === updated.id ? updated : current));
+          if (updated.status === "Completed" || updated.status === "Failed") {
+            clearInterval(intervalId);
+          }
+        } catch {
+          clearInterval(intervalId);
+        }
+      }, 2000);
     } catch (err) {
-      console.error(err);
+      console.error("Upload failed:", err);
     } finally {
       setIsUploading(false);
     }
   };
 
   const handleRetry = async (id: string) => {
-    const retried = await api.retryDataSource(id);
-    setDataSources((prev) => prev.map((d) => (d.id === id ? retried : d)));
-    setActiveJob(retried);
+    try {
+      const retried = await api.retryDataSource(id);
+      setDataSources((prev) => prev.map((d) => (d.id === id ? retried : d)));
+      setActiveJob(retried);
+    } catch (err) {
+      console.error("Retry failed:", err);
+    }
   };
+
 
   return (
     <ErrorBoundary fallbackTitle="Could not load Ingestion Hub">

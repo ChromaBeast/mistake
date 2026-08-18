@@ -37,7 +37,7 @@ export function ExecutiveSpendCalculator() {
               <span className="text-sm font-medium text-foreground">
                 Annual Direct Procurement Spend
               </span>
-              <span className="font-mono text-3xl font-bold text-foreground">
+              <span className="font-mono tabular-nums text-3xl font-bold text-foreground">
                 ₹{spendCr} <span className="text-base font-normal text-muted-foreground">Crores</span>
               </span>
             </div>
@@ -53,7 +53,7 @@ export function ExecutiveSpendCalculator() {
               aria-label="Annual Procurement Spend Slider"
             />
 
-            <div className="flex justify-between font-mono text-[11px] text-muted-foreground">
+            <div className="flex justify-between font-mono tabular-nums text-[11px] text-muted-foreground">
               <span>₹10 Cr</span>
               <span>₹250 Cr</span>
               <span>₹500 Cr</span>
@@ -66,7 +66,7 @@ export function ExecutiveSpendCalculator() {
             
             <div className="p-6 space-y-1 bg-muted/10">
               <div className="text-[11px] font-mono text-muted-foreground uppercase">Total Annual Recovery</div>
-              <div className="font-mono text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+              <div className="font-mono tabular-nums text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                 ₹{estimatedRecoveryCr} Cr
               </div>
               <div className="text-[11px] text-muted-foreground">1.8% of direct spend</div>
@@ -74,7 +74,7 @@ export function ExecutiveSpendCalculator() {
 
             <div className="p-6 space-y-1">
               <div className="text-[11px] font-mono text-muted-foreground uppercase">Rate Escalations</div>
-              <div className="font-mono text-2xl font-bold text-foreground">
+              <div className="font-mono tabular-nums text-2xl font-bold text-foreground">
                 ₹{rateLeakageLakhs} L
               </div>
               <div className="text-[11px] text-muted-foreground">Contract deviations</div>
@@ -82,7 +82,7 @@ export function ExecutiveSpendCalculator() {
 
             <div className="p-6 space-y-1">
               <div className="text-[11px] font-mono text-muted-foreground uppercase">Short Deliveries</div>
-              <div className="font-mono text-2xl font-bold text-foreground">
+              <div className="font-mono tabular-nums text-2xl font-bold text-foreground">
                 ₹{shortShipmentLakhs} L
               </div>
               <div className="text-[11px] text-muted-foreground">Gate vs billed deficits</div>
@@ -90,7 +90,7 @@ export function ExecutiveSpendCalculator() {
 
             <div className="p-6 space-y-1">
               <div className="text-[11px] font-mono text-muted-foreground uppercase">SLA Penalties</div>
-              <div className="font-mono text-2xl font-bold text-foreground">
+              <div className="font-mono tabular-nums text-2xl font-bold text-foreground">
                 ₹{penaltyLakhs} L
               </div>
               <div className="text-[11px] text-muted-foreground">Unclaimed delay charges</div>

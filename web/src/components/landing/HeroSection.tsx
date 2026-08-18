@@ -122,7 +122,7 @@ export function HeroSection() {
               </div>
             </div>
 
-            <div className="font-mono text-xs font-bold text-rose-600 dark:text-rose-400">
+            <div className="font-mono tabular-nums text-xs font-bold text-rose-600 dark:text-rose-400">
               VARIANCE: {current.variance}
             </div>
           </div>
@@ -143,14 +143,14 @@ export function HeroSection() {
                 <tr>
                   <td className="px-4 py-3.5 font-sans font-medium text-foreground">
                     {current.item}
-                    <div className="text-[10px] text-muted-foreground font-mono mt-0.5">
+                    <div className="text-[10px] text-muted-foreground font-mono tabular-nums mt-0.5">
                       HSN: {current.hsn} • {current.vendor} ({current.gstin})
                     </div>
                   </td>
-                  <td className="px-4 py-3.5 text-muted-foreground">{current.poTerms}</td>
-                  <td className="px-4 py-3.5 text-muted-foreground">{current.grnGate}</td>
-                  <td className="px-4 py-3.5 text-rose-600 dark:text-rose-400 font-semibold">{current.invoiceBilled}</td>
-                  <td className="px-4 py-3.5 text-right font-bold text-rose-600 dark:text-rose-400">
+                  <td className="px-4 py-3.5 text-muted-foreground tabular-nums">{current.poTerms}</td>
+                  <td className="px-4 py-3.5 text-muted-foreground tabular-nums">{current.grnGate}</td>
+                  <td className="px-4 py-3.5 text-rose-600 dark:text-rose-400 font-semibold tabular-nums">{current.invoiceBilled}</td>
+                  <td className="px-4 py-3.5 text-right font-bold text-rose-600 dark:text-rose-400 tabular-nums">
                     {current.variance}
                   </td>
                 </tr>

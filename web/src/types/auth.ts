@@ -38,8 +38,8 @@ export interface SignupPayload {
 }
 
 export interface MfaVerifyPayload {
-  user_id: string;
-  otp_code: string;
+  mfa_token: string;
+  code: string;
 }
 
 /** Response returned by the login endpoint. */

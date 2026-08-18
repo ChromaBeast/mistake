@@ -11,6 +11,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -25,10 +26,13 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-background flex">
-      <Sidebar />
-      <div className="flex-1 flex flex-col pl-64 min-w-0">
-        <Header onOpenSearch={() => setIsSearchOpen(true)} />
-        <main className="flex-1 p-6 overflow-y-auto">{children}</main>
+      <Sidebar isOpen={isMobileNavOpen} onClose={() => setIsMobileNavOpen(false)} />
+      <div className="flex-1 flex flex-col pl-0 lg:pl-60 min-w-0">
+        <Header
+          onOpenSearch={() => setIsSearchOpen(true)}
+          onToggleSidebar={() => setIsMobileNavOpen((prev) => !prev)}
+        />
+        <main className="flex-1 p-4 sm:p-6 overflow-y-auto">{children}</main>
       </div>
       <GlobalSearchModal
         isOpen={isSearchOpen}
@@ -37,3 +41,4 @@ export default function DashboardLayout({
     </div>
   );
 }
+

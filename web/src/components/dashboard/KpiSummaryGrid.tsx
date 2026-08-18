@@ -43,10 +43,10 @@ export function KpiSummaryGrid({ kpi }: { kpi: KpiSummary }) {
           <div className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">
             {m.title}
           </div>
-          <div className={`text-2xl font-bold font-mono tracking-tight ${m.highlight}`}>
+          <div className={`text-2xl font-bold font-mono tabular-nums tracking-tight ${m.highlight}`}>
             {m.value}
           </div>
-          <div className="text-[11px] text-muted-foreground font-mono truncate">
+          <div className="text-[11px] text-muted-foreground font-mono tabular-nums truncate">
             {m.subtext}
           </div>
         </div>

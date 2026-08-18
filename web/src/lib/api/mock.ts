@@ -30,8 +30,8 @@ export class MockApiClient implements ApiClient {
     return { user: this.store.currentUser, requires_mfa: false, tenant: this.store.tenant };
   }
 
-  async verifyMfa(_payload: MfaVerifyPayload) {
-    return { token: "mock-jwt-token", user: this.store.currentUser };
+  async verifyMfa(_payload: MfaVerifyPayload): Promise<LoginResponse> {
+    return { user: this.store.currentUser, requires_mfa: false, tenant: this.store.tenant };
   }
 
   async logout() {}

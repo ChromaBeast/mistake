@@ -52,7 +52,7 @@ export function BillingOverview({ subscription, invoices }: BillingOverviewProps
                 {t.isCurrent && <Badge variant="success">Current Plan</Badge>}
               </div>
               <div className="pt-2">
-                <span className="text-2xl font-bold font-mono text-foreground">
+                <span className="text-2xl font-bold font-mono tabular-nums text-foreground">
                   {formatPaiseToINR(t.price_minor, { showDecimals: false })}
                 </span>
                 <span className="text-xs text-muted-foreground"> / month</span>
@@ -94,13 +94,13 @@ export function BillingOverview({ subscription, invoices }: BillingOverviewProps
             <TableBody>
               {invoices.map((inv) => (
                 <TableRow key={inv.id}>
-                  <TableCell className="font-mono text-xs font-semibold text-foreground">
+                  <TableCell className="font-mono tabular-nums text-xs font-semibold text-foreground">
                     {inv.invoice_number}
                   </TableCell>
-                  <TableCell className="font-mono text-xs text-muted-foreground">
+                  <TableCell className="font-mono tabular-nums text-xs text-muted-foreground">
                     {formatDate(inv.issued_at)}
                   </TableCell>
-                  <TableCell className="font-mono text-xs font-semibold text-foreground">
+                  <TableCell className="font-mono tabular-nums text-xs font-semibold text-foreground">
                     {formatPaiseToINR(inv.amount_minor)}
                   </TableCell>
                   <TableCell>

@@ -16,20 +16,25 @@ Raw Evidence → AI Extraction → Structured Event → Deterministic Engine
 financial calculations, timestamps, state transitions, retention,
 deletion, permissions, severity, evidence existence.
 
-## Routing
-Not every document should go to an expensive model:
+## Routing & Model Fallback Hierarchy
+Not every document should go to an expensive model. The pipeline routes through explicit Gemini fallback chains:
 
 ```
 Document → Classifier
-   ├── Structured → Parser (no LLM needed)
-   ├── Simple → Small model
-   ├── Complex → Stronger model
-   └── Ambiguous → Human review
+   ├── Structured (CSV, XLSX) ──► Deterministic Parsers (No LLM needed)
+   ├── Standard Ingestion ──────► Gemini Flash-Lite Tier
+   │                              Primary: gemini-3.5-flash-lite
+   │                              Fallback: gemini-3.1-flash-lite
+   ├── Frontier / Reasoning ────► Gemini Flash Tier
+   │                              Primary: gemini-3.7-flash
+   │                              Fallback 1: gemini-3.6-flash
+   │                              Fallback 2: gemini-3.5-flash
+   └── Ambiguous (Confidence < 85%) ──► Human Review Queue
 ```
 
-Optimize for accuracy, cost, latency, and reliability, in roughly that
-priority order for MVP — cost optimization that meaningfully hurts
-accuracy undermines the trust the product depends on.
+
+Optimize for accuracy, cost, latency, and reliability, in that priority order.
+
 
 ## Processing cache
 Cache key: `document_hash + extraction_version + model_version` (see

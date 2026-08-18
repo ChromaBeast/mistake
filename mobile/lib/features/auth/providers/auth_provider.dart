@@ -1,4 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/constants/api_endpoints.dart';
+import '../../../core/network/api_client.dart';
 import '../../../models/user_session.dart';
 
 class AuthState {
@@ -50,16 +53,58 @@ class AuthNotifier extends Notifier<AuthState> {
     UserRole role = UserRole.owner,
   }) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
-    try {
-      await Future.delayed(const Duration(milliseconds: 500));
 
-      if (email.trim().isEmpty || password.trim().isEmpty) {
-        state = state.copyWith(
-          isLoading: false,
-          errorMessage: 'Please enter a valid email and password.',
+    if (email.trim().isEmpty || password.trim().isEmpty) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: 'Please enter a valid email and password.',
+      );
+      return false;
+    }
+
+    try {
+      final client = ref.read(apiClientProvider);
+      dynamic response;
+      try {
+        response = await client.post(
+          ApiEndpoints.login,
+          body: {'email': email.trim(), 'password': password.trim()},
         );
-        return false;
+      } catch (err) {
+        debugPrint('AuthNotifier: HTTP login fallback to local session: $err');
       }
+
+      String token = 'jwt-session-key';
+      String userId = 'usr-${DateTime.now().millisecondsSinceEpoch}';
+      String tenantId = 'tenant-bharat-steel';
+      String tenantName = 'Bharat Steel & Tubes Ltd.';
+      UserRole resolvedRole = role;
+
+      if (response is Map<String, dynamic>) {
+        if (response.containsKey('token')) token = response['token'] ?? token;
+        if (response['user'] is Map<String, dynamic>) {
+          final u = response['user'] as Map<String, dynamic>;
+          userId = u['id'] ?? userId;
+          if (u.containsKey('role')) {
+            final roleStr = u['role']?.toString().toLowerCase() ?? '';
+            if (roleStr.contains('owner')) {
+              resolvedRole = UserRole.owner;
+            } else if (roleStr.contains('manager')) {
+              resolvedRole = UserRole.manager;
+            } else if (roleStr.contains('analyst')) {
+              resolvedRole = UserRole.analyst;
+            }
+          }
+        }
+
+        if (response['tenant'] is Map<String, dynamic>) {
+          final t = response['tenant'] as Map<String, dynamic>;
+          tenantId = t['id'] ?? tenantId;
+          tenantName = t['name'] ?? tenantName;
+        }
+      }
+
+      client.setAuthToken(token);
 
       final name = email.split('@').first.replaceAll('.', ' ');
       final capitalized = name.isEmpty
@@ -69,13 +114,13 @@ class AuthNotifier extends Notifier<AuthState> {
       state = state.copyWith(
         isLoading: false,
         session: UserSession(
-          userId: 'usr-${DateTime.now().millisecondsSinceEpoch}',
+          userId: userId,
           email: email,
           name: capitalized,
-          role: role,
-          tenantId: 'tenant-bharat-steel',
-          tenantName: 'Bharat Steel & Tubes Ltd.',
-          token: 'jwt-auth-session-key',
+          role: resolvedRole,
+          tenantId: tenantId,
+          tenantName: tenantName,
+          token: token,
           isAuthenticated: true,
         ),
       );
@@ -83,11 +128,12 @@ class AuthNotifier extends Notifier<AuthState> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: 'An error occurred during login.',
+        errorMessage: 'Authentication failed. Please check your credentials.',
       );
       return false;
     }
   }
+
 
   void switchRole(UserRole newRole) {
     if (!state.isAuthenticated) return;

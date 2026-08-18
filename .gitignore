@@ -7,7 +7,9 @@ node_modules/
 web/.next/
 web/out/
 web/build/
+*.tsbuildinfo
 dist/
+
 
 # Flutter & Dart builds
 mobile/.dart_tool/
@@ -33,6 +35,11 @@ server.exe
 .env.development.local
 .env.test.local
 .env.production.local
+*serviceaccount*.json
+*-*-firebase-adminsdk-*.json
+blog-automation-*.json
+*.pem
+*.key
 
 # OS / IDE files
 .DS_Store
@@ -41,3 +48,4 @@ Thumbs.db
 *.swo
 .vscode/
 .idea/
+

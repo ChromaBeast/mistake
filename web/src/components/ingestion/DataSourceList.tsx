@@ -60,14 +60,14 @@ export function DataSourceList({ dataSources, onRetry, onSelect }: DataSourceLis
                   {getFormatIcon(ds.format)}
                   <div>
                     <p className="text-xs font-semibold text-foreground">{ds.file_name}</p>
-                    <p className="text-[10px] text-muted-foreground font-mono">
+                    <p className="text-[10px] text-muted-foreground font-mono tabular-nums">
                       {(ds.file_size_bytes / (1024 * 1024)).toFixed(2)} MB • by {ds.uploaded_by_name || "User"}
                     </p>
                   </div>
                 </div>
               </TableCell>
               <TableCell>{getStatusBadge(ds.status)}</TableCell>
-              <TableCell className="font-mono text-xs">
+              <TableCell className="font-mono tabular-nums text-xs">
                 {ds.total_records_extracted.toLocaleString("en-IN")}
               </TableCell>
               <TableCell>
@@ -77,7 +77,7 @@ export function DataSourceList({ dataSources, onRetry, onSelect }: DataSourceLis
                   <span className="text-xs text-muted-foreground">—</span>
                 )}
               </TableCell>
-              <TableCell className="text-xs text-muted-foreground font-mono">
+              <TableCell className="text-xs text-muted-foreground font-mono tabular-nums">
                 {formatDate(ds.uploaded_at, { showTime: true })}
               </TableCell>
               <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>

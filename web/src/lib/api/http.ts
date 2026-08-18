@@ -63,8 +63,8 @@ export class HttpApiClient implements ApiClient {
   }
 
   /** Verifies TOTP MFA token. */
-  async verifyMfa(payload: MfaVerifyPayload) {
-    return this.request<{ token: string; user: User }>("/auth/mfa/verify", { method: "POST", body: JSON.stringify(payload) });
+  async verifyMfa(payload: MfaVerifyPayload): Promise<LoginResponse> {
+    return this.request<LoginResponse>("/api/auth/mfa", { method: "POST", body: JSON.stringify(payload) });
   }
 
   /** Logs out the current user by clearing the HttpOnly cookie. */

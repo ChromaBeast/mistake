@@ -30,7 +30,7 @@ export function MathBreakdownProof({ mathProof }: { mathProof?: MathProof }) {
           <p className="text-foreground font-bold mt-0.5">{mathProof.formula}</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 font-mono text-[11px]">
+        <div className="grid grid-cols-2 gap-2 font-mono tabular-nums text-[11px]">
           <div className="p-2 rounded bg-card/60 border border-border">
             <span className="text-muted-foreground text-[10px] block">PO Expected Qty</span>
             <span className="font-semibold text-foreground">{mathProof.expected_quantity}</span>
@@ -53,7 +53,7 @@ export function MathBreakdownProof({ mathProof }: { mathProof?: MathProof }) {
           </div>
         </div>
 
-        <div className="flex items-center justify-between p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/20 font-mono">
+        <div className="flex items-center justify-between p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/20 font-mono tabular-nums">
           <span className="text-xs font-semibold text-rose-600 dark:text-rose-400">
             Total Leakage (Paise):
           </span>

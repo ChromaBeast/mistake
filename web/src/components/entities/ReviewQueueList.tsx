@@ -37,7 +37,7 @@ export function ReviewQueueList({ items, onMerge, onReject }: ReviewQueueListPro
                 <Badge variant={item.entity_type === "Supplier" ? "info" : "success"} size="sm">
                   {item.entity_type}
                 </Badge>
-                <span className="text-[11px] text-muted-foreground font-mono">
+                <span className="text-[11px] text-muted-foreground font-mono tabular-nums">
                   Similarity Score: {item.similarity_score}%
                 </span>
               </div>

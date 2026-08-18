@@ -30,7 +30,7 @@ export function AuditLogTable({ logs, onViewDiff }: AuditLogTableProps) {
         <TableBody>
           {logs.map((log) => (
             <TableRow key={log.id}>
-              <TableCell className="font-mono text-xs text-muted-foreground">
+              <TableCell className="font-mono tabular-nums text-xs text-muted-foreground">
                 {formatDate(log.timestamp, { showTime: true })}
               </TableCell>
               <TableCell>
@@ -54,7 +54,7 @@ export function AuditLogTable({ logs, onViewDiff }: AuditLogTableProps) {
                   </p>
                 </div>
               </TableCell>
-              <TableCell className="font-mono text-xs text-muted-foreground">
+              <TableCell className="font-mono tabular-nums text-xs text-muted-foreground">
                 {log.ip_address || "127.0.0.1"}
               </TableCell>
               <TableCell className="text-right">

@@ -1,14 +1,16 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { User, Tenant, LoginPayload, SignupPayload } from "@/types";
+import { User, Tenant, LoginPayload, SignupPayload, LoginResponse, MfaVerifyPayload } from "@/types";
+
 import { api } from "@/lib/api";
 
 interface AuthContextType {
   user: User | null;
   tenant: Tenant | null;
   isLoading: boolean;
-  login: (payload: LoginPayload) => Promise<void>;
+  login: (payload: LoginPayload) => Promise<LoginResponse>;
+  verifyMfa: (payload: MfaVerifyPayload) => Promise<LoginResponse>;
   signup: (payload: SignupPayload) => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -36,11 +38,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loadSession();
   }, []);
 
-  const login = async (payload: LoginPayload) => {
+  const login = async (payload: LoginPayload): Promise<LoginResponse> => {
     const res = await api.login(payload);
+    if (!res.requires_mfa) {
+      setUser(res.user);
+      if (res.tenant) {
+        setTenant(res.tenant);
+      } else {
+        const t = await api.getTenant().catch(() => null);
+        if (t) setTenant(t);
+      }
+    }
+    return res;
+  };
+
+  const verifyMfa = async (payload: MfaVerifyPayload): Promise<LoginResponse> => {
+    const res = await api.verifyMfa(payload);
     setUser(res.user);
-    const t = await api.getTenant();
-    setTenant(t);
+    if (res.tenant) {
+      setTenant(res.tenant);
+    } else {
+      const t = await api.getTenant().catch(() => null);
+      if (t) setTenant(t);
+    }
+    return res;
   };
 
   const signup = async (payload: SignupPayload) => {
@@ -62,10 +83,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         tenant,
         isLoading,
         login,
+        verifyMfa,
         signup,
         logout,
       }}
     >
+
       {children}
     </AuthContext.Provider>
   );

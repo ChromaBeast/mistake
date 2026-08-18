@@ -29,7 +29,7 @@ export interface ApiClient {
   signup(payload: SignupPayload): Promise<SignupResponse>;
   login(payload: LoginPayload): Promise<LoginResponse>;
   refreshToken(): Promise<LoginResponse>;
-  verifyMfa(payload: MfaVerifyPayload): Promise<{ token: string; user: User }>;
+  verifyMfa(payload: MfaVerifyPayload): Promise<LoginResponse>;
   logout(): Promise<void>;
   getCurrentUser(): Promise<User>;
 

@@ -17,8 +17,11 @@ type Config struct {
 	Environment    string
 	StorageDir     string
 	WorkerCount    int
-	AllowedOrigins []string
-	Plans          map[string]PlanConfig
+	AllowedOrigins       []string
+	GeminiAPIKey         string
+	GeminiFrontierModel  string
+	GeminiStandardModel  string
+	Plans                map[string]PlanConfig
 }
 
 func LoadConfig() *Config {
@@ -51,13 +54,26 @@ func LoadConfig() *Config {
 		}
 	}
 
+	geminiAPIKey := os.Getenv("GEMINI_API_KEY")
+	frontierModel := os.Getenv("GEMINI_FRONTIER_MODEL")
+	if frontierModel == "" {
+		frontierModel = "gemini-3.7-flash"
+	}
+	standardModel := os.Getenv("GEMINI_STANDARD_MODEL")
+	if standardModel == "" {
+		standardModel = "gemini-3.5-flash-lite"
+	}
+
 	return &Config{
-		Port:           port,
-		JWTSecret:      secret,
-		Environment:    env,
-		StorageDir:     storageDir,
-		WorkerCount:    workerCount,
-		AllowedOrigins: []string{"http://localhost:3000"},
+		Port:                port,
+		JWTSecret:           secret,
+		Environment:         env,
+		StorageDir:          storageDir,
+		WorkerCount:         workerCount,
+		AllowedOrigins:      []string{"http://localhost:3000"},
+		GeminiAPIKey:        geminiAPIKey,
+		GeminiFrontierModel: frontierModel,
+		GeminiStandardModel: standardModel,
 		Plans: map[string]PlanConfig{
 			"starter":    {Name: "Starter Plan", AmountMinor: 490000, MaxDocuments: 1000},
 			"growth":     {Name: "Growth Plan", AmountMinor: 1490000, MaxDocuments: 10000},
@@ -65,3 +81,4 @@ func LoadConfig() *Config {
 		},
 	}
 }
+
