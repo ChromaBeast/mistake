@@ -29,7 +29,7 @@ const GOVERNANCE_FEATURES = [
 
 export function FeatureGrid() {
   return (
-    <section id="governance" className="py-20 border-b border-border bg-background">
+    <section id="governance" className="py-20 border-b border-border/50 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         <div className="max-w-3xl space-y-3">
@@ -41,7 +41,7 @@ export function FeatureGrid() {
           </p>
         </div>
 
-        <div className="border-t border-b border-border grid sm:grid-cols-2 lg:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-border">
+        <div className="border-y border-border/50 grid sm:grid-cols-2 lg:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-border/50">
           {GOVERNANCE_FEATURES.map((f, i) => (
             <div key={i} className="p-6 md:p-8 space-y-2">
               <h3 className="font-bold text-base text-foreground">{f.title}</h3>

@@ -15,7 +15,7 @@ export function ExecutiveSpendCalculator() {
   const penaltyLakhs = Math.round(spendCr * 0.018 * 0.20 * 100);
 
   return (
-    <section id="calculator" className="py-20 border-b border-border bg-background">
+    <section id="calculator" className="py-20 border-b border-border/50 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         <div className="max-w-2xl space-y-3">
@@ -27,10 +27,10 @@ export function ExecutiveSpendCalculator() {
           </p>
         </div>
 
-        <div className="border border-border bg-card rounded-lg overflow-hidden shadow-sm hover:border-foreground/20 transition-all duration-300">
+        <div className="border border-border/60 bg-card rounded-2xl overflow-hidden shadow-xs hover:border-foreground/20 transition-all duration-300">
           
           {/* Top Control Bar */}
-          <div className="p-6 md:p-8 border-b border-border space-y-6">
+          <div className="p-6 md:p-8 border-b border-border/50 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
               <span className="text-sm font-medium text-foreground">
                 Annual Direct Procurement Spend
@@ -60,7 +60,7 @@ export function ExecutiveSpendCalculator() {
           </div>
 
           {/* Breakdown Grid with NumberTickers */}
-          <div className="grid md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-border">
+          <div className="grid md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-border/50">
             
             <div className="p-6 md:p-8 space-y-1 bg-muted/20">
               <div className="text-[11px] font-mono text-muted-foreground uppercase">Total Annual Recovery</div>
@@ -97,7 +97,7 @@ export function ExecutiveSpendCalculator() {
           </div>
 
           {/* Action Row */}
-          <div className="p-4 md:p-6 bg-muted/10 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="p-4 md:p-6 bg-muted/10 border-t border-border/50 flex flex-col sm:flex-row items-center justify-between gap-4">
             <span className="text-xs text-muted-foreground text-center sm:text-left">
               Based on empirical data across 500k+ reconciled B2B transactions.
             </span>

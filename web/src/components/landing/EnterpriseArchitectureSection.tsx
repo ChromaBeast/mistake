@@ -26,7 +26,7 @@ const PIPELINE_STAGES = [
 
 export function EnterpriseArchitectureSection() {
   return (
-    <section id="architecture" className="py-20 border-b border-border bg-background">
+    <section id="architecture" className="py-20 border-b border-border/50 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         <div className="max-w-3xl space-y-3">
@@ -38,7 +38,7 @@ export function EnterpriseArchitectureSection() {
           </p>
         </div>
 
-        <div className="border-t border-b border-border grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border">
+        <div className="border-y border-border/50 grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border/50">
           {PIPELINE_STAGES.map((s, i) => (
             <div key={i} className="p-6 md:p-8 space-y-4">
               <div className="space-y-1">
@@ -50,9 +50,9 @@ export function EnterpriseArchitectureSection() {
                 {s.details}
               </p>
 
-              <div className="pt-3 border-t border-border/60 flex flex-wrap gap-1.5 font-mono text-[10px] text-muted-foreground">
+              <div className="pt-3 border-t border-border/40 flex flex-wrap gap-1.5 font-mono text-[10px] text-muted-foreground">
                 {s.stack.map((tech, j) => (
-                  <span key={j} className="px-2 py-0.5 border border-border bg-muted/20">
+                  <span key={j} className="px-2 py-0.5 rounded border border-border/50 bg-muted/20">
                     {tech}
                   </span>
                 ))}

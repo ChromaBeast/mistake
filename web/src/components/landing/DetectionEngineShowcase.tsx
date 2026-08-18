@@ -40,7 +40,7 @@ const LEAK_VECTORS = [
 
 export function DetectionEngineShowcase() {
   return (
-    <section id="features" className="py-20 border-b border-border bg-background">
+    <section id="features" className="py-20 border-b border-border/50 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         <div className="max-w-3xl space-y-3">
@@ -52,11 +52,11 @@ export function DetectionEngineShowcase() {
           </p>
         </div>
 
-        <div className="border-t border-b border-border divide-y divide-border">
+        <div className="border-y border-border/50 divide-y divide-border/40">
           {LEAK_VECTORS.map((v, i) => (
             <div
               key={i}
-              className="py-6 grid md:grid-cols-12 gap-4 items-baseline hover:bg-muted/10 transition-colors px-2"
+              className="py-6 grid md:grid-cols-12 gap-4 items-baseline hover:bg-muted/20 transition-colors px-2 rounded-lg"
             >
               <div className="md:col-span-4 space-y-1">
                 <h3 className="font-semibold text-base text-foreground">{v.title}</h3>

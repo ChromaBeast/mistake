@@ -66,7 +66,7 @@ export function HeroSection() {
   const current = AUDIT_RECORDS[activeIdx];
 
   return (
-    <section className="pt-16 pb-20 border-b border-border bg-background">
+    <section className="pt-16 pb-20 border-b border-border/50 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         {/* Typographic Thesis Header - Pure Minimalist Title & Para */}
@@ -95,10 +95,10 @@ export function HeroSection() {
         </div>
 
         {/* Minimalist Terminal / Ledger Console */}
-        <div className="border border-border bg-card">
+        <div className="border border-border/60 bg-card rounded-xl overflow-hidden shadow-xs">
           
           {/* Header Row */}
-          <div className="flex flex-wrap items-center justify-between px-4 py-3 border-b border-border bg-muted/30 text-xs">
+          <div className="flex flex-wrap items-center justify-between px-4 py-3 border-b border-border/50 bg-muted/20 text-xs">
             <div className="flex items-center gap-2">
               <span className="font-mono text-muted-foreground uppercase text-[11px]">Audit Case:</span>
               <div className="flex items-center gap-1">
@@ -106,10 +106,10 @@ export function HeroSection() {
                   <button
                     key={rec.id}
                     onClick={() => setActiveIdx(i)}
-                    className={`px-2 py-1 font-mono text-[11px] border ${
+                    className={`px-2 py-1 font-mono text-[11px] rounded transition-colors ${
                       activeIdx === i
-                        ? "bg-foreground text-background border-foreground font-semibold"
-                        : "bg-background text-muted-foreground border-border hover:text-foreground"
+                        ? "bg-foreground text-background font-semibold"
+                        : "bg-background/80 text-muted-foreground border border-border/50 hover:text-foreground"
                     }`}
                   >
                     #{rec.id}
@@ -123,13 +123,13 @@ export function HeroSection() {
           </div>
 
           {/* 3-Way Comparative Grid */}
-          <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border p-4 md:p-6 gap-4 md:gap-0">
+          <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border/50 p-4 md:p-6 gap-4 md:gap-0">
             {/* Step 1: PO Terms */}
             <div className="md:pr-6 space-y-2">
               <div className="text-[11px] font-mono text-muted-foreground uppercase">1. Master Purchase Order</div>
               <div className="font-bold text-sm text-foreground">{current.vendor}</div>
               <div className="font-mono text-xs text-muted-foreground">GSTIN: {current.gstin}</div>
-              <div className="pt-2 border-t border-border/50 text-xs font-mono text-foreground">{current.poTerms}</div>
+              <div className="pt-2 border-t border-border/40 text-xs font-mono text-foreground">{current.poTerms}</div>
             </div>
 
             {/* Step 2: Gate GRN / Physical Receipts */}
@@ -137,7 +137,7 @@ export function HeroSection() {
               <div className="text-[11px] font-mono text-muted-foreground uppercase">2. Warehouse Gate Entry (GRN)</div>
               <div className="font-bold text-sm text-foreground">{current.item}</div>
               <div className="font-mono text-xs text-muted-foreground">HSN: {current.hsn}</div>
-              <div className="pt-2 border-t border-border/50 text-xs font-mono text-foreground">{current.grnGate}</div>
+              <div className="pt-2 border-t border-border/40 text-xs font-mono text-foreground">{current.grnGate}</div>
             </div>
 
             {/* Step 3: Billed Invoice & Discrepancy */}
@@ -145,7 +145,7 @@ export function HeroSection() {
               <div className="text-[11px] font-mono text-rose-600 dark:text-rose-400 uppercase">3. Supplier Invoice Discrepancy</div>
               <div className="font-mono text-xs font-bold text-foreground">{current.invoiceBilled}</div>
               <div className="text-xs text-rose-600 dark:text-rose-400 font-medium">{current.finding}</div>
-              <div className="pt-2 border-t border-border/50 text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
+              <div className="pt-2 border-t border-border/40 text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
                 ✓ {current.resolution}
               </div>
             </div>

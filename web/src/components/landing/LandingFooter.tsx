@@ -5,12 +5,12 @@ export function LandingFooter() {
   return (
     <footer className="bg-background py-12 text-xs text-muted-foreground">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-border pb-8">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-border/40 pb-8">
           <div className="flex items-center gap-2.5">
-            <div className="w-6 h-6 rounded bg-foreground text-background flex items-center justify-center font-black text-xs">
+            <div className="w-6 h-6 rounded bg-foreground text-background flex items-center justify-center font-black text-xs font-serif">
               M
             </div>
-            <span className="font-bold tracking-tight text-foreground text-sm uppercase">
+            <span className="font-bold tracking-tight text-foreground text-sm uppercase font-serif">
               MISTAKE
             </span>
             <span className="text-[11px] text-muted-foreground font-mono">

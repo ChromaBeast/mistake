@@ -2,7 +2,7 @@ import React from "react";
 
 export function PaiseProofSection() {
   return (
-    <section id="math-proof" className="py-20 border-b border-border bg-background">
+    <section id="math-proof" className="py-20 border-b border-border/50 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         <div className="max-w-3xl space-y-3">
@@ -14,7 +14,7 @@ export function PaiseProofSection() {
           </p>
         </div>
 
-        <div className="border border-border grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border bg-card">
+        <div className="border border-border/60 rounded-2xl overflow-hidden grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border/50 bg-card shadow-xs">
           
           {/* Legacy ERP Column */}
           <div className="p-6 md:p-8 space-y-4">
