@@ -1,76 +1,87 @@
 import React from "react";
-import { TrendingDown, PackageCheck, Clock, ShieldX, HelpCircle } from "lucide-react";
-import { Badge } from "@/components/ui/Badge";
+
+const LEAK_VECTORS = [
+  {
+    num: "01",
+    title: "Contract Rate Deviations",
+    category: "Price Arbitrage",
+    impact: "35% - 45% of total leakage",
+    description:
+      "Suppliers bill line items above agreed master PO rates, slipping in unapproved commodity surcharges or updated spot prices. Mistake cross-references every line against contract caps.",
+  },
+  {
+    num: "02",
+    title: "Short Deliveries Billed in Full",
+    category: "Volume Deficit",
+    impact: "25% - 35% of total leakage",
+    description:
+      "Vendors invoice for the full purchase order volume while the factory weighbridge or dock GRN records partial receipt. We calculate the exact deficit before voucher creation.",
+  },
+  {
+    num: "03",
+    title: "Omitted SLA Delay Penalties",
+    category: "Contract Compliance",
+    impact: "15% - 20% of total leakage",
+    description:
+      "Supply agreements stipulate liquidated damages (e.g. 0.5% per week of delivery delay). We correlate transport challan dates with PO milestones to enforce penalty deductions.",
+  },
+  {
+    num: "04",
+    title: "Rejected & Defective Material Billing",
+    category: "Quality Gate",
+    impact: "10% - 15% of total leakage",
+    description:
+      "Material rejected during inbound quality inspection often bypasses receiving gate systems and gets paid by finance. We lock invoice line items until QC lot clearance is matched.",
+  },
+  {
+    num: "05",
+    title: "Orphan & Unbacked Invoices",
+    category: "Reconciliation",
+    impact: "5% - 10% of total leakage",
+    description:
+      "Invoices submitted without an authorized purchase order or verified warehouse gate entry pass are isolated before entering the accounts payable queue.",
+  },
+];
 
 export function DetectionEngineShowcase() {
-  const categories = [
-    {
-      icon: TrendingDown,
-      title: "Contract Rate Deviations",
-      badge: "Price Protection",
-      desc: "Supplier invoices frequently sneak in unapproved raw material surcharges or higher spot rates. We cross-verify every invoice line item against signed master contracts.",
-    },
-    {
-      icon: PackageCheck,
-      title: "Short Deliveries Billed in Full",
-      badge: "Quantity Audit",
-      desc: "Suppliers bill for 1,000 units, but the warehouse gate only received 850. Mistake flags the 150-unit deficit instantly and calculates the exact overcharge.",
-    },
-    {
-      icon: Clock,
-      title: "Missed SLA & Delivery Penalties",
-      badge: "Contract Enforcement",
-      desc: "Contracts stipulate 0.5% penalty per week of dispatch delay. We audit transit dates against agreed delivery windows to recover legitimate liquidated damages.",
-    },
-    {
-      icon: ShieldX,
-      title: "Billing for Rejected Materials",
-      badge: "Quality Guard",
-      desc: "Materials rejected during floor quality inspection often get processed through accounts payable by mistake. We freeze payment until quality clearances are matched.",
-    },
-    {
-      icon: HelpCircle,
-      title: "Orphan & Unbacked Invoices",
-      badge: "Fraud Prevention",
-      desc: "Invoices received without a backing Purchase Order or verified Goods Receipt Note (GRN) are isolated before they can be routed for executive sign-off.",
-    },
-  ];
-
   return (
-    <section id="features" className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
-      <div className="text-center max-w-3xl mx-auto space-y-4">
-        <Badge variant="outline" className="font-semibold text-xs uppercase tracking-wider">
-          Leakage Prevention
-        </Badge>
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight">
-          Where Does Your Procurement Spend Silently Leak?
-        </h2>
-        <p className="text-muted-foreground text-base leading-relaxed">
-          High transaction volumes make manual invoice checking practically impossible. Mistake monitors the five critical leak points across every single supplier transaction.
-        </p>
-      </div>
+    <section id="features" className="py-20 border-b border-border bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        
+        <div className="max-w-3xl space-y-3">
+          <div className="text-xs font-mono tracking-widest text-muted-foreground uppercase">
+            Audit Scope / 5 Primary Leak Points
+          </div>
+          <h2 className="text-3xl font-bold tracking-tight text-foreground">
+            Where enterprise procurement spend leaks.
+          </h2>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            High invoice volume makes manual line-by-line verification impractical. Mistake continuously audits every transaction across five structural leak vectors.
+          </p>
+        </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {categories.map((cat, i) => {
-          const Icon = cat.icon;
-          return (
+        <div className="border-t border-b border-border divide-y divide-border">
+          {LEAK_VECTORS.map((v) => (
             <div
-              key={i}
-              className="p-6 rounded-2xl border border-border/80 bg-card hover:border-primary/50 transition-all hover:shadow-md space-y-4"
+              key={v.num}
+              className="py-6 grid md:grid-cols-12 gap-4 items-baseline hover:bg-muted/10 transition-colors px-2"
             >
-              <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                  <Icon className="w-5 h-5" />
-                </div>
-                <Badge variant="info" className="text-[11px] font-medium">
-                  {cat.badge}
-                </Badge>
+              <div className="md:col-span-1 font-mono text-xs font-bold text-muted-foreground">
+                {v.num}
               </div>
-              <h3 className="font-bold text-base text-foreground">{cat.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{cat.desc}</p>
+              <div className="md:col-span-4 space-y-1">
+                <h3 className="font-semibold text-base text-foreground">{v.title}</h3>
+                <div className="text-[11px] font-mono text-muted-foreground">
+                  {v.category} • <span className="text-foreground">{v.impact}</span>
+                </div>
+              </div>
+              <div className="md:col-span-7 text-xs text-muted-foreground leading-relaxed">
+                {v.description}
+              </div>
             </div>
-          );
-        })}
+          ))}
+        </div>
+
       </div>
     </section>
   );

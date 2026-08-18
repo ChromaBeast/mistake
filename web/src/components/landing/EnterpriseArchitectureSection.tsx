@@ -1,74 +1,73 @@
 import React from "react";
-import { ArrowRight, Database, ShieldCheck, FileSpreadsheet, Server, Laptop, Cpu } from "lucide-react";
+
+const PIPELINE_STAGES = [
+  {
+    step: "STAGE 01",
+    name: "Multi-Source Ingestion",
+    role: "Non-Invasive Data Capture",
+    details:
+      "Ingests Purchase Orders, Master Price Agreements, and Vendor Catalogs directly from SAP S/4HANA, TallyPrime, Oracle, or CSV. Inbound delivery challans and weighbridge tickets captured via dock scanner app.",
+    stack: ["SAP S/4HANA", "TallyPrime", "Dock Mobile App", "OCR / CSV"],
+  },
+  {
+    step: "STAGE 02",
+    name: "Deterministic Audit Engine",
+    role: "Exact Paisa 3-Way Match",
+    details:
+      "Executes parallel mathematical cross-matching across thousands of line items in <50ms. Identifies rate mismatches, partial delivery deficits, and SLA delivery date breaches with exact integer paise math.",
+    stack: ["Zero Float Drift", "Integer Paise", "Fuzzy GSTIN Match", "Audit Log"],
+  },
+  {
+    step: "STAGE 03",
+    name: "Pre-Disbursement Action",
+    role: "Automated Capital Recovery",
+    details:
+      "Applies automated payment holds on disputed invoice line items before finance release. Generates mathematical dispute proof packages and automated vendor debit notes for accounts payable.",
+    stack: ["Debit Note Gen", "Payment Hold", "GSTR-2B Sync", "ERP Webhooks"],
+  },
+];
 
 export function EnterpriseArchitectureSection() {
   return (
     <section id="architecture" className="py-20 border-b border-border bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        <div className="max-w-3xl space-y-4">
-          <div className="font-mono text-xs text-primary font-bold uppercase tracking-wider">
-            SYSTEM ARCHITECTURE & ERP INTEGRATION
+        
+        <div className="max-w-3xl space-y-3">
+          <div className="text-xs font-mono tracking-widest text-muted-foreground uppercase">
+            Integration / System Architecture
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-            Non-Invasive Coexistence with Your Existing Tech Stack
+          <h2 className="text-3xl font-bold tracking-tight text-foreground">
+            Operates non-invasively with your ERP.
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Mistake sits parallel to your existing core financial ledgers and factory operations. No risky ERP migrations or downtime required.
+            Mistake connects parallel to your existing financial ledgers and factory receiving workflows. No risky ERP migrations or downtime required.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          
-          {/* Step 1 */}
-          <div className="p-6 rounded-xl border border-border bg-card space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-xs font-bold text-muted-foreground">01. INGESTION</span>
-              <Database className="w-5 h-5 text-primary" />
-            </div>
-            <h3 className="font-bold text-base text-foreground">Multi-Source Ingestion</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Pulls Purchase Orders and Master Vendor Contracts directly from SAP, TallyPrime, Oracle, or raw CSV/Excel. Captures physical delivery challans via mobile dock app.
-            </p>
-            <div className="pt-2 flex flex-wrap gap-1.5 font-mono text-[10px] text-muted-foreground">
-              <span className="px-2 py-0.5 rounded bg-muted">SAP S/4HANA</span>
-              <span className="px-2 py-0.5 rounded bg-muted">TallyPrime</span>
-              <span className="px-2 py-0.5 rounded bg-muted">Custom APIs</span>
-            </div>
-          </div>
+        <div className="border-t border-b border-border grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border">
+          {PIPELINE_STAGES.map((s, i) => (
+            <div key={i} className="p-6 md:p-8 space-y-4">
+              <div className="space-y-1">
+                <div className="text-[10px] font-mono text-muted-foreground uppercase">{s.step}</div>
+                <h3 className="font-bold text-base text-foreground">{s.name}</h3>
+                <div className="text-xs text-muted-foreground">{s.role}</div>
+              </div>
 
-          {/* Step 2 */}
-          <div className="p-6 rounded-xl border border-border bg-card space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-xs font-bold text-muted-foreground">02. AUDIT ENGINE</span>
-              <Cpu className="w-5 h-5 text-primary" />
-            </div>
-            <h3 className="font-bold text-base text-foreground">Deterministic 3-Way Match</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Executes exact integer paise arithmetic across thousands of line items in &lt;50ms. Identifies rate mismatches, partial volume gaps, and SLA breaches with mathematical proof.
-            </p>
-            <div className="pt-2 flex flex-wrap gap-1.5 font-mono text-[10px] text-muted-foreground">
-              <span className="px-2 py-0.5 rounded bg-muted">Zero Float Drift</span>
-              <span className="px-2 py-0.5 rounded bg-muted">5-Engine Matrix</span>
-            </div>
-          </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                {s.details}
+              </p>
 
-          {/* Step 3 */}
-          <div className="p-6 rounded-xl border border-border bg-card space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-xs font-bold text-muted-foreground">03. EXECUTION</span>
-              <ShieldCheck className="w-5 h-5 text-emerald-500" />
+              <div className="pt-3 border-t border-border/60 flex flex-wrap gap-1.5 font-mono text-[10px] text-muted-foreground">
+                {s.stack.map((tech, j) => (
+                  <span key={j} className="px-2 py-0.5 border border-border bg-muted/20">
+                    {tech}
+                  </span>
+                ))}
+              </div>
             </div>
-            <h3 className="font-bold text-base text-foreground">Pre-Payment Hold & Recovery</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Triggers automated payment holds on disputed invoices. Generates audit-ready debit notes with backing proof sheets for instant vendor reconciliation.
-            </p>
-            <div className="pt-2 flex flex-wrap gap-1.5 font-mono text-[10px] text-muted-foreground">
-              <span className="px-2 py-0.5 rounded bg-muted">Debit Notes</span>
-              <span className="px-2 py-0.5 rounded bg-muted">GSTR-2B Ready</span>
-            </div>
-          </div>
-
+          ))}
         </div>
+
       </div>
     </section>
   );

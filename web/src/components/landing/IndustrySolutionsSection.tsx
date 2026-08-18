@@ -1,98 +1,85 @@
 import React from "react";
-import { Factory, Truck, Flame, ShoppingCart } from "lucide-react";
-import { Badge } from "@/components/ui/Badge";
+
+const VERTICALS = [
+  {
+    sector: "Automotive & Engineering",
+    focus: "Forgings, Castings & Tier-1 Assemblies",
+    risks: [
+      "Raw material price index escalation formula disputes",
+      "Machining and core scrap weight deductions",
+      "Line-item rejects during inbound quality gate check",
+    ],
+  },
+  {
+    sector: "Steel, Metals & Fabrication",
+    focus: "Foundries, Slitters & Structural Mills",
+    risks: [
+      "Weighbridge scale variance vs mill invoice MT",
+      "Grade/heat chemical composition surcharge gaps",
+      "Coil slit width conversion rounding errors",
+    ],
+  },
+  {
+    sector: "Chemicals & Process Industries",
+    focus: "Bulk Liquids, Polymers & Packaging",
+    risks: [
+      "Tanker volume ambient temperature expansion loss",
+      "Unloading delay demurrage charges",
+      "Purity concentration differential adjustments",
+    ],
+  },
+  {
+    sector: "FMCG, Wholesale & Distribution",
+    focus: "Multi-Warehouse Distribution Hubs",
+    risks: [
+      "Turnover and quarterly volume rebate realization",
+      "Transit shortages across multi-city delivery drops",
+      "Unapproved freight handling surcharges",
+    ],
+  },
+];
 
 export function IndustrySolutionsSection() {
-  const industries = [
-    {
-      icon: Factory,
-      title: "Automotive & Engineering",
-      subtitle: "Tier-1 & Tier-2 Component Makers",
-      leakagePoints: [
-        "Raw material price index fluctuation disputes",
-        "Tooling and machining scrap deductions",
-        "Part rejection during inbound quality checks",
-      ],
-    },
-    {
-      icon: Flame,
-      title: "Steel, Metals & Fabrication",
-      subtitle: "Mills, Foundries & Service Centers",
-      leakagePoints: [
-        "Weighbridge scale variance vs mill invoice MT",
-        "Grade/heat surcharge rate discrepancies",
-        "Coil slit width conversion rounding errors",
-      ],
-    },
-    {
-      icon: Truck,
-      title: "Chemicals & Process Industries",
-      subtitle: "Continuous Processing & Bulk Liquids",
-      leakagePoints: [
-        "Tanker temperature volume expansion losses",
-        "Delayed tanker unloading demurrage charges",
-        "Purity concentration differential adjustments",
-      ],
-    },
-    {
-      icon: ShoppingCart,
-      title: "FMCG, Wholesale & Distribution",
-      subtitle: "Multi-Hub Distribution Networks",
-      leakagePoints: [
-        "Contractual turnover & quarterly volume rebates",
-        "Short-shipments across multi-city delivery drops",
-        "Unauthorized logistics freight surcharges",
-      ],
-    },
-  ];
-
   return (
-    <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
-      <div className="text-center max-w-3xl mx-auto space-y-4">
-        <Badge variant="outline" className="font-semibold text-xs uppercase tracking-wider">
-          Tailored Solutions
-        </Badge>
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight">
-          Engineered for Heavy Supply Chain Verticals
-        </h2>
-        <p className="text-muted-foreground text-base leading-relaxed">
-          Every industry has unique vendor contracting patterns and physical receiving nuances. Mistake is purpose-built for high-volume B2B operations.
-        </p>
-      </div>
+    <section id="industries" className="py-20 border-b border-border bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        
+        <div className="max-w-3xl space-y-3">
+          <div className="text-xs font-mono tracking-widest text-muted-foreground uppercase">
+            Sectors / Industry-Specific Risk Vectors
+          </div>
+          <h2 className="text-3xl font-bold tracking-tight text-foreground">
+            Built for heavy industrial operations.
+          </h2>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Every vertical presents distinct contracting nuances and receiving realities. Mistake is configured for high-volume B2B supply chains.
+          </p>
+        </div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {industries.map((ind, i) => {
-          const Icon = ind.icon;
-          return (
-            <div
-              key={i}
-              className="p-6 rounded-2xl border border-border/70 bg-card flex flex-col justify-between space-y-6"
-            >
-              <div className="space-y-4">
-                <div className="w-11 h-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                  <Icon className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-base text-foreground">{ind.title}</h3>
-                  <p className="text-xs text-muted-foreground">{ind.subtitle}</p>
-                </div>
-                <div className="border-t border-border/40 pt-3 space-y-2">
-                  <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-                    Common Leak Points:
-                  </span>
-                  <ul className="text-xs text-muted-foreground space-y-1.5">
-                    {ind.leakagePoints.map((pt, j) => (
-                      <li key={j} className="flex items-start gap-1.5">
-                        <span className="text-primary font-bold">•</span>
-                        <span>{pt}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+        <div className="border-t border-b border-border grid sm:grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 sm:divide-x divide-border">
+          {VERTICALS.map((v, i) => (
+            <div key={i} className="p-6 space-y-4">
+              <div className="space-y-1">
+                <div className="text-[10px] font-mono text-muted-foreground uppercase">Vertical 0{i + 1}</div>
+                <h3 className="font-bold text-base text-foreground">{v.sector}</h3>
+                <p className="text-xs text-muted-foreground">{v.focus}</p>
+              </div>
+
+              <div className="pt-2 border-t border-border/60 space-y-2">
+                <div className="text-[11px] font-mono text-muted-foreground uppercase">Primary Leak Vectors:</div>
+                <ul className="text-xs text-muted-foreground space-y-2">
+                  {v.risks.map((r, j) => (
+                    <li key={j} className="flex items-start gap-1.5">
+                      <span className="text-foreground font-mono font-bold shrink-0">—</span>
+                      <span>{r}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
-          );
-        })}
+          ))}
+        </div>
+
       </div>
     </section>
   );
