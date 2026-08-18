@@ -104,6 +104,14 @@ The entire full-stack platform (Go REST API + Next.js Web Dashboard + Managed Po
    - 🌐 **`mistake-web`** — Next.js 16 Web Dashboard Docker Service
 5. Click **Apply**.
 
+### ⚡ Automated Build Preemption (Save 100% Wasted Build Minutes)
+GitHub Actions workflow [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) automatically aborts in-progress builds when a new commit is pushed:
+1. In **Render Dashboard**, open `mistake-backend` ➔ **Settings** ➔ Copy **Deploy Hook**.
+2. Open `mistake-web` ➔ **Settings** ➔ Copy **Deploy Hook**.
+3. In **GitHub Repository**, go to **Settings** ➔ **Secrets and variables** ➔ **Actions** ➔ Add:
+   - `RENDER_BACKEND_DEPLOY_HOOK`: *(Paste Backend hook URL)*
+   - `RENDER_WEB_DEPLOY_HOOK`: *(Paste Web hook URL)*
+
 ---
 
 ## 📱 Mobile Distribution (Flutter)

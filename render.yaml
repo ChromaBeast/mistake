@@ -5,6 +5,7 @@ services:
     runtime: docker
     dockerfilePath: backend/Dockerfile
     dockerContext: backend
+    autoDeploy: false
     plan: free
     region: oregon
     healthCheckPath: /health
@@ -28,6 +29,7 @@ services:
     runtime: docker
     dockerfilePath: web/Dockerfile
     dockerContext: web
+    autoDeploy: false
     plan: free
     region: oregon
     envVars:

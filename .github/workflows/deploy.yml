@@ -1,0 +1,36 @@
+name: Optimized Render Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+# Build Preemption: If a new commit is pushed while a previous deployment is running,
+# GitHub Actions immediately cancels the previous run and only deploys the latest commit.
+concurrency:
+  group: render-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-to-render:
+    name: Trigger Latest Render Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Trigger Render Deploy Hook (Backend)
+        if: env.RENDER_BACKEND_HOOK != ''
+        env:
+          RENDER_BACKEND_HOOK: ${{ secrets.RENDER_BACKEND_DEPLOY_HOOK }}
+        run: |
+          echo "Triggering Render Go Backend Deploy for commit ${{ github.sha }}..."
+          curl -s -f -X POST "$RENDER_BACKEND_HOOK" || echo "Warning: Backend hook not configured or failed"
+
+      - name: Trigger Render Deploy Hook (Web)
+        if: env.RENDER_WEB_HOOK != ''
+        env:
+          RENDER_WEB_HOOK: ${{ secrets.RENDER_WEB_DEPLOY_HOOK }}
+        run: |
+          echo "Triggering Render Next.js Web Deploy for commit ${{ github.sha }}..."
+          curl -s -f -X POST "$RENDER_WEB_HOOK" || echo "Warning: Web hook not configured or failed"
