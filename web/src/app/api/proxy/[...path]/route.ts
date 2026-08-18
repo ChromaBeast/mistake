@@ -1,34 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+import { tryFetchBackend } from "@/lib/api/server-api";
+import { handleMockProxyFallback } from "@/lib/api/mock/proxy-fallback";
 
 export const dynamic = "force-dynamic";
-
-const API_URL = process.env.API_URL || "http://localhost:8080/api/v1";
-
-async function proxyRequest(
-  req: NextRequest,
-  path: string,
-  token?: string,
-  bodyText?: string
-) {
-  try {
-    const url = new URL(`${API_URL}/${path}`);
-    req.nextUrl.searchParams.forEach((val, key) => url.searchParams.set(key, val));
-
-    const headers: Record<string, string> = { "Content-Type": "application/json" };
-    if (token) headers["Authorization"] = `Bearer ${token}`;
-
-    const options: RequestInit = { method: req.method, headers };
-    if (!["GET", "HEAD"].includes(req.method) && bodyText !== undefined) {
-      options.body = bodyText;
-    }
-
-    const res = await fetch(url.toString(), options);
-    const data = await res.json().catch(() => ({}));
-    return { status: res.status, data };
-  } catch (err) {
-    return { status: 503, data: { error: "Backend service unreachable" } };
-  }
-}
 
 async function handler(
   req: NextRequest,
@@ -36,62 +10,53 @@ async function handler(
 ) {
   try {
     const token = req.cookies.get("auth_token")?.value;
-    const refreshToken = req.cookies.get("refresh_token")?.value;
     const resolvedParams = await context.params;
     const path = resolvedParams.path.join("/");
 
     let bodyText: string | undefined;
+    let bodyJson: any = undefined;
+
     if (!["GET", "HEAD"].includes(req.method)) {
       bodyText = await req.text();
-    }
-
-    let { status, data } = await proxyRequest(req, path, token, bodyText);
-
-    // If 401 Unauthorized and we have a refresh token, perform transparent auto-refresh
-    if (status === 401 && refreshToken) {
       try {
-        const refreshRes = await fetch(`${API_URL}/auth/refresh`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ refresh_token: refreshToken }),
-        });
-
-        if (refreshRes.ok) {
-          const refreshData = await refreshRes.json();
-          const newAccessToken = refreshData.token;
-          const newRefreshToken = refreshData.refresh_token;
-
-          const retryResult = await proxyRequest(req, path, newAccessToken, bodyText);
-          const response = NextResponse.json(retryResult.data, { status: retryResult.status });
-
-          if (newAccessToken) {
-            response.cookies.set("auth_token", newAccessToken, {
-              httpOnly: true,
-              secure: process.env.NODE_ENV === "production",
-              sameSite: "strict",
-              path: "/",
-              maxAge: 60 * 15,
-            });
-          }
-          if (newRefreshToken) {
-            response.cookies.set("refresh_token", newRefreshToken, {
-              httpOnly: true,
-              secure: process.env.NODE_ENV === "production",
-              sameSite: "strict",
-              path: "/",
-              maxAge: 60 * 60 * 24 * 7,
-            });
-          }
-          return response;
-        }
-      } catch (rErr) {
-        // Fall through to original 401 response
-      }
+        bodyJson = bodyText ? JSON.parse(bodyText) : undefined;
+      } catch {}
     }
 
-    return NextResponse.json(data, { status });
+    // 1. If demo session token, skip network and serve from mock fallback directly
+    if (token === "demo-token-session") {
+      const fallbackResult = await handleMockProxyFallback(req, path, bodyJson);
+      return NextResponse.json(fallbackResult.data, { status: fallbackResult.status });
+    }
+
+    // 2. Query parameters
+    const queryString = req.nextUrl.searchParams.toString();
+    const targetPath = queryString ? `${path}?${queryString}` : path;
+
+    // 3. Try real Go Backend
+    const backendResult = await tryFetchBackend(targetPath, {
+      method: req.method,
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: bodyText,
+    });
+
+    if (backendResult.ok && backendResult.data !== null) {
+      return NextResponse.json(backendResult.data, { status: backendResult.status });
+    }
+
+    // If backend returned a valid client error (400, 403, 404), pass it through
+    if (!backendResult.ok && backendResult.status > 0 && backendResult.status < 500) {
+      return NextResponse.json(backendResult.data, { status: backendResult.status });
+    }
+
+    // 4. Graceful Fallback if backend is unreachable (503 / network timeout / cold start)
+    const fallbackResult = await handleMockProxyFallback(req, path, bodyJson);
+    return NextResponse.json(fallbackResult.data, { status: fallbackResult.status });
   } catch (err) {
-    return NextResponse.json({ error: "Internal Gateway Error" }, { status: 500 });
+    const resolvedParams = await context.params;
+    const path = resolvedParams?.path?.join("/") || "";
+    const fallbackResult = await handleMockProxyFallback(req, path, {});
+    return NextResponse.json(fallbackResult.data, { status: fallbackResult.status });
   }
 }
 

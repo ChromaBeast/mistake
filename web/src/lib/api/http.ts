@@ -1,4 +1,5 @@
 import { ApiClient } from "./client";
+import { httpJsonRequest } from "./http-requester";
 import {
   LoginResponse,
   SignupResponse,
@@ -25,89 +26,54 @@ import {
   SearchResponse,
 } from "@/types";
 
-/**
- * HTTP implementation of ApiClient that communicates with the backend via Next.js proxy & auth routes.
- */
 export class HttpApiClient implements ApiClient {
   private baseUrl = "/api/proxy";
 
-  private async request<T>(path: string, options: RequestInit = {}, serverToken?: string): Promise<T> {
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-      ...(serverToken ? { Authorization: `Bearer ${serverToken}` } : {}),
-      ...(options.headers as Record<string, string>),
-    };
-
-    const url = path.startsWith("/api/") ? path : `${this.baseUrl}${path}`;
-    const res = await fetch(url, { ...options, headers });
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => ({}));
-      throw new Error(errorData?.error?.message || `HTTP ${res.status}: ${res.statusText}`);
-    }
-    return res.json();
+  private req<T>(path: string, options: RequestInit = {}, serverToken?: string): Promise<T> {
+    return httpJsonRequest<T>(this.baseUrl, path, options, serverToken);
   }
 
-  /** Signs up a new user and tenant. */
+  // Auth & Session
   async signup(payload: SignupPayload): Promise<SignupResponse> {
-    return this.request<SignupResponse>("/api/auth/signup", { method: "POST", body: JSON.stringify(payload) });
+    return this.req<SignupResponse>("/api/auth/signup", { method: "POST", body: JSON.stringify(payload) });
   }
-
-  /** Logs in a user, setting an HttpOnly auth cookie. */
   async login(payload: LoginPayload): Promise<LoginResponse> {
-    return this.request<LoginResponse>("/api/auth/login", { method: "POST", body: JSON.stringify(payload) });
+    return this.req<LoginResponse>("/api/auth/login", { method: "POST", body: JSON.stringify(payload) });
   }
-
-  /** Refreshes the auth session using the HttpOnly refresh token cookie. */
   async refreshToken(): Promise<LoginResponse> {
-    return this.request<LoginResponse>("/api/auth/refresh", { method: "POST" });
+    return this.req<LoginResponse>("/api/auth/refresh", { method: "POST" });
   }
-
-  /** Verifies TOTP MFA token. */
   async verifyMfa(payload: MfaVerifyPayload): Promise<LoginResponse> {
-    return this.request<LoginResponse>("/api/auth/mfa", { method: "POST", body: JSON.stringify(payload) });
+    return this.req<LoginResponse>("/api/auth/mfa", { method: "POST", body: JSON.stringify(payload) });
   }
-
-  /** Logs out the current user by clearing the HttpOnly cookie. */
   async logout(): Promise<void> {
-    await this.request<void>("/api/auth/logout", { method: "POST" });
+    await this.req<void>("/api/auth/logout", { method: "POST" });
   }
-
-  /** Gets the current authenticated user profile. */
   async getCurrentUser(): Promise<User> {
-    return this.request<User>("/api/auth/me");
+    return this.req<User>("/api/auth/me");
   }
 
-  /** Gets current tenant details. */
+  // Tenant & Organization
   async getTenant(): Promise<Tenant> {
-    return this.request<Tenant>("/tenant");
+    return this.req<Tenant>("/tenant");
   }
-
-  /** Updates tenant configuration. */
   async updateTenant(data: Partial<Tenant>): Promise<Tenant> {
-    return this.request<Tenant>("/tenant", { method: "PATCH", body: JSON.stringify(data) });
+    return this.req<Tenant>("/tenant", { method: "PATCH", body: JSON.stringify(data) });
   }
-
-  /** Lists all team members of the tenant. */
   async getUsers(): Promise<TeamMember[]> {
-    return this.request<TeamMember[]>("/users");
+    return this.req<TeamMember[]>("/users");
   }
-
-  /** Invites a new team member. */
   async inviteUser(payload: InvitePayload): Promise<TeamMember> {
-    return this.request<TeamMember>("/users/invite", { method: "POST", body: JSON.stringify(payload) });
+    return this.req<TeamMember>("/users/invite", { method: "POST", body: JSON.stringify(payload) });
   }
 
-  /** Lists all data sources. */
+  // Data Sources / Ingestion
   async getDataSources(): Promise<DataSource[]> {
-    return this.request<DataSource[]>("/data-sources");
+    return this.req<DataSource[]>("/data-sources");
   }
-
-  /** Gets a single data source by ID. */
   async getDataSource(id: string): Promise<DataSource> {
-    return this.request<DataSource>(`/data-sources/${id}`);
+    return this.req<DataSource>(`/data-sources/${id}`);
   }
-
-  /** Uploads a new data source file. */
   async uploadDataSource(file: File | { name: string; size: number; format: string }): Promise<DataSource> {
     const formData = new FormData();
     if (file instanceof File) formData.append("file", file);
@@ -115,100 +81,72 @@ export class HttpApiClient implements ApiClient {
     if (!res.ok) throw new Error("File upload failed");
     return res.json();
   }
-
-  /** Retries a failed data source ingestion. */
   async retryDataSource(id: string): Promise<DataSource> {
-    return this.request<DataSource>(`/data-sources/${id}/retry`, { method: "POST" });
+    return this.req<DataSource>(`/data-sources/${id}/retry`, { method: "POST" });
   }
 
-  /** Lists resolved business entities. */
+  // Canonical Entities
   async getEntities(params?: { type?: string; q?: string }): Promise<Entity[]> {
     const query = new URLSearchParams(params as Record<string, string>).toString();
-    return this.request<Entity[]>(`/entities?${query}`);
+    return this.req<Entity[]>(`/entities?${query}`);
   }
-
-  /** Gets a specific entity by ID. */
   async getEntity(id: string): Promise<Entity> {
-    return this.request<Entity>(`/entities/${id}`);
+    return this.req<Entity>(`/entities/${id}`);
   }
-
-  /** Gets the chronological timeline of events for an entity. */
   async getEntityTimeline(entityId: string): Promise<BusinessEvent[]> {
-    return this.request<BusinessEvent[]>(`/entities/${entityId}/timeline`);
+    return this.req<BusinessEvent[]>(`/entities/${entityId}/timeline`);
   }
-
-  /** Gets entities pending review in the merge queue. */
   async getReviewQueue(): Promise<ReviewQueueItem[]> {
-    return this.request<ReviewQueueItem[]>("/entities/review-queue");
+    return this.req<ReviewQueueItem[]>("/entities/review-queue");
   }
-
-  /** Merges candidate entities into a surviving canonical entity. */
   async mergeEntity(payload: MergePayload): Promise<{ success: boolean; surviving_entity_id: string }> {
-    return this.request<{ success: boolean; surviving_entity_id: string }>(
+    return this.req<{ success: boolean; surviving_entity_id: string }>(
       `/entities/${payload.surviving_entity_id}/merge`,
       { method: "POST", body: JSON.stringify(payload) }
     );
   }
-
-  /** Rejects an entity merge suggestion. */
   async rejectMerge(id: string): Promise<{ success: boolean }> {
-    return this.request<{ success: boolean }>(`/entities/${id}/reject-merge`, { method: "POST" });
+    return this.req<{ success: boolean }>(`/entities/${id}/reject-merge`, { method: "POST" });
   }
 
-  /** Lists detected financial leakage mistakes and discrepancies. */
+  // Financial Leakage Investigation Workspace
   async getMistakes(params?: { status?: string; type?: string; severity?: string }): Promise<Mistake[]> {
     const query = new URLSearchParams(params as Record<string, string>).toString();
-    return this.request<Mistake[]>(`/mistakes?${query}`);
+    return this.req<Mistake[]>(`/mistakes?${query}`);
   }
-
-  /** Gets a specific mistake with full math proof and evidence refs. */
   async getMistake(id: string): Promise<Mistake> {
-    return this.request<Mistake>(`/mistakes/${id}`);
+    return this.req<Mistake>(`/mistakes/${id}`);
   }
-
-  /** Transitions the triage status of a mistake. */
   async updateMistakeStatus(id: string, status: MistakeStatus, reason?: string): Promise<Mistake> {
-    return this.request<Mistake>(`/mistakes/${id}/status`, { method: "PATCH", body: JSON.stringify({ status, reason }) });
+    return this.req<Mistake>(`/mistakes/${id}/status`, { method: "PATCH", body: JSON.stringify({ status, reason }) });
   }
-
-  /** Assigns a mistake to an analyst or manager. */
   async assignMistake(id: string, userId: string): Promise<Mistake> {
-    return this.request<Mistake>(`/mistakes/${id}/assign`, { method: "PATCH", body: JSON.stringify({ user_id: userId }) });
+    return this.req<Mistake>(`/mistakes/${id}/assign`, { method: "PATCH", body: JSON.stringify({ user_id: userId }) });
   }
 
-  /** Gets business health score, KPIs, and trend metrics for the dashboard. */
+  // Intelligence Dashboard & Global Search
   async getDashboardSummary(serverToken?: string): Promise<DashboardSummary> {
-    return this.request<DashboardSummary>("/dashboard/summary", {}, serverToken);
+    return this.req<DashboardSummary>("/dashboard/summary", {}, serverToken);
   }
-
-  /** Global search across entities, orders, and mistakes. */
   async search(query: string, type?: string): Promise<SearchResponse> {
-    return this.request<SearchResponse>(`/search?q=${encodeURIComponent(query)}&type=${type || ""}`);
+    return this.req<SearchResponse>(`/search?q=${encodeURIComponent(query)}&type=${type || ""}`);
   }
 
-  /** Gets audit trail logs. */
+  // Audit Logs & Retention & Billing
   async getAuditLogs(filter?: AuditFilter): Promise<AuditLog[]> {
     const query = new URLSearchParams(filter as Record<string, string>).toString();
-    return this.request<AuditLog[]>(`/audit-logs?${query}`);
+    return this.req<AuditLog[]>(`/audit-logs?${query}`);
   }
-
-  /** Gets current data retention policies. */
   async getRetentionPolicies(): Promise<RetentionPolicy[]> {
-    return this.request<RetentionPolicy[]>("/retention-policy");
+    return this.req<RetentionPolicy[]>("/retention-policy");
   }
-
-  /** Updates retention duration for a data type. */
   async updateRetentionPolicy(id: string, days: number): Promise<RetentionPolicy> {
-    return this.request<RetentionPolicy>(`/retention-policy/${id}`, { method: "PATCH", body: JSON.stringify({ retention_days: days }) });
+    return this.req<RetentionPolicy>(`/retention-policy/${id}`, { method: "PATCH", body: JSON.stringify({ retention_days: days }) });
   }
-
-  /** Gets current subscription and billing quota. */
   async getSubscription(): Promise<Subscription> {
-    return this.request<Subscription>("/billing/subscription");
+    return this.req<Subscription>("/billing/subscription");
   }
-
-  /** Gets past billing invoices and receipts. */
   async getInvoices(): Promise<Invoice[]> {
-    return this.request<Invoice[]>("/billing/invoices");
+    return this.req<Invoice[]>("/billing/invoices");
   }
 }

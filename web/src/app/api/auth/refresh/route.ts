@@ -1,31 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
+import { tryFetchBackend, getServerMock } from "@/lib/api/server-api";
 
 export const dynamic = "force-dynamic";
 
-const API_URL = process.env.API_URL || "http://localhost:8080/api/v1";
-
 export async function POST(req: NextRequest) {
   const refreshToken = req.cookies.get("refresh_token")?.value;
+  const authToken = req.cookies.get("auth_token")?.value;
+
+  if (authToken === "demo-token-session" || (!refreshToken && authToken)) {
+    const mock = getServerMock();
+    const currentUser = await mock.getCurrentUser();
+    const currentTenant = await mock.getTenant();
+    return NextResponse.json({ user: currentUser, tenant: currentTenant }, { status: 200 });
+  }
+
   if (!refreshToken) {
     return NextResponse.json({ error: "Missing refresh token" }, { status: 401 });
   }
 
-  try {
-    const res = await fetch(`${API_URL}/auth/refresh`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refresh_token: refreshToken }),
-    });
+  const backendResult = await tryFetchBackend("/auth/refresh", {
+    method: "POST",
+    body: JSON.stringify({ refresh_token: refreshToken }),
+  });
 
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      const errorResponse = NextResponse.json(data, { status: res.status });
-      errorResponse.cookies.set("auth_token", "", { maxAge: 0, path: "/" });
-      errorResponse.cookies.set("refresh_token", "", { maxAge: 0, path: "/" });
-      return errorResponse;
-    }
-
-    const { token, refresh_token: newRefreshToken, ...clientData } = data;
+  if (backendResult.ok && backendResult.data) {
+    const { token, refresh_token: newRefreshToken, ...clientData } = backendResult.data;
     const response = NextResponse.json(clientData, { status: 200 });
 
     if (token) {
@@ -37,7 +36,6 @@ export async function POST(req: NextRequest) {
         maxAge: 60 * 15,
       });
     }
-
     if (newRefreshToken) {
       response.cookies.set("refresh_token", newRefreshToken, {
         httpOnly: true,
@@ -47,12 +45,18 @@ export async function POST(req: NextRequest) {
         maxAge: 60 * 60 * 24 * 7,
       });
     }
-
     return response;
-  } catch (err) {
-    return NextResponse.json(
-      { error: "Token refresh service temporarily unavailable" },
-      { status: 503 }
-    );
   }
+
+  if (backendResult.status === 503) {
+    const mock = getServerMock();
+    const currentUser = await mock.getCurrentUser();
+    const currentTenant = await mock.getTenant();
+    return NextResponse.json({ user: currentUser, tenant: currentTenant }, { status: 200 });
+  }
+
+  const errorResponse = NextResponse.json(backendResult.data || { error: "Session expired" }, { status: backendResult.status || 401 });
+  errorResponse.cookies.set("auth_token", "", { maxAge: 0, path: "/" });
+  errorResponse.cookies.set("refresh_token", "", { maxAge: 0, path: "/" });
+  return errorResponse;
 }
