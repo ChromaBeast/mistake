@@ -13,6 +13,7 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
+RUN mkdir -p /app/public
 RUN npm run build
 
 # Stage 3: Runner
