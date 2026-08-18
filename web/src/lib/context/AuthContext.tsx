@@ -2,13 +2,13 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { User, Tenant, LoginPayload, SignupPayload, LoginResponse, MfaVerifyPayload } from "@/types";
-
 import { api } from "@/lib/api";
 
 interface AuthContextType {
   user: User | null;
   tenant: Tenant | null;
   isLoading: boolean;
+  isDemoMode: boolean;
   login: (payload: LoginPayload) => Promise<LoginResponse>;
   verifyMfa: (payload: MfaVerifyPayload) => Promise<LoginResponse>;
   signup: (payload: SignupPayload) => Promise<void>;
@@ -21,6 +21,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [tenant, setTenant] = useState<Tenant | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDemoMode, setIsDemoMode] = useState(false);
 
   useEffect(() => {
     async function loadSession() {
@@ -29,6 +30,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const currentTenant = await api.getTenant();
         setUser(currentUser);
         setTenant(currentTenant);
+        if (currentUser?.email?.includes("acmemfg.in") || currentUser?.id?.startsWith("usr-")) {
+          setIsDemoMode(true);
+        }
       } catch (err) {
         console.warn("No active session:", err);
       } finally {
@@ -42,6 +46,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const res = await api.login(payload);
     if (!res.requires_mfa) {
       setUser(res.user);
+      if ((res as any).is_demo || payload.email.includes("acmemfg.in")) {
+        setIsDemoMode(true);
+      }
       if (res.tenant) {
         setTenant(res.tenant);
       } else {
@@ -68,12 +75,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const res = await api.signup(payload);
     setUser(res.user);
     setTenant(res.tenant);
+    if ((res as any).is_demo) {
+      setIsDemoMode(true);
+    }
   };
 
   const logout = async () => {
     await api.logout();
     setUser(null);
     setTenant(null);
+    setIsDemoMode(false);
   };
 
   return (
@@ -82,13 +93,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         tenant,
         isLoading,
+        isDemoMode,
         login,
         verifyMfa,
         signup,
         logout,
       }}
     >
-
       {children}
     </AuthContext.Provider>
   );

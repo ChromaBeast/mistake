@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
     if (backendResult.ok && backendResult.data) {
       const { token, refresh_token, ...clientData } = backendResult.data;
-      const response = NextResponse.json(clientData, { status: 200 });
+      const response = NextResponse.json({ ...clientData, is_demo: false }, { status: 200 });
 
       if (token) {
         response.cookies.set("auth_token", token, {
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
     });
 
     const response = NextResponse.json(
-      { user: mockRes.user, tenant: mockRes.tenant, requires_mfa: false },
+      { user: mockRes.user, tenant: mockRes.tenant, requires_mfa: false, is_demo: true },
       { status: 200 }
     );
 
@@ -65,9 +65,8 @@ export async function POST(req: NextRequest) {
 
     return response;
   } catch (err) {
-    // Ultimate safety fallback
     const mock = getServerMock();
     const mockRes = await mock.login({ email: "aditya.verma@acmemfg.in", password: "password123" });
-    return NextResponse.json(mockRes, { status: 200 });
+    return NextResponse.json({ ...mockRes, is_demo: true }, { status: 200 });
   }
 }

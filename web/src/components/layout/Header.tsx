@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Search, Sun, Moon, Laptop, Menu } from "lucide-react";
+import { Search, Sun, Moon, Laptop, Menu, Sparkles } from "lucide-react";
 import { useTheme } from "@/lib/context/ThemeContext";
 import { useAuth } from "@/lib/context/AuthContext";
 import { NotificationDropdown } from "./NotificationDropdown";
@@ -14,7 +14,7 @@ export interface HeaderProps {
 
 export function Header({ onOpenSearch, onToggleSidebar }: HeaderProps) {
   const { theme, setTheme } = useTheme();
-  const { user, logout } = useAuth();
+  const { user, logout, isDemoMode } = useAuth();
 
   const themeItems = [
     { id: "light", label: "Light Theme", icon: <Sun className="h-3.5 w-3.5" />, onClick: () => setTheme("light") },
@@ -28,7 +28,7 @@ export function Header({ onOpenSearch, onToggleSidebar }: HeaderProps) {
   ];
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 w-full items-center justify-between border-b border-border bg-card/90 px-4 sm:px-6 backdrop-blur-sm">
+    <header className="sticky top-0 z-30 flex h-14 w-full items-center justify-between border-b border-border/50 bg-card/90 px-4 sm:px-6 backdrop-blur-sm">
       <div className="flex items-center space-x-3 sm:space-x-4">
         {onToggleSidebar && (
           <button
@@ -42,18 +42,36 @@ export function Header({ onOpenSearch, onToggleSidebar }: HeaderProps) {
         )}
         <button
           onClick={onOpenSearch}
-          className="flex items-center space-x-2.5 rounded border border-border bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors w-48 sm:w-64 md:w-80 justify-between"
+          className="flex items-center space-x-2.5 rounded-lg border border-border/60 bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors w-44 sm:w-60 md:w-72 justify-between"
           aria-label="Global search shortcut"
         >
-
           <div className="flex items-center space-x-2">
             <Search className="h-3.5 w-3.5" />
             <span>Search invoices, POs, vendors...</span>
           </div>
-          <kbd className="hidden rounded bg-card px-1.5 py-0.5 text-[10px] font-mono border border-border sm:inline-block">
+          <kbd className="hidden rounded bg-card px-1.5 py-0.5 text-[10px] font-mono border border-border/60 sm:inline-block">
             ⌘K
           </kbd>
         </button>
+
+        {/* Live Backend vs Evaluation Sandbox Status Badge */}
+        {isDemoMode ? (
+          <div
+            title="Evaluation dataset active. Connected to simulated multi-vendor transaction store."
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 font-mono text-[11px] select-none"
+          >
+            <Sparkles className="w-3 h-3 text-amber-500 shrink-0" />
+            <span>Evaluation Sandbox</span>
+          </div>
+        ) : (
+          <div
+            title="Connected to production PostgreSQL database."
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-mono text-[11px] select-none"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+            <span>Live Database</span>
+          </div>
+        )}
       </div>
 
       <div className="flex items-center space-x-2">
@@ -73,7 +91,7 @@ export function Header({ onOpenSearch, onToggleSidebar }: HeaderProps) {
 
         <NotificationDropdown />
 
-        <div className="h-4 w-px bg-border mx-1" />
+        <div className="h-4 w-px bg-border/50 mx-1" />
 
         <Dropdown
           align="right"

@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
     if (backendResult.ok && backendResult.data) {
       const { token, refresh_token, ...clientData } = backendResult.data;
-      const response = NextResponse.json(clientData, { status: 201 });
+      const response = NextResponse.json({ ...clientData, is_demo: false }, { status: 201 });
 
       if (token) {
         response.cookies.set("auth_token", token, {
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
     });
 
     const response = NextResponse.json(
-      { user: mockRes.user, tenant: mockRes.tenant },
+      { user: mockRes.user, tenant: mockRes.tenant, is_demo: true },
       { status: 201 }
     );
 
@@ -74,6 +74,6 @@ export async function POST(req: NextRequest) {
       email: "aditya.verma@acmemfg.in",
       password: "password123",
     });
-    return NextResponse.json(mockRes, { status: 201 });
+    return NextResponse.json({ ...mockRes, is_demo: true }, { status: 201 });
   }
 }

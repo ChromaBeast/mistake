@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   if (token === "demo-token-session") {
     const mock = getServerMock();
     const currentUser = await mock.getCurrentUser();
-    return NextResponse.json({ user: currentUser }, { status: 200 });
+    return NextResponse.json({ user: currentUser, is_demo: true }, { status: 200 });
   }
 
   // 2. Try real backend
@@ -22,14 +22,14 @@ export async function GET(req: NextRequest) {
   });
 
   if (backendResult.ok && backendResult.data) {
-    return NextResponse.json(backendResult.data, { status: 200 });
+    return NextResponse.json({ ...backendResult.data, is_demo: false }, { status: 200 });
   }
 
   // 3. Fallback mock if backend unreachable
   if (backendResult.status === 503) {
     const mock = getServerMock();
     const currentUser = await mock.getCurrentUser();
-    return NextResponse.json({ user: currentUser }, { status: 200 });
+    return NextResponse.json({ user: currentUser, is_demo: true }, { status: 200 });
   }
 
   return NextResponse.json({ error: "Unauthorized" }, { status: backendResult.status || 401 });
