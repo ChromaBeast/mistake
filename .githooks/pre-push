@@ -1,0 +1,15 @@
+#!/bin/sh
+set -e
+
+echo "?? [pre-push] Verifying Web build & tests..."
+cd web
+bun run test
+bun run build
+cd ..
+
+echo "?? [pre-push] Verifying Backend tests..."
+cd backend
+go test ./test/...
+cd ..
+
+echo "? [pre-push] Build and test verification passed! Proceeding with push."

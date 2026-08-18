@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+
+echo "?? [pre-commit] Validating Web TypeScript types..."
+cd web
+bun x tsc --noEmit
+cd ..
+
+echo "?? [pre-commit] Running Go vet..."
+cd backend
+go vet ./...
+cd ..
+
+echo "? [pre-commit] All pre-commit checks passed!"
