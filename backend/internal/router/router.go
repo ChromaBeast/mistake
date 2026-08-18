@@ -52,7 +52,8 @@ func SetupRouter(store storage.Store, p *pipeline.Pipeline, wp *pipeline.WorkerP
 		return authMiddleware(tenantGuard(auditMiddleware(middleware.RequirePermission(perm)(http.HandlerFunc(h)))))
 	}
 
-	// Auth sessions
+	// Auth sessions & profile
+	mux.Handle("GET /api/v1/auth/me", wrap(authH.GetMe))
 	mux.Handle("GET /api/v1/auth/sessions", wrap(sessionH.ListSessions))
 	mux.Handle("DELETE /api/v1/auth/sessions/{id}", wrap(sessionH.RevokeSession))
 

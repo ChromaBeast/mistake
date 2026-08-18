@@ -6,9 +6,7 @@ let clientInstance: ApiClient | null = null;
 
 export function getApiClient(): ApiClient {
   if (!clientInstance) {
-    const useMock =
-      process.env.NEXT_PUBLIC_USE_MOCK !== "false" ||
-      typeof window === "undefined";
+    const useMock = process.env.NEXT_PUBLIC_USE_MOCK === "true";
     clientInstance = useMock ? new MockApiClient() : new HttpApiClient();
   }
   return clientInstance;

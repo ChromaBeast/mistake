@@ -205,3 +205,19 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	}
 	RespondJSON(w, http.StatusOK, map[string]string{"message": "Logged out successfully"})
 }
+
+// GetMe returns the authenticated user profile.
+func (h *AuthHandler) GetMe(w http.ResponseWriter, r *http.Request) {
+	tenantID := middleware.GetTenantID(r.Context())
+	userID := middleware.GetUserID(r.Context())
+	if tenantID == "" || userID == "" {
+		RespondError(w, http.StatusUnauthorized, "UNAUTHORIZED", "Unauthorized")
+		return
+	}
+	user, err := h.store.GetUserByID(r.Context(), tenantID, userID)
+	if err != nil || user == nil {
+		RespondError(w, http.StatusNotFound, "NOT_FOUND", "User not found")
+		return
+	}
+	RespondJSON(w, http.StatusOK, user)
+}
