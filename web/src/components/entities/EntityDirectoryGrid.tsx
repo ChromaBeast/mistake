@@ -7,10 +7,12 @@ import { formatPaiseToCompactINR } from "@/lib/formatters/inr";
 import { Building2, ArrowRight } from "lucide-react";
 
 interface EntityDirectoryGridProps {
-  entities: Entity[];
+  entities?: Entity[];
 }
 
-export function EntityDirectoryGrid({ entities }: EntityDirectoryGridProps) {
+export function EntityDirectoryGrid({ entities = [] }: EntityDirectoryGridProps) {
+  const safeEntities = entities || [];
+
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden">
       <Table>
@@ -27,7 +29,7 @@ export function EntityDirectoryGrid({ entities }: EntityDirectoryGridProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {entities.length === 0 ? (
+          {safeEntities.length === 0 ? (
             <TableRow>
               <TableCell colSpan={8} className="text-center py-8 text-muted-foreground text-xs">
                 <div className="flex flex-col items-center justify-center space-y-1">
@@ -38,7 +40,7 @@ export function EntityDirectoryGrid({ entities }: EntityDirectoryGridProps) {
               </TableCell>
             </TableRow>
           ) : (
-            entities.map((ent) => (
+            safeEntities.map((ent) => (
               <TableRow key={ent.id}>
                 <TableCell className="font-semibold text-xs text-foreground">
                   <div className="flex items-center space-x-2">
@@ -55,7 +57,7 @@ export function EntityDirectoryGrid({ entities }: EntityDirectoryGridProps) {
                   {ent.gstin || "—"}
                 </TableCell>
                 <TableCell>
-                  <span className="font-mono tabular-nums text-xs">{ent.aliases.length} aliases</span>
+                  <span className="font-mono tabular-nums text-xs">{(ent.aliases || []).length} aliases</span>
                 </TableCell>
                 <TableCell className="font-mono tabular-nums text-xs font-semibold">
                   {formatPaiseToCompactINR(ent.total_volume_minor)}

@@ -6,8 +6,9 @@ import { Badge } from "@/components/ui/Badge";
 import { formatPaiseToINR } from "@/lib/formatters/inr";
 import { ArrowRight, Building2, AlertTriangle, FileText } from "lucide-react";
 
-export function SearchResultList({ results }: { results: SearchResult[] }) {
-  if (results.length === 0) {
+export function SearchResultList({ results = [] }: { results?: SearchResult[] }) {
+  const safeResults = results || [];
+  if (safeResults.length === 0) {
     return (
       <Card className="p-8 text-center bg-card">
         <p className="text-xs text-muted-foreground">
@@ -30,7 +31,7 @@ export function SearchResultList({ results }: { results: SearchResult[] }) {
 
   return (
     <div className="space-y-3">
-      {results.map((item) => (
+      {safeResults.map((item) => (
         <Card key={item.id} hoverable>
           <CardContent className="p-4 flex items-center justify-between">
             <div className="flex items-start space-x-3">

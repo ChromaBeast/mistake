@@ -23,13 +23,14 @@ export default function WorkspaceListPage() {
     async function load() {
       setIsLoading(true);
       try {
-        const list = await api.getMistakes({
+        const res = await api.getMistakes({
           status: activeTab,
           severity: severityFilter,
         });
-        setMistakes(list);
+        setMistakes(Array.isArray(res) ? res : []);
       } catch (err) {
         console.error(err);
+        setMistakes([]);
       } finally {
         setIsLoading(false);
       }
@@ -45,6 +46,8 @@ export default function WorkspaceListPage() {
     { id: "resolved", label: "Resolved" },
     { id: "dismissed", label: "Dismissed" },
   ];
+
+  const safeMistakes = mistakes || [];
 
   return (
     <div className="space-y-6">
@@ -75,12 +78,12 @@ export default function WorkspaceListPage() {
       <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
 
       {isLoading ? (
-        <div className="border border-border p-8 space-y-4">
+        <div className="space-y-3">
           <Skeleton className="h-10 w-full" />
           <Skeleton className="h-10 w-full" />
           <Skeleton className="h-10 w-full" />
         </div>
-      ) : mistakes.length === 0 ? (
+      ) : safeMistakes.length === 0 ? (
         <div className="border border-border p-12 text-center space-y-3 bg-card">
           <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto" />
           <h3 className="text-sm font-semibold text-foreground">Zero Active Discrepancies Found</h3>
@@ -103,7 +106,7 @@ export default function WorkspaceListPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {mistakes.map((m) => (
+              {safeMistakes.map((m) => (
                 <TableRow key={m.id}>
                   <TableCell className="font-medium text-xs text-foreground">
                     <div>

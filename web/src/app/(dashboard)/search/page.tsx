@@ -21,9 +21,10 @@ export default function SearchPage() {
       setIsLoading(true);
       try {
         const res = await api.search(query);
-        let filtered = res.results;
+        const rawList = res?.results || (Array.isArray(res) ? res : []);
+        let filtered = Array.isArray(rawList) ? rawList : [];
         if (selectedType !== "all") {
-          filtered = filtered.filter((r) => r.type === selectedType || r.subtitle.toLowerCase().includes(selectedType));
+          filtered = filtered.filter((r) => r.type === selectedType || r.subtitle?.toLowerCase().includes(selectedType));
         }
         if (selectedSeverity !== "all") {
           filtered = filtered.filter((r) => r.badge?.toLowerCase() === selectedSeverity.toLowerCase());
@@ -31,6 +32,7 @@ export default function SearchPage() {
         setResults(filtered);
       } catch (err) {
         console.error(err);
+        setResults([]);
       } finally {
         setIsLoading(false);
       }

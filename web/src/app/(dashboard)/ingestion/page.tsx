@@ -21,7 +21,8 @@ export default function IngestionPage() {
 
   const loadSources = async () => {
     try {
-      const list = await api.getDataSources();
+      const res = await api.getDataSources();
+      const list = Array.isArray(res) ? res : [];
       setDataSources(list);
       const inProgress = list.find(
         (d) => d.status === "Processing" || d.status === "Extracting" || d.status === "Analyzing"
@@ -30,6 +31,7 @@ export default function IngestionPage() {
       else if (list.length > 0) setActiveJob(list[0]);
     } catch (err) {
       console.error(err);
+      setDataSources([]);
     } finally {
       setIsLoading(false);
     }

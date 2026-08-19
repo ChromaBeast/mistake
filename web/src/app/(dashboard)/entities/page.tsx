@@ -21,13 +21,14 @@ export default function EntityExplorerPage() {
     async function load() {
       setIsLoading(true);
       try {
-        const list = await api.getEntities({
+        const res = await api.getEntities({
           type: activeTab === "All" ? undefined : activeTab,
           q: searchQuery || undefined,
         });
-        setEntities(list);
+        setEntities(Array.isArray(res) ? res : []);
       } catch (err) {
         console.error(err);
+        setEntities([]);
       } finally {
         setIsLoading(false);
       }

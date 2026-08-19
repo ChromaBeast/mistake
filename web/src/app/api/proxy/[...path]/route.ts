@@ -35,11 +35,15 @@ async function handler(
       body: bodyText,
     });
 
-    if (backendResult.ok && backendResult.data !== null) {
+    if (backendResult.ok) {
       if (path === "dashboard/summary") {
         return NextResponse.json(normalizeDashboardSummary(backendResult.data), { status: backendResult.status });
       }
-      return NextResponse.json(backendResult.data, { status: backendResult.status });
+      const listEndpoints = ["data-sources", "entities", "audit-logs", "mistakes", "users", "retention-policy", "billing/invoices", "entities/review-queue", "search"];
+      if (listEndpoints.some((ep) => path.startsWith(ep)) && backendResult.data === null) {
+        return NextResponse.json([], { status: backendResult.status });
+      }
+      return NextResponse.json(backendResult.data ?? {}, { status: backendResult.status });
     }
 
     // If backend returned any HTTP status (client error or server error), return it directly

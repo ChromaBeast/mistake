@@ -9,13 +9,14 @@ import { formatDate } from "@/lib/formatters/date";
 import { GitMerge, X, FileText, Check } from "lucide-react";
 
 interface ReviewQueueListProps {
-  items: ReviewQueueItem[];
+  items?: ReviewQueueItem[];
   onMerge: (item: ReviewQueueItem) => Promise<void>;
   onReject: (id: string) => Promise<void>;
 }
 
-export function ReviewQueueList({ items, onMerge, onReject }: ReviewQueueListProps) {
-  if (items.length === 0) {
+export function ReviewQueueList({ items = [], onMerge, onReject }: ReviewQueueListProps) {
+  const safeItems = items || [];
+  if (safeItems.length === 0) {
     return (
       <Card className="p-8 text-center bg-card">
         <Check className="h-8 w-8 text-emerald-500 mx-auto mb-2" />
@@ -29,7 +30,7 @@ export function ReviewQueueList({ items, onMerge, onReject }: ReviewQueueListPro
 
   return (
     <div className="space-y-3">
-      {items.map((item) => (
+      {safeItems.map((item) => (
         <Card key={item.id} className="border-border hover:border-slate-300 dark:hover:border-slate-700 transition-colors">
           <CardContent className="p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="space-y-1.5 flex-1">

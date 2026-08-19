@@ -21,11 +21,11 @@ export default function AuditTrailPage() {
     async function load() {
       setIsLoading(true);
       try {
-        const list = await api.getAuditLogs({
+        const res = await api.getAuditLogs({
           action: actionFilter === "all" ? undefined : actionFilter,
           resource_type: resourceFilter === "all" ? undefined : resourceFilter,
         });
-        let filtered = list;
+        let filtered = Array.isArray(res) ? res : [];
         if (actionFilter !== "all") {
           filtered = filtered.filter((l) => l.action === actionFilter);
         }
@@ -35,6 +35,7 @@ export default function AuditTrailPage() {
         setLogs(filtered);
       } catch (err) {
         console.error(err);
+        setLogs([]);
       } finally {
         setIsLoading(false);
       }

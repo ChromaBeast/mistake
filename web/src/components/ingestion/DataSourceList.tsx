@@ -7,12 +7,14 @@ import { formatDate } from "@/lib/formatters/date";
 import { FileText, FileSpreadsheet, RotateCcw, CheckCircle, AlertTriangle, Clock } from "lucide-react";
 
 interface DataSourceListProps {
-  dataSources: DataSource[];
+  dataSources?: DataSource[];
   onRetry: (id: string) => Promise<void>;
   onSelect?: (ds: DataSource) => void;
 }
 
-export function DataSourceList({ dataSources, onRetry, onSelect }: DataSourceListProps) {
+export function DataSourceList({ dataSources = [], onRetry, onSelect }: DataSourceListProps) {
+  const safeList = dataSources || [];
+
   const getStatusBadge = (status: DataSource["status"]) => {
     switch (status) {
       case "Completed":
@@ -49,7 +51,18 @@ export function DataSourceList({ dataSources, onRetry, onSelect }: DataSourceLis
           </TableRow>
         </TableHeader>
         <TableBody>
-          {dataSources.map((ds) => (
+          {safeList.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={6} className="text-center py-8 text-muted-foreground text-xs">
+                <div className="flex flex-col items-center justify-center space-y-1">
+                  <FileText className="h-6 w-6 text-muted-foreground/40 mb-1" />
+                  <p className="font-semibold text-foreground">No documents ingested yet</p>
+                  <p className="text-[11px]">Upload PDF invoices, CSV orders, or Excel ledgers using the dropzone above.</p>
+                </div>
+              </TableCell>
+            </TableRow>
+          ) : (
+            safeList.map((ds) => (
             <TableRow
               key={ds.id}
               onClick={() => onSelect?.(ds)}
@@ -94,9 +107,10 @@ export function DataSourceList({ dataSources, onRetry, onSelect }: DataSourceLis
                 )}
               </TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
-  );
+          ))
+        )}
+      </TableBody>
+    </Table>
+  </div>
+);
 }
