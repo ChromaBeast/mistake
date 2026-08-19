@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { DashboardSummary } from "@/types";
+import { normalizeDashboardSummary } from "@/lib/api/adapters/dashboard-adapter";
 import { KpiSummaryGrid } from "@/components/dashboard/KpiSummaryGrid";
 import { HealthScoreGauge } from "@/components/dashboard/HealthScoreGauge";
 import { LeakageCategoryChart } from "@/components/dashboard/LeakageCategoryChart";
@@ -22,8 +23,12 @@ export default function DashboardPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await api.getDashboardSummary();
-      setSummary(data);
+      const [rawSummary, mistakesList] = await Promise.all([
+        api.getDashboardSummary(),
+        api.getMistakes(),
+      ]);
+      const normalized = normalizeDashboardSummary(rawSummary, mistakesList);
+      setSummary(normalized);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to load dashboard data");
     } finally {

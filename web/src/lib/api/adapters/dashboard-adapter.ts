@@ -81,6 +81,28 @@ export function normalizeDashboardSummary(
   if (byType.date_mismatch) riskDrivers.push("SLA delivery and penalty date delays");
   if (riskDrivers.length === 0) riskDrivers.push("All monitored accounts within normal tolerance");
 
+  // Aggregate from live database findings if available
+  const categoryAmounts: Record<string, number> = {};
+  const monthlyBuckets: Record<string, { detected: number; resolved: number; count: number }> = {};
+
+  for (const m of fallbackMistakes) {
+    categoryAmounts[m.type] = (categoryAmounts[m.type] || 0) + (m.financial_impact_minor || 0);
+
+    const d = new Date(m.detected_at);
+    const monthKey = isNaN(d.getTime())
+      ? "Current"
+      : d.toLocaleDateString("en-IN", { month: "short", year: "numeric" });
+
+    if (!monthlyBuckets[monthKey]) {
+      monthlyBuckets[monthKey] = { detected: 0, resolved: 0, count: 0 };
+    }
+    monthlyBuckets[monthKey].detected += m.financial_impact_minor || 0;
+    monthlyBuckets[monthKey].count += 1;
+    if (m.status === "resolved") {
+      monthlyBuckets[monthKey].resolved += m.financial_impact_minor || 0;
+    }
+  }
+
   // Build Category Breakdown
   const categories: LeakageCategory[] = [];
   const typeKeys = Object.keys(byType);
@@ -89,7 +111,9 @@ export function normalizeDashboardSummary(
   for (const [t, count] of Object.entries(byType)) {
     const meta = CATEGORY_META[t] || { label: t.replace(/_/g, " "), color: "#94A3B8" };
     const pct = totalTypeCount > 0 ? Math.round((count / totalTypeCount) * 100) : 0;
-    const catAmount = totalTypeCount > 0 ? Math.round((totalValue * count) / totalTypeCount) : 0;
+    const catAmount =
+      categoryAmounts[t] ?? (totalTypeCount > 0 ? Math.round((totalValue * count) / totalTypeCount) : 0);
+
     categories.push({
       type: t,
       label: meta.label,
@@ -100,7 +124,7 @@ export function normalizeDashboardSummary(
     });
   }
 
-  // Build Trend Points
+  // Build Trend Points from live months or backend trend
   let trendData: DiscrepancyTrendPoint[] = [];
   if (raw.monthly_leakage_trend && raw.monthly_leakage_trend.length > 0) {
     trendData = raw.monthly_leakage_trend.map((m) => ({
@@ -109,11 +133,22 @@ export function normalizeDashboardSummary(
       resolved_paise: 0,
       leakage_count: m.count,
     }));
+  } else if (Object.keys(monthlyBuckets).length > 0) {
+    trendData = Object.entries(monthlyBuckets).map(([date, b]) => ({
+      date,
+      detected_paise: b.detected,
+      resolved_paise: b.resolved,
+      leakage_count: b.count,
+    }));
   } else {
     trendData = [
       { date: "Current", detected_paise: totalValue, resolved_paise: protectedVal, leakage_count: totalDiscrepancies },
     ];
   }
+
+  const sortedFindings = [...fallbackMistakes].sort(
+    (a, b) => (b.financial_impact_minor || 0) - (a.financial_impact_minor || 0)
+  );
 
   return {
     health_score: {
@@ -132,7 +167,7 @@ export function normalizeDashboardSummary(
     },
     leakage_by_category: categories,
     trend_data: trendData,
-    recent_findings: raw.recent_findings ?? fallbackMistakes,
+    recent_findings: raw.recent_findings ?? sortedFindings,
   };
 }
 
