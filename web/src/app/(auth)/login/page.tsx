@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/context/AuthContext";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { MfaStep } from "@/components/auth/MfaStep";
-import { ArrowRight, Zap, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -31,21 +31,6 @@ export default function LoginPage() {
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Invalid corporate credentials or unauthorized tenant");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleDemoLogin = async (roleEmail: string, rolePassword = "Admin@123456") => {
-    setEmail(roleEmail);
-    setPassword(rolePassword);
-    setIsLoading(true);
-    setError(null);
-    try {
-      await login({ email: roleEmail, password: rolePassword });
-      router.push("/dashboard");
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to launch workspace");
     } finally {
       setIsLoading(false);
     }
@@ -81,31 +66,6 @@ export default function LoginPage() {
         <p className="text-xs sm:text-sm text-muted-foreground">
           Enter your work email and password to access your workspace.
         </p>
-      </div>
-
-      {/* 1-Click Fast-Track Demo Access */}
-      <div className="p-3.5 rounded-xl border border-border/60 bg-muted/20 space-y-2">
-        <div className="flex items-center justify-between text-xs">
-          <span className="font-semibold text-foreground flex items-center gap-1.5">
-            <Zap className="w-3.5 h-3.5 text-amber-500" /> Demo Mode
-          </span>
-          <span className="text-[11px] text-muted-foreground font-mono">Instant Access</span>
-        </div>
-        <button
-          type="button"
-          onClick={() => handleDemoLogin("owner@apexcastings.in", "Admin@123456")}
-          className="w-full py-2 px-3 rounded-lg border border-border/60 bg-card hover:bg-muted/80 text-foreground text-xs font-medium flex items-center justify-between transition-colors"
-        >
-          <span>Sign in as <strong className="font-semibold">Lead Auditor</strong> (Apex Castings)</span>
-          <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />
-        </button>
-      </div>
-
-      <div className="relative flex items-center justify-center">
-        <div className="border-t border-border/50 w-full" />
-        <span className="bg-background px-3 text-[11px] font-mono text-muted-foreground uppercase absolute">
-          or continue with email
-        </span>
       </div>
 
       {/* Form */}
