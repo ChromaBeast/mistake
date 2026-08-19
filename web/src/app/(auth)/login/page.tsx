@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/context/AuthContext";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { MfaStep } from "@/components/auth/MfaStep";
-import { ArrowRight, Sparkles, AlertCircle } from "lucide-react";
+import { ArrowRight, Zap, AlertCircle } from "lucide-react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -76,10 +76,10 @@ export default function LoginPage() {
       {/* Header */}
       <div className="space-y-2">
         <h1 className="text-2xl sm:text-3xl font-bold font-serif tracking-tight text-foreground">
-          Sign in to your ledger
+          Sign in to Mistake
         </h1>
         <p className="text-xs sm:text-sm text-muted-foreground">
-          Enter your corporate credentials to access the audit investigation workspace.
+          Enter your work email and password to access your workspace.
         </p>
       </div>
 
@@ -87,9 +87,9 @@ export default function LoginPage() {
       <div className="p-3.5 rounded-xl border border-border/60 bg-muted/20 space-y-2">
         <div className="flex items-center justify-between text-xs">
           <span className="font-semibold text-foreground flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Evaluation Mode
+            <Zap className="w-3.5 h-3.5 text-amber-500" /> Demo Mode
           </span>
-          <span className="text-[11px] text-muted-foreground font-mono">1-Click Fast Track</span>
+          <span className="text-[11px] text-muted-foreground font-mono">Instant Access</span>
         </div>
         <button
           type="button"
@@ -118,7 +118,7 @@ export default function LoginPage() {
         )}
 
         <Input
-          label="Corporate Work Email"
+          label="Work Email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -136,16 +136,16 @@ export default function LoginPage() {
         />
 
         <Button type="submit" className="w-full h-10 font-semibold" isLoading={isLoading}>
-          Sign in to Workspace
+          Sign In
         </Button>
       </form>
 
       {/* Switch to Signup */}
       <div className="text-center pt-2">
         <p className="text-xs text-muted-foreground">
-          New enterprise organization?{" "}
+          Don&apos;t have an account?{" "}
           <Link href="/signup" className="text-foreground hover:underline font-semibold">
-            Create tenant account
+            Create an account
           </Link>
         </p>
       </div>

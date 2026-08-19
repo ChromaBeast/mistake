@@ -11,7 +11,7 @@ import { RecentFindingsList } from "@/components/dashboard/RecentFindingsList";
 import { Button } from "@/components/ui/Button";
 import { DashboardSkeleton } from "@/components/ui/skeletons/DashboardSkeleton";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
-import { RefreshCw, Sparkles } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 
 export default function DashboardPage() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -52,9 +52,8 @@ export default function DashboardPage() {
         )}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-foreground flex items-center space-x-2">
-              <span>Business Health Dashboard</span>
-              <Sparkles className="h-4 w-4 text-primary" />
+            <h1 className="text-xl font-bold tracking-tight text-foreground">
+              Business Health Dashboard
             </h1>
             <p className="text-xs text-muted-foreground mt-0.5">
               Real-time financial leakage, contradiction risks, and PO-invoice reconciliation overview.

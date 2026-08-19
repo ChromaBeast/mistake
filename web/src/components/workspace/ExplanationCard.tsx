@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import { Sparkles, ArrowRightCircle } from "lucide-react";
+import { FileText, ArrowRightCircle } from "lucide-react";
 
 export function ExplanationCard({
   explanation,
@@ -12,8 +12,8 @@ export function ExplanationCard({
   return (
     <Card className="h-full">
       <CardHeader className="flex flex-row items-center space-x-2 pb-2">
-        <Sparkles className="h-4 w-4 text-primary" />
-        <CardTitle className="text-sm font-semibold">Root Cause Explanation & Remediation</CardTitle>
+        <FileText className="h-4 w-4 text-primary" />
+        <CardTitle className="text-sm font-semibold">Root Cause Analysis & Remediation</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4 text-xs">
         <div>

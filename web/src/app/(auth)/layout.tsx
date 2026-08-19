@@ -33,7 +33,7 @@ export default function AuthLayout({
 
         {/* Form Footer */}
         <div className="pt-6 text-center text-xs text-muted-foreground">
-          <span>Enterprise reconciliation platform for high-volume B2B supply chains.</span>
+          <span>Deterministic financial reconciliation for enterprise supply chains.</span>
         </div>
       </div>
     </div>

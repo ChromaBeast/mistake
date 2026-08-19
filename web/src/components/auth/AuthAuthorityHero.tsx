@@ -70,11 +70,11 @@ export function AuthAuthorityHero() {
       <div className="relative z-10 pt-6 flex items-center justify-between text-xs text-muted-foreground font-mono">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-emerald-500" />
-          <span>Statutory GSTR-2B Math</span>
+          <span>Statutory GSTR-2B Verification</span>
         </div>
         <div className="flex items-center gap-2">
           <Lock className="w-3.5 h-3.5" />
-          <span>256-Bit Ledger Encryption</span>
+          <span>Enterprise-Grade Encryption</span>
         </div>
       </div>
     </div>

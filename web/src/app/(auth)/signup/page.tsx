@@ -37,17 +37,17 @@ export default function SignupPage() {
       {/* Header */}
       <div className="space-y-2">
         <h1 className="text-2xl sm:text-3xl font-bold font-serif tracking-tight text-foreground">
-          Create Tenant Workspace
+          Create your account
         </h1>
         <p className="text-xs sm:text-sm text-muted-foreground">
-          Set up autonomous reconciliation for your supply chain in under 2 minutes.
+          Get started with automated reconciliation in under 2 minutes.
         </p>
       </div>
 
       {/* Trust Callout */}
       <div className="p-3 rounded-xl border border-border/60 bg-muted/20 flex items-center gap-2.5 text-xs text-muted-foreground">
         <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
-        <span>Includes isolated tenant database & full 22-table audit schema.</span>
+        <span>Includes dedicated tenant database & full 22-table audit schema.</span>
       </div>
 
       {/* Form */}
@@ -76,7 +76,7 @@ export default function SignupPage() {
         />
 
         <Input
-          label="Corporate Work Email"
+          label="Work Email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -85,7 +85,7 @@ export default function SignupPage() {
         />
 
         <Input
-          label="Master Password"
+          label="Password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -94,14 +94,14 @@ export default function SignupPage() {
         />
 
         <Button type="submit" className="w-full h-10 font-semibold mt-2" isLoading={isLoading}>
-          Create Account & Tenant
+          Create Account
         </Button>
       </form>
 
       {/* Switch to Login */}
       <div className="text-center pt-2">
         <p className="text-xs text-muted-foreground">
-          Already have tenant credentials?{" "}
+          Already have an account?{" "}
           <Link href="/login" className="text-foreground hover:underline font-semibold">
             Sign In
           </Link>

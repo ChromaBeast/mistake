@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Search, Sun, Moon, Laptop, Menu, Sparkles } from "lucide-react";
+import { Search, Sun, Moon, Laptop, Menu } from "lucide-react";
 import { useTheme } from "@/lib/context/ThemeContext";
 import { useAuth } from "@/lib/context/AuthContext";
 import { NotificationDropdown } from "./NotificationDropdown";
@@ -60,7 +60,7 @@ export function Header({ onOpenSearch, onToggleSidebar }: HeaderProps) {
             title="Evaluation dataset active. Connected to simulated multi-vendor transaction store."
             className="hidden sm:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 font-mono text-[11px] select-none"
           >
-            <Sparkles className="w-3 h-3 text-amber-500 shrink-0" />
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
             <span>Evaluation Sandbox</span>
           </div>
         ) : (
