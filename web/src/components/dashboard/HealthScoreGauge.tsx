@@ -4,8 +4,10 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { ShieldCheck, AlertTriangle, ShieldX } from "lucide-react";
 
-export function HealthScoreGauge({ healthScore }: { healthScore: HealthScore }) {
-  const { score, status, risk_drivers } = healthScore;
+export function HealthScoreGauge({ healthScore }: { healthScore?: Partial<HealthScore> }) {
+  const score = healthScore?.score ?? 100;
+  const status = healthScore?.status ?? "healthy";
+  const risk_drivers = healthScore?.risk_drivers ?? [];
 
   const statusConfig = {
     healthy: {

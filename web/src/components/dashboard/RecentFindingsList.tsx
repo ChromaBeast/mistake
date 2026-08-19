@@ -8,7 +8,9 @@ import { formatPaiseToINR } from "@/lib/formatters/inr";
 import { formatRelativeTime } from "@/lib/formatters/date";
 import { ArrowRight, AlertTriangle } from "lucide-react";
 
-export function RecentFindingsList({ findings }: { findings: Mistake[] }) {
+export function RecentFindingsList({ findings = [] }: { findings?: Mistake[] }) {
+  const safeFindings = findings || [];
+
   const severityBadge = (sev: Mistake["severity"]) => {
     switch (sev) {
       case "critical":
@@ -35,7 +37,7 @@ export function RecentFindingsList({ findings }: { findings: Mistake[] }) {
         </Link>
       </CardHeader>
       <CardContent className="p-0">
-        {findings.length === 0 ? (
+        {safeFindings.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-8 text-center space-y-2">
             <div className="p-3 rounded-full bg-muted text-muted-foreground">
               <AlertTriangle className="h-5 w-5" />
@@ -54,7 +56,7 @@ export function RecentFindingsList({ findings }: { findings: Mistake[] }) {
           </div>
         ) : (
           <div className="divide-y divide-border/60">
-            {findings.map((item) => (
+            {safeFindings.map((item) => (
               <Link
                 key={item.id}
                 href={`/workspace/${item.id}`}

@@ -3,8 +3,9 @@ import { DiscrepancyTrendPoint } from "@/types";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { formatPaiseToCompactINR } from "@/lib/formatters/inr";
 
-export function DiscrepancyTrendChart({ data }: { data: DiscrepancyTrendPoint[] }) {
-  const maxPaise = Math.max(...data.map((d) => d.detected_paise), 1);
+export function DiscrepancyTrendChart({ data = [] }: { data?: DiscrepancyTrendPoint[] }) {
+  const safeData = data && data.length > 0 ? data : [{ date: "Current", detected_paise: 0, resolved_paise: 0, leakage_count: 0 }];
+  const maxPaise = Math.max(...safeData.map((d) => d.detected_paise || 0), 1);
 
   return (
     <Card className="h-full">
@@ -23,7 +24,7 @@ export function DiscrepancyTrendChart({ data }: { data: DiscrepancyTrendPoint[] 
       </CardHeader>
       <CardContent>
         <div className="flex h-48 items-end space-x-6 pt-4">
-          {data.map((point, idx) => {
+          {safeData.map((point, idx) => {
             const detectedHeight = Math.round((point.detected_paise / maxPaise) * 100);
             const resolvedHeight = Math.round((point.resolved_paise / maxPaise) * 100);
 

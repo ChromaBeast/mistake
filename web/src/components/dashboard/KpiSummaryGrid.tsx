@@ -2,35 +2,42 @@ import React from "react";
 import { KpiSummary } from "@/types";
 import { formatPaiseToCompactINR, formatPaiseToINR } from "@/lib/formatters/inr";
 
-export function KpiSummaryGrid({ kpi }: { kpi: KpiSummary }) {
+export function KpiSummaryGrid({ kpi }: { kpi?: Partial<KpiSummary> }) {
+  const totalLeakage = kpi?.total_leakage_minor ?? 0;
+  const openContradictions = kpi?.open_contradictions_count ?? 0;
+  const highRiskOrders = kpi?.high_risk_orders_count ?? 0;
+  const missingEvidence = kpi?.missing_evidence_count ?? 0;
+  const valueProtected = kpi?.value_protected_minor ?? 0;
+  const resolutionRate = kpi?.resolution_rate_percent ?? 100;
+
   const metrics = [
     {
       title: "Total Financial Leakage",
-      value: formatPaiseToCompactINR(kpi.total_leakage_minor),
-      subtext: formatPaiseToINR(kpi.total_leakage_minor),
+      value: formatPaiseToCompactINR(totalLeakage),
+      subtext: formatPaiseToINR(totalLeakage),
       highlight: "text-rose-600 dark:text-rose-400",
     },
     {
       title: "Open Contradictions",
-      value: kpi.open_contradictions_count.toString(),
-      subtext: `${kpi.high_risk_orders_count} high-risk orders`,
+      value: openContradictions.toString(),
+      subtext: `${highRiskOrders} high-risk orders`,
       highlight: "text-amber-600 dark:text-amber-400",
     },
     {
       title: "Missing Evidence (GRN/PO)",
-      value: kpi.missing_evidence_count.toString(),
+      value: missingEvidence.toString(),
       subtext: "Orphan vendor invoices",
       highlight: "text-foreground",
     },
     {
       title: "Protected Capital (Resolved)",
-      value: formatPaiseToCompactINR(kpi.value_protected_minor),
-      subtext: formatPaiseToINR(kpi.value_protected_minor),
+      value: formatPaiseToCompactINR(valueProtected),
+      subtext: formatPaiseToINR(valueProtected),
       highlight: "text-emerald-600 dark:text-emerald-400",
     },
     {
       title: "Triage Resolution Rate",
-      value: `${kpi.resolution_rate_percent}%`,
+      value: `${resolutionRate}%`,
       subtext: "SLA compliance",
       highlight: "text-foreground",
     },

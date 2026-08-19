@@ -26,6 +26,8 @@ import {
   SearchResponse,
 } from "@/types";
 
+import { normalizeDashboardSummary } from "./adapters/dashboard-adapter";
+
 export class HttpApiClient implements ApiClient {
   private baseUrl = "/api/proxy";
 
@@ -126,7 +128,8 @@ export class HttpApiClient implements ApiClient {
 
   // Intelligence Dashboard & Global Search
   async getDashboardSummary(serverToken?: string): Promise<DashboardSummary> {
-    return this.req<DashboardSummary>("/dashboard/summary", {}, serverToken);
+    const raw = await this.req<any>("/dashboard/summary", {}, serverToken);
+    return normalizeDashboardSummary(raw);
   }
   async search(query: string, type?: string): Promise<SearchResponse> {
     return this.req<SearchResponse>(`/search?q=${encodeURIComponent(query)}&type=${type || ""}`);

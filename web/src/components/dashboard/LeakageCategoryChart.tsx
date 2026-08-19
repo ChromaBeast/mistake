@@ -3,14 +3,19 @@ import { LeakageCategory } from "@/types";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { formatPaiseToCompactINR, formatPaiseToINR } from "@/lib/formatters/inr";
 
-export function LeakageCategoryChart({ categories }: { categories: LeakageCategory[] }) {
+export function LeakageCategoryChart({ categories = [] }: { categories?: LeakageCategory[] }) {
+  const safeCategories = categories || [];
+
   return (
     <Card className="h-full">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-semibold">Financial Leakage by Category</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {categories.map((cat) => (
+        {safeCategories.length === 0 ? (
+          <p className="text-xs text-muted-foreground py-4 text-center">No category discrepancies detected.</p>
+        ) : (
+          safeCategories.map((cat) => (
           <div key={cat.type} className="space-y-1.5">
             <div className="flex items-center justify-between text-xs">
               <span className="font-medium text-foreground flex items-center space-x-1.5">
@@ -38,8 +43,9 @@ export function LeakageCategoryChart({ categories }: { categories: LeakageCatego
               />
             </div>
           </div>
-        ))}
-      </CardContent>
+        ))
+      )}
+    </CardContent>
     </Card>
   );
 }

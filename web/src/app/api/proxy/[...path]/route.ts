@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { tryFetchBackend } from "@/lib/api/server-api";
 import { handleMockProxyFallback } from "@/lib/api/mock/proxy-fallback";
+import { normalizeDashboardSummary } from "@/lib/api/adapters/dashboard-adapter";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +42,9 @@ async function handler(
     });
 
     if (backendResult.ok && backendResult.data !== null) {
+      if (path === "dashboard/summary") {
+        return NextResponse.json(normalizeDashboardSummary(backendResult.data), { status: backendResult.status });
+      }
       return NextResponse.json(backendResult.data, { status: backendResult.status });
     }
 
