@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   LayoutDashboard,
@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { NavItem } from "./NavItem";
 import { TenantSwitcher } from "./TenantSwitcher";
+import { api } from "@/lib/api";
 import { cn } from "@/lib/utils/cn";
 
 export interface SidebarProps {
@@ -22,9 +23,28 @@ export interface SidebarProps {
 }
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
+  const [activeCount, setActiveCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    async function fetchCount() {
+      try {
+        const list = await api.getMistakes({ status: "detected" });
+        if (Array.isArray(list)) setActiveCount(list.length);
+      } catch {
+        setActiveCount(null);
+      }
+    }
+    fetchCount();
+  }, []);
+
   const mainNav = [
     { href: "/dashboard", label: "Executive Overview", icon: <LayoutDashboard className="h-3.5 w-3.5" /> },
-    { href: "/workspace", label: "3-Way Investigation", icon: <FileSearch className="h-3.5 w-3.5" />, badge: "4 Active" },
+    {
+      href: "/workspace",
+      label: "3-Way Investigation",
+      icon: <FileSearch className="h-3.5 w-3.5" />,
+      badge: activeCount !== null && activeCount > 0 ? `${activeCount} Active` : undefined,
+    },
     { href: "/ingestion", label: "Ingestion Pipeline", icon: <FileUp className="h-3.5 w-3.5" /> },
     { href: "/entities", label: "Entity Directory", icon: <Users className="h-3.5 w-3.5" /> },
     { href: "/search", label: "Search & Lookup", icon: <Search className="h-3.5 w-3.5" /> },

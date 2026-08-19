@@ -24,6 +24,7 @@ import {
   AuditFilter,
   DashboardSummary,
   SearchResponse,
+  Notification,
 } from "@/types";
 
 import { normalizeDashboardSummary } from "./adapters/dashboard-adapter";
@@ -175,5 +176,18 @@ export class HttpApiClient implements ApiClient {
   async getInvoices(): Promise<Invoice[]> {
     const res = await this.req<Invoice[]>("/billing/invoices");
     return Array.isArray(res) ? res : [];
+  }
+  async checkoutSubscription(planTier: string) {
+    return this.req<{ session_id: string; plan_tier: string; amount_minor: number; status: string }>("/billing/checkout", {
+      method: "POST",
+      body: JSON.stringify({ plan_tier: planTier }),
+    });
+  }
+  async getNotifications(): Promise<Notification[]> {
+    const res = await this.req<Notification[]>("/notifications");
+    return Array.isArray(res) ? res : [];
+  }
+  async markNotificationRead(id: string): Promise<void> {
+    await this.req<void>(`/notifications/${id}/read`, { method: "PATCH" });
   }
 }

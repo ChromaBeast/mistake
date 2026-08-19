@@ -49,5 +49,14 @@ describe("ApiClient Contract Test", () => {
 
     expect(typeof httpClient.getSubscription).toBe("function");
     expect(typeof mockClient.getSubscription).toBe("function");
+
+    expect(typeof httpClient.getNotifications).toBe("function");
+    expect(typeof mockClient.getNotifications).toBe("function");
+
+    expect(typeof httpClient.markNotificationRead).toBe("function");
+    expect(typeof mockClient.markNotificationRead).toBe("function");
+
+    expect(typeof httpClient.checkoutSubscription).toBe("function");
+    expect(typeof mockClient.checkoutSubscription).toBe("function");
   });
 });

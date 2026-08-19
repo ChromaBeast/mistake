@@ -22,6 +22,7 @@ import {
   AuditFilter,
   DashboardSummary,
   SearchResponse,
+  Notification,
 } from "@/types";
 
 export interface ApiClient {
@@ -59,9 +60,11 @@ export interface ApiClient {
   updateMistakeStatus(id: string, status: MistakeStatus, reason?: string): Promise<Mistake>;
   assignMistake(id: string, userId: string): Promise<Mistake>;
 
-  // Dashboard & Search
+  // Dashboard, Search & Notifications
   getDashboardSummary(): Promise<DashboardSummary>;
   search(query: string, type?: string): Promise<SearchResponse>;
+  getNotifications(): Promise<Notification[]>;
+  markNotificationRead(id: string): Promise<void>;
 
   // Audit & Retention & Billing
   getAuditLogs(filter?: AuditFilter): Promise<AuditLog[]>;
@@ -69,4 +72,5 @@ export interface ApiClient {
   updateRetentionPolicy(id: string, days: number): Promise<RetentionPolicy>;
   getSubscription(): Promise<Subscription>;
   getInvoices(): Promise<Invoice[]>;
+  checkoutSubscription(planTier: string): Promise<{ session_id: string; plan_tier: string; amount_minor: number; status: string }>;
 }

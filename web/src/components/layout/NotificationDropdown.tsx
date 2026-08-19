@@ -1,43 +1,96 @@
 "use client";
 
-import React, { useState } from "react";
-import { Bell, AlertCircle, CheckCircle2, FileText } from "lucide-react";
-import { Badge } from "@/components/ui/Badge";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Bell, AlertCircle, CheckCircle2, FileText, Sparkles } from "lucide-react";
 import { Dropdown } from "@/components/ui/Dropdown";
+import { api } from "@/lib/api";
+import { Notification, Mistake } from "@/types";
+import { formatPaiseToINR } from "@/lib/formatters/inr";
+
+interface DisplayNotification {
+  id: string;
+  title: string;
+  desc: string;
+  icon: React.ReactNode;
+  route?: string;
+  read: boolean;
+}
 
 export function NotificationDropdown() {
-  const [unreadCount, setUnreadCount] = useState(2);
+  const router = useRouter();
+  const [items, setItems] = useState<DisplayNotification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
 
-  const notifications = [
-    {
-      id: "notif-1",
-      title: "New High Severity Discrepancy",
-      desc: "₹2.5L quantity variance flagged in Tata Steel PO-9921",
-      icon: <AlertCircle className="h-4 w-4 text-rose-500" />,
-      time: "10m ago",
-    },
-    {
-      id: "notif-2",
-      title: "Ingestion Batch Completed",
-      desc: "1,420 SAP records processed successfully",
-      icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />,
-      time: "2h ago",
-    },
-    {
-      id: "notif-3",
-      title: "Entity Merge Review Required",
-      desc: "Tata Steels B2B Ltd queued for canonical resolution",
-      icon: <FileText className="h-4 w-4 text-indigo-500" />,
-      time: "4h ago",
-    },
-  ];
+  const loadNotifications = async () => {
+    try {
+      const [backendNotifs, mistakes] = await Promise.all([
+        api.getNotifications().catch(() => [] as Notification[]),
+        api.getMistakes({ status: "detected" }).catch(() => [] as Mistake[]),
+      ]);
 
-  const items = notifications.map((n) => ({
+      const displayList: DisplayNotification[] = [];
+
+      // 1. Add any direct notifications from backend
+      for (const n of backendNotifs) {
+        displayList.push({
+          id: n.id,
+          title: n.title,
+          desc: n.message,
+          icon: <AlertCircle className="h-4 w-4 text-rose-500" />,
+          read: n.read,
+        });
+      }
+
+      // 2. Add dynamic notifications for real detected findings in database
+      for (const m of mistakes.slice(0, 4)) {
+        displayList.push({
+          id: `mistake-${m.id}`,
+          title: `${m.severity.toUpperCase()} Discrepancy: ${m.title}`,
+          desc: `${formatPaiseToINR(m.financial_impact_minor)} variance in ${m.entity_name}`,
+          icon: <AlertCircle className="h-4 w-4 text-amber-500" />,
+          route: `/workspace/${m.id}`,
+          read: false,
+        });
+      }
+
+      if (displayList.length === 0) {
+        displayList.push({
+          id: "all-clear",
+          title: "All Audits Current",
+          desc: "Zero unreconciled contradictions in pipeline",
+          icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />,
+          read: true,
+        });
+      }
+
+      setItems(displayList);
+      setUnreadCount(displayList.filter((d) => !d.read).length);
+    } catch {
+      // Fallback cleanly
+      setItems([]);
+    }
+  };
+
+  useEffect(() => {
+    loadNotifications();
+  }, []);
+
+  const dropdownItems = items.map((n) => ({
     id: n.id,
     label: `${n.title} - ${n.desc}`,
     icon: n.icon,
-    onClick: () => {
-      if (unreadCount > 0) setUnreadCount(unreadCount - 1);
+    onClick: async () => {
+      if (!n.read) {
+        if (!n.id.startsWith("mistake-") && n.id !== "all-clear") {
+          await api.markNotificationRead(n.id).catch(() => {});
+        }
+        setItems((prev) => prev.map((item) => (item.id === n.id ? { ...item, read: true } : item)));
+        setUnreadCount((prev) => Math.max(0, prev - 1));
+      }
+      if (n.route) {
+        router.push(n.route);
+      }
     },
   }));
 
@@ -48,17 +101,17 @@ export function NotificationDropdown() {
         <button
           type="button"
           aria-label="Notifications"
-          className="relative rounded-lg p-2 text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
+          className="relative rounded-lg p-2 min-h-[40px] min-w-[40px] flex items-center justify-center text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
         >
           <Bell className="h-4 w-4" />
           {unreadCount > 0 && (
-            <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">
+            <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">
               {unreadCount}
             </span>
           )}
         </button>
       }
-      items={items}
+      items={dropdownItems}
     />
   );
 }

@@ -39,7 +39,18 @@ async function handler(
       if (path === "dashboard/summary") {
         return NextResponse.json(normalizeDashboardSummary(backendResult.data), { status: backendResult.status });
       }
-      const listEndpoints = ["data-sources", "entities", "audit-logs", "mistakes", "users", "retention-policy", "billing/invoices", "entities/review-queue", "search"];
+      const listEndpoints = [
+        "data-sources",
+        "entities",
+        "audit-logs",
+        "mistakes",
+        "users",
+        "retention-policy",
+        "billing/invoices",
+        "entities/review-queue",
+        "search",
+        "notifications",
+      ];
       if (listEndpoints.some((ep) => path.startsWith(ep)) && backendResult.data === null) {
         return NextResponse.json([], { status: backendResult.status });
       }

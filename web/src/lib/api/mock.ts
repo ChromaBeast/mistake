@@ -185,4 +185,9 @@ export class MockApiClient implements ApiClient {
 
   async getSubscription() { return initialSubscription; }
   async getInvoices() { return initialInvoices; }
+  async checkoutSubscription(planTier: string) {
+    return { session_id: `chk_${Date.now()}`, plan_tier: planTier, amount_minor: 1499900, status: "completed" };
+  }
+  async getNotifications() { return []; }
+  async markNotificationRead(_id: string) {}
 }

@@ -13,25 +13,39 @@ export default function BillingSettingsPage() {
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUpgrading, setIsUpgrading] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const [sub, invs] = await Promise.all([
-          api.getSubscription(),
-          api.getInvoices(),
-        ]);
-        setSubscription(sub);
-        setInvoices(invs);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setIsLoading(false);
-      }
+  const load = async () => {
+    try {
+      const [sub, invs] = await Promise.all([
+        api.getSubscription(),
+        api.getInvoices(),
+      ]);
+      setSubscription(sub);
+      setInvoices(invs);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  useEffect(() => {
     load();
   }, []);
+
+  const handleUpgrade = async (planTier: string) => {
+    setIsUpgrading(true);
+    try {
+      await api.checkoutSubscription(planTier);
+      await load();
+    } catch (err) {
+      console.error("Plan upgrade failed:", err);
+    } finally {
+      setIsUpgrading(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -55,7 +69,12 @@ export default function BillingSettingsPage() {
       {isLoading || !subscription ? (
         <Skeleton className="h-64 w-full rounded-xl" />
       ) : (
-        <BillingOverview subscription={subscription} invoices={invoices} />
+        <BillingOverview
+          subscription={subscription}
+          invoices={invoices}
+          onUpgrade={handleUpgrade}
+          isUpgrading={isUpgrading}
+        />
       )}
     </div>
   );

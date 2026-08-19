@@ -11,9 +11,18 @@ import { CreditCard, CheckCircle2, Download } from "lucide-react";
 interface BillingOverviewProps {
   subscription: Subscription;
   invoices: Invoice[];
+  onUpgrade?: (tierId: string) => Promise<void>;
+  isUpgrading?: boolean;
 }
 
-export function BillingOverview({ subscription, invoices }: BillingOverviewProps) {
+export function BillingOverview({
+  subscription,
+  invoices,
+  onUpgrade,
+  isUpgrading,
+}: BillingOverviewProps) {
+  const currentTier = (subscription?.plan_tier || "growth").toLowerCase();
+
   const tiers = [
     {
       id: "starter",
@@ -23,10 +32,9 @@ export function BillingOverview({ subscription, invoices }: BillingOverviewProps
     },
     {
       id: "growth",
-      name: "Growth (Active)",
+      name: "Growth",
       price_minor: 1499900,
       description: "For multi-tier enterprises with real-time discrepancy detection & timeline.",
-      isCurrent: true,
     },
     {
       id: "enterprise",
@@ -39,38 +47,43 @@ export function BillingOverview({ subscription, invoices }: BillingOverviewProps
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {tiers.map((t) => (
-          <Card
-            key={t.id}
-            className={`flex flex-col justify-between ${
-              t.isCurrent ? "border-primary ring-2 ring-primary/20 bg-card" : "bg-card"
-            }`}
-          >
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-semibold">{t.name}</CardTitle>
-                {t.isCurrent && <Badge variant="success">Current Plan</Badge>}
-              </div>
-              <div className="pt-2">
-                <span className="text-2xl font-bold font-mono tabular-nums text-foreground">
-                  {formatPaiseToINR(t.price_minor, { showDecimals: false })}
-                </span>
-                <span className="text-xs text-muted-foreground"> / month</span>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4 pt-2">
-              <p className="text-xs text-muted-foreground">{t.description}</p>
-              <Button
-                size="sm"
-                variant={t.isCurrent ? "outline" : "primary"}
-                className="w-full"
-                disabled={t.isCurrent}
-              >
-                {t.isCurrent ? "Active Subscription" : "Upgrade Plan"}
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
+        {tiers.map((t) => {
+          const isCurrent = currentTier === t.id;
+          return (
+            <Card
+              key={t.id}
+              className={`flex flex-col justify-between ${
+                isCurrent ? "border-primary ring-2 ring-primary/20 bg-card" : "bg-card"
+              }`}
+            >
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-semibold">{t.name}</CardTitle>
+                  {isCurrent && <Badge variant="success">Current Plan</Badge>}
+                </div>
+                <div className="pt-2">
+                  <span className="text-2xl font-bold font-mono tabular-nums text-foreground">
+                    {formatPaiseToINR(t.price_minor, { showDecimals: false })}
+                  </span>
+                  <span className="text-xs text-muted-foreground"> / month</span>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4 pt-2">
+                <p className="text-xs text-muted-foreground">{t.description}</p>
+                <Button
+                  size="sm"
+                  variant={isCurrent ? "outline" : "primary"}
+                  className="w-full"
+                  disabled={isCurrent || isUpgrading}
+                  isLoading={isUpgrading && !isCurrent}
+                  onClick={() => onUpgrade?.(t.id)}
+                >
+                  {isCurrent ? "Active Subscription" : "Upgrade Plan"}
+                </Button>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
       <Card>

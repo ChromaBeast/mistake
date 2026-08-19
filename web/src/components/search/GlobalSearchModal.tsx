@@ -40,7 +40,7 @@ export function GlobalSearchModal({
     const timer = setTimeout(async () => {
       try {
         const res = await api.search(query);
-        setResults(res.results);
+        setResults(res?.results || (Array.isArray(res) ? res : []));
       } catch (err) {
         console.error(err);
       }

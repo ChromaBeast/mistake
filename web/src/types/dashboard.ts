@@ -39,3 +39,21 @@ export interface DashboardSummary {
   trend_data: DiscrepancyTrendPoint[];
   recent_findings: Mistake[];
 }
+
+export type NotificationType =
+  | "mistake_detected"
+  | "mistake_assigned"
+  | "review_required"
+  | "pipeline_failed";
+
+export interface Notification {
+  id: string;
+  tenant_id: string;
+  user_id?: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  resource?: string;
+  read: boolean;
+  created_at: string;
+}
