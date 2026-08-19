@@ -32,15 +32,15 @@ export function AuditFilterBar({
   ];
 
   return (
-    <div className="flex flex-wrap items-center gap-3 p-3 rounded-xl border border-border bg-card">
-      <div className="w-48">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 rounded-xl border border-border bg-card">
+      <div className="w-full sm:w-56">
         <Select
           options={actions}
           value={actionFilter}
           onChange={(e) => onActionChange(e.target.value)}
         />
       </div>
-      <div className="w-48">
+      <div className="w-full sm:w-48">
         <Select
           options={resources}
           value={resourceFilter}

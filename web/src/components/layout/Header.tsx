@@ -35,19 +35,20 @@ export function Header({ onOpenSearch, onToggleSidebar }: HeaderProps) {
             type="button"
             onClick={onToggleSidebar}
             aria-label="Toggle navigation drawer"
-            className="lg:hidden rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+            className="lg:hidden rounded-lg p-2 min-h-[40px] min-w-[40px] flex items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
           >
             <Menu className="h-5 w-5" />
           </button>
         )}
         <button
           onClick={onOpenSearch}
-          className="flex items-center space-x-2.5 rounded-lg border border-border/60 bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors w-44 sm:w-60 md:w-72 justify-between"
+          className="flex items-center space-x-2 rounded-lg border border-border/60 bg-muted/40 px-2.5 sm:px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors w-28 xs:w-36 sm:w-60 md:w-72 justify-between"
           aria-label="Global search shortcut"
         >
-          <div className="flex items-center space-x-2">
-            <Search className="h-3.5 w-3.5" />
-            <span>Search invoices, POs, vendors...</span>
+          <div className="flex items-center space-x-2 min-w-0">
+            <Search className="h-3.5 w-3.5 shrink-0" />
+            <span className="truncate hidden sm:inline">Search invoices, POs, vendors...</span>
+            <span className="sm:hidden text-xs">Search...</span>
           </div>
           <kbd className="hidden rounded bg-card px-1.5 py-0.5 text-[10px] font-mono border border-border/60 sm:inline-block">
             ⌘K

@@ -51,9 +51,9 @@ export function TriageActionBar({
   };
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl border border-border bg-card shadow-sm">
-      <div className="flex items-center space-x-2">
-        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-border bg-card shadow-xs">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mr-1">
           Triage Actions:
         </span>
         {actionButton("Verify Finding", "verified", "primary", <Check className="h-3.5 w-3.5" />)}
@@ -61,7 +61,7 @@ export function TriageActionBar({
         {actionButton("Dismiss Discrepancy", "dismissed", "danger", <XCircle className="h-3.5 w-3.5" />)}
       </div>
 
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/50">
         <span className="text-xs text-muted-foreground">Assignee:</span>
         <span className="text-xs font-semibold text-foreground px-2.5 py-1 rounded-md bg-secondary border border-border">
           {mistake.assigned_to_name || "Unassigned"}

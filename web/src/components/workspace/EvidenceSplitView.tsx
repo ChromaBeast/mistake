@@ -50,7 +50,7 @@ export function EvidenceSplitView({ evidence }: { evidence: EvidenceRef[] }) {
           </CardHeader>
           <CardContent className="p-4 space-y-3">
             {/* Simulated Document Canvas with Bounding Highlight */}
-            <div className="relative h-56 rounded-lg bg-slate-900/10 dark:bg-slate-950/60 border border-border p-4 font-mono text-xs overflow-hidden flex flex-col justify-between">
+            <div className="relative min-h-[14rem] h-auto rounded-lg bg-slate-900/10 dark:bg-slate-950/60 border border-border p-4 font-mono text-xs overflow-hidden flex flex-col justify-between gap-3">
               <div className="text-[11px] text-muted-foreground/80 space-y-1">
                 <p className="font-semibold text-foreground/90">{leftDoc.document_type} • OFFICIAL RECORD</p>
                 <p>Date: {new Date(leftDoc.observed_at).toLocaleDateString("en-IN")}</p>
@@ -67,7 +67,7 @@ export function EvidenceSplitView({ evidence }: { evidence: EvidenceRef[] }) {
                 <span className="text-[10px] text-muted-foreground uppercase block font-sans">
                   Extracted Line Snippet:
                 </span>
-                <p className="text-xs font-semibold text-foreground mt-0.5">
+                <p className="text-xs font-semibold text-foreground mt-0.5 break-words">
                   {leftDoc.raw_snippet || leftDoc.extracted_value}
                 </p>
               </div>
@@ -89,7 +89,7 @@ export function EvidenceSplitView({ evidence }: { evidence: EvidenceRef[] }) {
               <Badge variant="danger" size="sm">{rightDoc.field_name}</Badge>
             </CardHeader>
             <CardContent className="p-4 space-y-3">
-              <div className="relative h-56 rounded-lg bg-slate-900/10 dark:bg-slate-950/60 border border-border p-4 font-mono text-xs overflow-hidden flex flex-col justify-between">
+              <div className="relative min-h-[14rem] h-auto rounded-lg bg-slate-900/10 dark:bg-slate-950/60 border border-border p-4 font-mono text-xs overflow-hidden flex flex-col justify-between gap-3">
                 <div className="text-[11px] text-muted-foreground/80 space-y-1">
                   <p className="font-semibold text-foreground/90">{rightDoc.document_type} • CONTRADICTION</p>
                   <p>Date: {new Date(rightDoc.observed_at).toLocaleDateString("en-IN")}</p>
@@ -106,7 +106,7 @@ export function EvidenceSplitView({ evidence }: { evidence: EvidenceRef[] }) {
                   <span className="text-[10px] text-muted-foreground uppercase block font-sans">
                     Extracted Line Snippet:
                   </span>
-                  <p className="text-xs font-semibold text-rose-600 dark:text-rose-400 mt-0.5">
+                  <p className="text-xs font-semibold text-rose-600 dark:text-rose-400 mt-0.5 break-words">
                     {rightDoc.raw_snippet || rightDoc.extracted_value}
                   </p>
                 </div>

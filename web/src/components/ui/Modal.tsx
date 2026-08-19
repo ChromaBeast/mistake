@@ -55,14 +55,14 @@ export function Modal({
       />
       <div
         className={cn(
-          "relative w-full rounded-xl bg-card border border-border p-6 shadow-2xl z-10 max-h-[90vh] overflow-y-auto",
+          "relative w-full rounded-xl bg-card border border-border p-4 sm:p-6 shadow-2xl z-10 max-h-[90vh] overflow-y-auto",
           maxWClasses[maxWidth]
         )}
       >
         <div className="flex items-center justify-between pb-3 border-b border-border/60">
           <div>
-            {title && <h2 className="text-lg font-semibold text-foreground">{title}</h2>}
-            {description && <p className="text-sm text-muted-foreground mt-0.5">{description}</p>}
+            {title && <h2 className="text-base sm:text-lg font-semibold text-foreground">{title}</h2>}
+            {description && <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">{description}</p>}
           </div>
           <button
             onClick={onClose}

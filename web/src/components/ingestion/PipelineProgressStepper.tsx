@@ -25,8 +25,8 @@ export function PipelineProgressStepper({ status }: { status: PipelineState }) {
   const isFailed = status === "Failed";
 
   return (
-    <div className="w-full py-2">
-      <div className="flex items-center justify-between">
+    <div className="w-full py-2 overflow-x-auto">
+      <div className="flex items-center justify-between min-w-[280px]">
         {steps.map((step, idx) => {
           const isDone = currentIndex > idx || status === "Completed";
           const isCurrent = currentIndex === idx && !isFailed;
@@ -36,7 +36,7 @@ export function PipelineProgressStepper({ status }: { status: PipelineState }) {
               <div className="flex flex-col items-center space-y-1">
                 <div
                   className={cn(
-                    "flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold transition-all",
+                    "flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold transition-all shrink-0",
                     isDone && "bg-emerald-500 text-white",
                     isCurrent && "bg-primary text-white ring-4 ring-primary/20",
                     !isDone && !isCurrent && "bg-secondary text-muted-foreground border border-border",
@@ -55,7 +55,7 @@ export function PipelineProgressStepper({ status }: { status: PipelineState }) {
                 </div>
                 <span
                   className={cn(
-                    "text-[10px] font-medium",
+                    "text-[9px] sm:text-[10px] font-medium whitespace-nowrap",
                     isDone ? "text-emerald-500" : isCurrent ? "text-primary font-semibold" : "text-muted-foreground"
                   )}
                 >

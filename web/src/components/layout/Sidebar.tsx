@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import {
   LayoutDashboard,
-  UploadCloud,
+  FileUp,
   FileSearch,
   Users,
   Search,
@@ -25,7 +25,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const mainNav = [
     { href: "/dashboard", label: "Executive Overview", icon: <LayoutDashboard className="h-3.5 w-3.5" /> },
     { href: "/workspace", label: "3-Way Investigation", icon: <FileSearch className="h-3.5 w-3.5" />, badge: "4 Active" },
-    { href: "/ingestion", label: "Ingestion Pipeline", icon: <UploadCloud className="h-3.5 w-3.5" /> },
+    { href: "/ingestion", label: "Ingestion Pipeline", icon: <FileUp className="h-3.5 w-3.5" /> },
     { href: "/entities", label: "Entity Directory", icon: <Users className="h-3.5 w-3.5" /> },
     { href: "/search", label: "Search & Lookup", icon: <Search className="h-3.5 w-3.5" /> },
     { href: "/audit", label: "Statutory Audit Log", icon: <History className="h-3.5 w-3.5" /> },

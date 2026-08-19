@@ -2,16 +2,15 @@
 
 import React, { useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import { DataSource } from "@/types";
+import { DataSource, IngestionError } from "@/types";
 import { UploadDropzone } from "@/components/ingestion/UploadDropzone";
 import { PipelineProgressStepper } from "@/components/ingestion/PipelineProgressStepper";
 import { DataSourceList } from "@/components/ingestion/DataSourceList";
 import { ErrorDiagnosticsCard } from "@/components/ingestion/ErrorDiagnosticsCard";
-import { sampleIngestionErrors } from "@/lib/api/mock/data-sources";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { IngestionSkeleton } from "@/components/ui/skeletons/IngestionSkeleton";
-import { UploadCloud, Layers } from "lucide-react";
+import { FileUp, Layers, CheckCircle2 } from "lucide-react";
 
 export default function IngestionPage() {
   const [dataSources, setDataSources] = useState<DataSource[]>([]);
@@ -81,12 +80,21 @@ export default function IngestionPage() {
     return <IngestionSkeleton />;
   }
 
+  const failedSources = dataSources.filter((d) => d.status === "Failed" || !!d.error_message);
+  const diagnostics: IngestionError[] = failedSources.map((ds) => ({
+    file_name: ds.file_name,
+    code: "INGEST_PARSE_ERROR",
+    title: "Document Parsing / Extraction Variance",
+    description: ds.error_message || "Encountered formatting or syntax error during OCR / tabular normalization.",
+    recommended_action: "Verify file encoding, ensure headers match standard PO/Invoice formats, and re-upload.",
+  }));
+
   return (
     <ErrorBoundary fallbackTitle="Could not load Ingestion Hub">
       <div className="space-y-6 animate-fade-in">
         <div>
           <h1 className="text-xl font-bold tracking-tight text-foreground flex items-center space-x-2">
-            <UploadCloud className="h-5 w-5 text-primary" />
+            <FileUp className="h-5 w-5 text-primary" />
             <span>Multi-Format Ingestion Hub</span>
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5">
@@ -127,13 +135,32 @@ export default function IngestionPage() {
             </div>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-4">
             <h3 className="text-sm font-semibold text-foreground">Pipeline Diagnostics</h3>
-            <div className="space-y-3">
-              {sampleIngestionErrors.map((err, i) => (
-                <ErrorDiagnosticsCard key={i} error={err} />
-              ))}
-            </div>
+            {diagnostics.length === 0 ? (
+              <Card className="border-emerald-500/30 bg-emerald-500/5">
+                <CardHeader className="flex flex-row items-center space-x-2 pb-2">
+                  <div className="p-1.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                    <CheckCircle2 className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                      Pipeline Engine Healthy
+                    </CardTitle>
+                    <p className="text-[10px] text-muted-foreground font-mono">0 ACTIVE INGESTION ERRORS</p>
+                  </div>
+                </CardHeader>
+                <CardContent className="text-xs text-muted-foreground">
+                  All ingested datasets, PDF invoices, and spreadsheets have passed OCR syntax validation and schema reconciliation.
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="space-y-3">
+                {diagnostics.map((err, i) => (
+                  <ErrorDiagnosticsCard key={i} error={err} />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

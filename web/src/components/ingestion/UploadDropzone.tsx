@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { UploadCloud, FileSpreadsheet, FileText, AlertCircle } from "lucide-react";
+import { FileUp, FileSpreadsheet, FileText, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 interface UploadDropzoneProps {
@@ -62,7 +62,7 @@ export function UploadDropzone({ onUpload, isLoading }: UploadDropzoneProps) {
           onChange={(e) => handleFiles(e.target.files)}
         />
         <div className="p-3 rounded-full bg-primary/10 text-primary mb-3">
-          <UploadCloud className="h-6 w-6" />
+          <FileUp className="h-6 w-6" />
         </div>
         <h4 className="text-sm font-semibold text-foreground">
           Drag and drop business documents to ingest

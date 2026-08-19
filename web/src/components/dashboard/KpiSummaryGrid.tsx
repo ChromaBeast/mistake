@@ -44,9 +44,9 @@ export function KpiSummaryGrid({ kpi }: { kpi?: Partial<KpiSummary> }) {
   ];
 
   return (
-    <div className="border border-border grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 divide-y sm:divide-y-0 sm:divide-x divide-border bg-card">
+    <div className="rounded-xl border border-border overflow-hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-px bg-border">
       {metrics.map((m, idx) => (
-        <div key={idx} className="p-4 space-y-1">
+        <div key={idx} className="p-4 space-y-1 bg-card">
           <div className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">
             {m.title}
           </div>
