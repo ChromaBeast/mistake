@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { tryFetchBackend, getServerMock } from "@/lib/api/server-api";
+import { tryFetchBackend } from "@/lib/api/server-api";
 
 export const dynamic = "force-dynamic";
 
@@ -38,42 +38,18 @@ export async function POST(req: NextRequest) {
       return response;
     }
 
-    // If backend returned a genuine 400/409 validation error, pass it through
-    if (!backendResult.ok && backendResult.status > 0 && backendResult.status < 500) {
-      return NextResponse.json(backendResult.data, { status: backendResult.status });
-    }
+    const errorPayload = backendResult.data || {
+      error: {
+        code: "SIGNUP_FAILED",
+        message: "Failed to create tenant workspace on deployed backend",
+      },
+    };
 
-    // 2. Seamless Fallback Mock for Evaluation/Demo/Offline Resiliency
-    const mock = getServerMock();
-    const mockRes = await mock.signup({
-      name: body.name || "Aditya Verma",
-      company_name: body.company_name || "Enterprise Org",
-      email: body.email || "aditya.verma@acmemfg.in",
-      password: body.password || "password123",
-    });
-
-    const response = NextResponse.json(
-      { user: mockRes.user, tenant: mockRes.tenant, is_demo: true },
-      { status: 201 }
+    return NextResponse.json(errorPayload, { status: backendResult.status || 400 });
+  } catch (err: any) {
+    return NextResponse.json(
+      { error: { code: "SERVER_ERROR", message: err?.message || "Failed to reach registration service" } },
+      { status: 500 }
     );
-
-    response.cookies.set("auth_token", "demo-token-session", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-      maxAge: 60 * 60 * 24,
-    });
-
-    return response;
-  } catch (err) {
-    const mock = getServerMock();
-    const mockRes = await mock.signup({
-      name: "Aditya Verma",
-      company_name: "Enterprise Org",
-      email: "aditya.verma@acmemfg.in",
-      password: "password123",
-    });
-    return NextResponse.json({ ...mockRes, is_demo: true }, { status: 201 });
   }
 }

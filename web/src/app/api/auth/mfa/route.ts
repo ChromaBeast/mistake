@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { tryFetchBackend, getServerMock } from "@/lib/api/server-api";
+import { tryFetchBackend } from "@/lib/api/server-api";
 
 export const dynamic = "force-dynamic";
 
@@ -38,30 +38,18 @@ export async function POST(req: NextRequest) {
       return response;
     }
 
-    if (!backendResult.ok && backendResult.status > 0 && backendResult.status < 500) {
-      return NextResponse.json(backendResult.data, { status: backendResult.status });
-    }
+    const errorPayload = backendResult.data || {
+      error: {
+        code: "MFA_FAILED",
+        message: "Invalid MFA verification code",
+      },
+    };
 
-    // 2. Fallback mock verify
-    const mock = getServerMock();
-    const mockRes = await mock.verifyMfa(body);
-    const response = NextResponse.json(
-      { user: mockRes.user, tenant: mockRes.tenant, requires_mfa: false },
-      { status: 200 }
+    return NextResponse.json(errorPayload, { status: backendResult.status || 401 });
+  } catch (err: any) {
+    return NextResponse.json(
+      { error: { code: "SERVER_ERROR", message: err?.message || "Failed to verify MFA" } },
+      { status: 500 }
     );
-
-    response.cookies.set("auth_token", "demo-token-session", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-      maxAge: 60 * 60 * 24,
-    });
-
-    return response;
-  } catch (err) {
-    const mock = getServerMock();
-    const mockRes = await mock.verifyMfa({ mfa_token: "", code: "123456" });
-    return NextResponse.json(mockRes, { status: 200 });
   }
 }

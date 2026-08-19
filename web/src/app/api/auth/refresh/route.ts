@@ -1,18 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { tryFetchBackend, getServerMock } from "@/lib/api/server-api";
+import { tryFetchBackend } from "@/lib/api/server-api";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   const refreshToken = req.cookies.get("refresh_token")?.value;
-  const authToken = req.cookies.get("auth_token")?.value;
-
-  if (authToken === "demo-token-session" || (!refreshToken && authToken)) {
-    const mock = getServerMock();
-    const currentUser = await mock.getCurrentUser();
-    const currentTenant = await mock.getTenant();
-    return NextResponse.json({ user: currentUser, tenant: currentTenant }, { status: 200 });
-  }
 
   if (!refreshToken) {
     return NextResponse.json({ error: "Missing refresh token" }, { status: 401 });
@@ -46,13 +38,6 @@ export async function POST(req: NextRequest) {
       });
     }
     return response;
-  }
-
-  if (backendResult.status === 503) {
-    const mock = getServerMock();
-    const currentUser = await mock.getCurrentUser();
-    const currentTenant = await mock.getTenant();
-    return NextResponse.json({ user: currentUser, tenant: currentTenant }, { status: 200 });
   }
 
   const errorResponse = NextResponse.json(backendResult.data || { error: "Session expired" }, { status: backendResult.status || 401 });

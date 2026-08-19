@@ -24,17 +24,11 @@ async function handler(
       } catch {}
     }
 
-    // 1. If demo session token, skip network and serve from mock fallback directly
-    if (token === "demo-token-session") {
-      const fallbackResult = await handleMockProxyFallback(req, path, bodyJson);
-      return NextResponse.json(fallbackResult.data, { status: fallbackResult.status });
-    }
-
-    // 2. Query parameters
+    // 1. Query parameters
     const queryString = req.nextUrl.searchParams.toString();
     const targetPath = queryString ? `${path}?${queryString}` : path;
 
-    // 3. Try real Go Backend
+    // 2. Try real Go Backend
     const backendResult = await tryFetchBackend(targetPath, {
       method: req.method,
       headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -48,19 +42,32 @@ async function handler(
       return NextResponse.json(backendResult.data, { status: backendResult.status });
     }
 
-    // If backend returned a valid client error (400, 403, 404), pass it through
-    if (!backendResult.ok && backendResult.status > 0 && backendResult.status < 500) {
-      return NextResponse.json(backendResult.data, { status: backendResult.status });
+    // If backend returned any HTTP status (client error or server error), return it directly
+    if (backendResult.status && backendResult.status > 0) {
+      const errorPayload = backendResult.data || {
+        error: {
+          code: "BACKEND_ERROR",
+          message: `Backend returned status ${backendResult.status}`,
+        },
+      };
+      return NextResponse.json(errorPayload, { status: backendResult.status });
     }
 
-    // 4. Graceful Fallback if backend is unreachable (503 / network timeout / cold start)
-    const fallbackResult = await handleMockProxyFallback(req, path, bodyJson);
-    return NextResponse.json(fallbackResult.data, { status: fallbackResult.status });
-  } catch (err) {
-    const resolvedParams = await context.params;
-    const path = resolvedParams?.path?.join("/") || "";
-    const fallbackResult = await handleMockProxyFallback(req, path, {});
-    return NextResponse.json(fallbackResult.data, { status: fallbackResult.status });
+    // If explicit demo token session was used and network completely unreachable
+    if (token === "demo-token-session") {
+      const fallbackResult = await handleMockProxyFallback(req, path, bodyJson);
+      return NextResponse.json(fallbackResult.data, { status: fallbackResult.status });
+    }
+
+    return NextResponse.json(
+      { error: { code: "SERVICE_UNAVAILABLE", message: "Deployed API backend is unreachable" } },
+      { status: 503 }
+    );
+  } catch (err: any) {
+    return NextResponse.json(
+      { error: { code: "INTERNAL_PROXY_ERROR", message: err?.message || "Failed to proxy request to backend" } },
+      { status: 500 }
+    );
   }
 }
 

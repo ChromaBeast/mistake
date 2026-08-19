@@ -36,16 +36,16 @@ export default function LoginPage() {
     }
   };
 
-  const handleDemoLogin = async (roleEmail: string) => {
+  const handleDemoLogin = async (roleEmail: string, rolePassword = "Admin@123456") => {
     setEmail(roleEmail);
-    setPassword("password123");
+    setPassword(rolePassword);
     setIsLoading(true);
     setError(null);
     try {
-      await login({ email: roleEmail, password: "password123" });
+      await login({ email: roleEmail, password: rolePassword });
       router.push("/dashboard");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to launch demo workspace");
+      setError(err instanceof Error ? err.message : "Failed to launch workspace");
     } finally {
       setIsLoading(false);
     }
@@ -93,10 +93,10 @@ export default function LoginPage() {
         </div>
         <button
           type="button"
-          onClick={() => handleDemoLogin("aditya.verma@acmemfg.in")}
+          onClick={() => handleDemoLogin("owner@apexcastings.in", "Admin@123456")}
           className="w-full py-2 px-3 rounded-lg border border-border/60 bg-card hover:bg-muted/80 text-foreground text-xs font-medium flex items-center justify-between transition-colors"
         >
-          <span>Sign in as <strong className="font-semibold">Lead Auditor</strong> (Acme Mfg)</span>
+          <span>Sign in as <strong className="font-semibold">Lead Auditor</strong> (Apex Castings)</span>
           <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />
         </button>
       </div>

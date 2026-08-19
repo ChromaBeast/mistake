@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { tryFetchBackend, getServerMock } from "@/lib/api/server-api";
+import { tryFetchBackend } from "@/lib/api/server-api";
 
 export const dynamic = "force-dynamic";
 
@@ -38,35 +38,19 @@ export async function POST(req: NextRequest) {
       return response;
     }
 
-    // If backend returned a genuine 400/401/403 business validation error, pass it through
-    if (!backendResult.ok && backendResult.status > 0 && backendResult.status < 500) {
-      return NextResponse.json(backendResult.data, { status: backendResult.status });
-    }
+    // Return backend error directly (e.g. 401 Invalid Credentials)
+    const errorPayload = backendResult.data || {
+      error: {
+        code: "INVALID_CREDENTIALS",
+        message: "Invalid corporate credentials or unauthorized tenant",
+      },
+    };
 
-    // 2. Seamless Fallback Mock for Evaluation/Demo/Offline Resiliency
-    const mock = getServerMock();
-    const mockRes = await mock.login({
-      email: body.email || "aditya.verma@acmemfg.in",
-      password: body.password || "password123",
-    });
-
-    const response = NextResponse.json(
-      { user: mockRes.user, tenant: mockRes.tenant, requires_mfa: false, is_demo: true },
-      { status: 200 }
+    return NextResponse.json(errorPayload, { status: backendResult.status || 401 });
+  } catch (err: any) {
+    return NextResponse.json(
+      { error: { code: "SERVER_ERROR", message: err?.message || "Failed to reach authentication service" } },
+      { status: 500 }
     );
-
-    response.cookies.set("auth_token", "demo-token-session", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-      maxAge: 60 * 60 * 24,
-    });
-
-    return response;
-  } catch (err) {
-    const mock = getServerMock();
-    const mockRes = await mock.login({ email: "aditya.verma@acmemfg.in", password: "password123" });
-    return NextResponse.json({ ...mockRes, is_demo: true }, { status: 200 });
   }
 }

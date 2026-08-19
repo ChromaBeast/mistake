@@ -6,7 +6,9 @@ export function getBackendUrl(): string {
     process.env.BACKEND_URL ||
     process.env.NEXT_PUBLIC_API_URL ||
     process.env.NEXT_PUBLIC_BACKEND_URL ||
-    "http://localhost:8080/api/v1";
+    (process.env.NODE_ENV === "production"
+      ? "https://mistake-backend.onrender.com/api/v1"
+      : "http://localhost:8080/api/v1");
 
   // Ensure /api/v1 suffix if omitted
   return url.endsWith("/api/v1") ? url : `${url.replace(/\/+$/, "")}/api/v1`;
@@ -25,7 +27,7 @@ export function getServerMock(): MockApiClient {
 export async function tryFetchBackend(
   path: string,
   options: RequestInit = {},
-  timeoutMs = 4000
+  timeoutMs = 15000
 ): Promise<{ ok: boolean; status: number; data: any; headers?: Headers }> {
   const baseUrl = getBackendUrl();
   const fullUrl = `${baseUrl}${path.startsWith("/") ? path : `/${path}`}`;
