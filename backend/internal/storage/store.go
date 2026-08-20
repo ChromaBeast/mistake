@@ -160,4 +160,13 @@ type Store interface {
 	ListNotifications(ctx context.Context, tenantID, userID string) ([]*domain.Notification, error)
 	MarkNotificationRead(ctx context.Context, tenantID, id string) error
 	GlobalSearch(ctx context.Context, tenantID, query, entityType string) ([]*SearchResult, error)
+
+	// Pilot Enablers: Feedback, Aha-Telemetry, Agreement
+	CreateFeedback(ctx context.Context, f *domain.MistakeFeedback) error
+	GetFeedbackByMistake(ctx context.Context, tenantID, mistakeID string) (*domain.MistakeFeedback, error)
+	GetFeedbackMetrics(ctx context.Context, tenantID string) (*domain.FeedbackMetrics, error)
+	RecordAhaEvent(ctx context.Context, ev *domain.AhaEvent) error
+	GetAhaFunnelSummary(ctx context.Context, tenantID string) (*domain.AhaFunnelSummary, error)
+	RecordPilotAgreement(ctx context.Context, pa *domain.PilotAgreement) error
+	GetPilotAgreement(ctx context.Context, tenantID string) (*domain.PilotAgreement, error)
 }

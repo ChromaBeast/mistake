@@ -330,4 +330,38 @@ CREATE TABLE IF NOT EXISTS notifications (
     created_at TIMESTAMPTZ NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS mistake_feedback (
+    id TEXT PRIMARY KEY,
+    tenant_id TEXT NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    mistake_id TEXT NOT NULL REFERENCES mistakes(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    feedback_type TEXT NOT NULL,
+    reason TEXT,
+    created_at TIMESTAMPTZ NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_fb_mistake ON mistake_feedback(tenant_id, mistake_id);
+
+CREATE TABLE IF NOT EXISTS aha_events (
+    id TEXT PRIMARY KEY,
+    tenant_id TEXT NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    event_type TEXT NOT NULL,
+    duration_ms BIGINT NOT NULL,
+    metadata TEXT,
+    created_at TIMESTAMPTZ NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_aha_tenant ON aha_events(tenant_id, event_type);
+
+CREATE TABLE IF NOT EXISTS pilot_agreements (
+    id TEXT PRIMARY KEY,
+    tenant_id TEXT UNIQUE NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    signatory_name TEXT NOT NULL,
+    signatory_email TEXT NOT NULL,
+    agreement_version TEXT NOT NULL,
+    status TEXT NOT NULL,
+    retention_days INT NOT NULL DEFAULT 30,
+    accepted_at TIMESTAMPTZ NOT NULL,
+    ip_address TEXT
+);
 `

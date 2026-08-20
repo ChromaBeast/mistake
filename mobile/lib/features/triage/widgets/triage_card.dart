@@ -6,6 +6,7 @@ import '../../../models/mistake_item.dart';
 import '../../../shared/components/app_card.dart';
 import '../../../shared/components/financial_metric_chip.dart';
 import '../../../shared/components/severity_indicator_pill.dart';
+import 'mistake_feedback_bar.dart';
 
 class TriageCard extends StatelessWidget {
   final MistakeItem item;
@@ -95,6 +96,8 @@ class TriageCard extends StatelessWidget {
               ],
             ],
           ),
+          const SizedBox(height: AppDimensions.p12),
+          MistakeFeedbackBar(mistakeId: item.id),
         ],
       ),
     );

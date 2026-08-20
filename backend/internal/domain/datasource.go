@@ -22,6 +22,7 @@ const (
 	SourceTypeEmailExport SourceType = "email_export"
 	SourceTypeERPExport   SourceType = "erp_export"
 	SourceTypeManual      SourceType = "manual"
+	SourceTypeWhatsApp    SourceType = "whatsapp"
 )
 
 type DataSource struct {

@@ -10,6 +10,7 @@ const (
 	MistakeTypeDateMismatch     MistakeType = "date_mismatch"
 	MistakeTypeStatusMismatch   MistakeType = "status_mismatch"
 	MistakeTypeMissingEvidence  MistakeType = "missing_evidence"
+	MistakeTypeLeadTimeAnomaly  MistakeType = "lead_time_anomaly"
 )
 
 type Severity string
@@ -50,6 +51,8 @@ type Mistake struct {
 	AssignedTo           string          `json:"assigned_to,omitempty"`
 	AssignedToName       string          `json:"assigned_to_name,omitempty"`
 	EvidenceIDs          []string        `json:"evidence_ids,omitempty"`
+	CompoundGroupID      string          `json:"compound_group_id,omitempty"`
+	IsCompound           bool            `json:"is_compound,omitempty"`
 	DetectedAt           time.Time       `json:"detected_at"`
 	ResolvedAt           *time.Time      `json:"resolved_at,omitempty"`
 	CreatedAt            time.Time       `json:"created_at"`

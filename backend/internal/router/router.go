@@ -26,6 +26,9 @@ func SetupRouter(store storage.Store, p *pipeline.Pipeline, wp *pipeline.WorkerP
 	auditH := handlers.NewAuditHandler(store)
 	retentionH := handlers.NewRetentionHandler(store)
 	billingH := handlers.NewBillingHandler(store, cfg)
+	feedbackH := handlers.NewFeedbackHandler(store)
+	analyticsH := handlers.NewAnalyticsHandler(store)
+	pilotAgreementH := handlers.NewPilotAgreementHandler(store)
 
 	// Health check
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
@@ -105,6 +108,15 @@ func SetupRouter(store storage.Store, p *pipeline.Pipeline, wp *pipeline.WorkerP
 	mux.Handle("GET /api/v1/billing/subscription", wrap(billingH.GetSubscription))
 	mux.Handle("POST /api/v1/billing/checkout", wrap(billingH.Checkout))
 	mux.Handle("GET /api/v1/billing/invoices", wrap(billingH.ListInvoices))
+
+	// Pilot Enablers: Feedback, Telemetry, and Agreement
+	mux.Handle("POST /api/v1/mistakes/{id}/feedback", wrap(feedbackH.SubmitFeedback))
+	mux.Handle("GET /api/v1/mistakes/{id}/feedback", wrap(feedbackH.GetMistakeFeedback))
+	mux.Handle("GET /api/v1/analytics/accuracy-metrics", wrap(feedbackH.GetMetrics))
+	mux.Handle("POST /api/v1/analytics/events", wrap(analyticsH.RecordEvent))
+	mux.Handle("GET /api/v1/analytics/aha-summary", wrap(analyticsH.GetAhaSummary))
+	mux.Handle("GET /api/v1/tenant/pilot-agreement", wrap(pilotAgreementH.GetStatus))
+	mux.Handle("POST /api/v1/tenant/pilot-agreement/accept", wrap(pilotAgreementH.AcceptAgreement))
 
 	// Top-level CORS and panic recovery
 	corsMiddleware := middleware.CORSMiddleware(cfg.AllowedOrigins)

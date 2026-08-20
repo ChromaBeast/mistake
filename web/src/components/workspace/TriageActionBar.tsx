@@ -5,6 +5,8 @@ import { Mistake, MistakeStatus } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { Check, XCircle, CheckCircle2, UserCheck } from "lucide-react";
+import { FindingFeedbackWidget } from "./FindingFeedbackWidget";
+import { CompoundMismatchBadge } from "./CompoundMismatchBadge";
 
 interface TriageActionBarProps {
   mistake: Mistake;
@@ -59,6 +61,8 @@ export function TriageActionBar({
         {actionButton("Verify Finding", "verified", "primary", <Check className="h-3.5 w-3.5" />)}
         {actionButton("Resolve Leakage", "resolved", "outline", <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />)}
         {actionButton("Dismiss Discrepancy", "dismissed", "danger", <XCircle className="h-3.5 w-3.5" />)}
+        <FindingFeedbackWidget mistakeId={mistake.id} />
+        <CompoundMismatchBadge compoundGroupId={mistake.compound_group_id} isCompound={mistake.is_compound} />
       </div>
 
       <div className="flex items-center space-x-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/50">

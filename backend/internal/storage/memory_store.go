@@ -35,6 +35,9 @@ type MemoryStore struct {
 	subscriptions      map[string]*domain.Subscription    // tenantID -> sub
 	billingInvoices    map[string][]*domain.BillingInvoice // tenantID -> invoices
 	notifications      map[string][]*domain.Notification   // tenantID:userID -> notifs
+	feedback           map[string]*domain.MistakeFeedback  // id -> feedback
+	ahaEvents          map[string][]*domain.AhaEvent       // tenantID -> events
+	pilotAgreements    map[string]*domain.PilotAgreement   // tenantID -> agreement
 }
 
 func NewMemoryStore() *MemoryStore {
@@ -62,6 +65,9 @@ func NewMemoryStore() *MemoryStore {
 		subscriptions:     make(map[string]*domain.Subscription),
 		billingInvoices:   make(map[string][]*domain.BillingInvoice),
 		notifications:     make(map[string][]*domain.Notification),
+		feedback:          make(map[string]*domain.MistakeFeedback),
+		ahaEvents:         make(map[string][]*domain.AhaEvent),
+		pilotAgreements:   make(map[string]*domain.PilotAgreement),
 	}
 }
 

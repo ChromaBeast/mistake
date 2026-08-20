@@ -3,7 +3,8 @@ export type MistakeType =
   | "price_mismatch"
   | "date_mismatch"
   | "status_mismatch"
-  | "missing_evidence";
+  | "missing_evidence"
+  | "lead_time_anomaly";
 
 export type MistakeSeverity = "critical" | "high" | "medium" | "low";
 
@@ -72,6 +73,8 @@ export interface Mistake {
   explanation: string;
   remediation_advice: string[];
   confidence_score: number;
+  compound_group_id?: string;
+  is_compound?: boolean;
   math_proof?: MathProof;
   evidence_items: EvidenceRef[];
   transitions?: MistakeTransition[];

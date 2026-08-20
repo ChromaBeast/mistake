@@ -50,6 +50,15 @@ func (e *DetectionEngine) RunAll(ctx context.Context, tenantID string) ([]*domai
 		allMistakes = append(allMistakes, mFindings...)
 	}
 
+	aDet := NewLeadTimeAnomalyDetector(e.store)
+	aFindings, err := aDet.Detect(ctx, tenantID)
+	if err == nil {
+		allMistakes = append(allMistakes, aFindings...)
+	}
+
+	aggregator := NewCompoundAggregator()
+	allMistakes = aggregator.GroupCompoundMistakes(allMistakes)
+
 	for _, m := range allMistakes {
 		select {
 		case <-ctx.Done():
