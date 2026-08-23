@@ -11,18 +11,18 @@ interface InviteUserModalProps {
   isOpen: boolean;
   onClose: () => void;
   onInvite: (payload: InvitePayload) => Promise<void>;
-  isLoading?: boolean;
 }
 
 export function InviteUserModal({
   isOpen,
   onClose,
   onInvite,
-  isLoading = false,
 }: InviteUserModalProps) {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [role, setRole] = useState<UserRole>("Analyst");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const roles: { value: UserRole; label: string }[] = [
     { value: "Admin", label: "Admin - Full configuration access" },
@@ -31,18 +31,37 @@ export function InviteUserModal({
     { value: "Viewer", label: "Viewer - Read-only dashboard access" },
   ];
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await onInvite({ email, name: name.trim() || undefined, role });
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const resetAndClose = () => {
     setEmail("");
     setName("");
+    setRole("Analyst");
+    setError(null);
     onClose();
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!emailValid) return;
+    setError(null);
+    setIsSubmitting(true);
+    try {
+      await onInvite({ email: email.trim(), name: name.trim() || undefined, role });
+      resetAndClose();
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "The invitation could not be sent. Try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={resetAndClose}
       title="Invite Team Member"
       description="Send an invitation to join your workspace."
       maxWidth="md"
@@ -54,6 +73,7 @@ export function InviteUserModal({
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="colleague@company.in"
+          error={email.length > 0 && !emailValid ? "Enter a valid work email address." : undefined}
           required
         />
         <Input
@@ -69,11 +89,17 @@ export function InviteUserModal({
           options={roles}
         />
 
+        {error && (
+          <p role="alert" className="text-xs text-rose-500 px-1">
+            {error}
+          </p>
+        )}
+
         <div className="flex items-center justify-end space-x-2 pt-3 border-t border-border">
-          <Button size="sm" variant="ghost" type="button" onClick={onClose} disabled={isLoading}>
+          <Button size="sm" variant="ghost" type="button" onClick={resetAndClose} disabled={isSubmitting}>
             Cancel
           </Button>
-          <Button size="sm" type="submit" isLoading={isLoading}>
+          <Button size="sm" type="submit" isLoading={isSubmitting} disabled={!emailValid}>
             Send Invitation
           </Button>
         </div>

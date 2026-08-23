@@ -16,7 +16,15 @@ export function EntityDetailHeader({ entity }: { entity: Entity }) {
           <div className="space-y-1">
             <div className="flex items-center space-x-2">
               <h2 className="text-xl font-bold text-foreground">{entity.canonical_name}</h2>
-              <Badge variant={entity.type === "Supplier" ? "info" : "success"}>
+              <Badge
+                variant={
+                  entity.type === "Supplier"
+                    ? "info"
+                    : entity.type === "Customer"
+                      ? "success"
+                      : "outline"
+                }
+              >
                 {entity.type}
               </Badge>
             </div>

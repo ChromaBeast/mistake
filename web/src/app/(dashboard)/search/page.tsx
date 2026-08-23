@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { api } from "@/lib/api";
 import { SearchResult } from "@/types";
 import { Input } from "@/components/ui/Input";
@@ -15,16 +15,32 @@ export default function SearchPage() {
   const [selectedSeverity, setSelectedSeverity] = useState("all");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const requestSeqRef = useRef(0);
 
   useEffect(() => {
+    if (!query.trim()) {
+      setResults([]);
+      setIsLoading(false);
+      return;
+    }
+    const seq = ++requestSeqRef.current;
     async function search() {
       setIsLoading(true);
       try {
         const res = await api.search(query);
+        if (seq !== requestSeqRef.current) return; // stale response
         const rawList = res?.results || (Array.isArray(res) ? res : []);
         let filtered = Array.isArray(rawList) ? rawList : [];
         if (selectedType !== "all") {
-          filtered = filtered.filter((r) => r.type === selectedType || r.subtitle?.toLowerCase().includes(selectedType));
+          // Match the result domain type, or the humanized/raw category in the subtitle
+          const rawCat = selectedType.toLowerCase();
+          const humanCat = selectedType.replace(/_/g, " ").toLowerCase();
+          filtered = filtered.filter(
+            (r) =>
+              r.type === rawCat ||
+              r.subtitle?.toLowerCase().includes(rawCat) ||
+              r.subtitle?.toLowerCase().includes(humanCat)
+          );
         }
         if (selectedSeverity !== "all") {
           filtered = filtered.filter((r) => r.badge?.toLowerCase() === selectedSeverity.toLowerCase());
@@ -32,9 +48,10 @@ export default function SearchPage() {
         setResults(filtered);
       } catch (err) {
         console.error(err);
+        if (seq !== requestSeqRef.current) return;
         setResults([]);
       } finally {
-        setIsLoading(false);
+        if (seq === requestSeqRef.current) setIsLoading(false);
       }
     }
     const timer = setTimeout(search, 150);
@@ -64,6 +81,8 @@ export default function SearchPage() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search entities, invoices, or finding keywords (e.g. Tata, Freight, Steel, INV-8812)..."
+          aria-label="Global search query"
+          autoFocus
         />
       </div>
 

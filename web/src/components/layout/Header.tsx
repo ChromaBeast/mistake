@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Search, Sun, Moon, Laptop, Menu } from "lucide-react";
 import { useTheme } from "@/lib/context/ThemeContext";
 import { useAuth } from "@/lib/context/AuthContext";
@@ -12,9 +12,19 @@ export interface HeaderProps {
   onToggleSidebar?: () => void;
 }
 
+function isApplePlatform(): boolean {
+  if (typeof navigator === "undefined") return false;
+  return /Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent);
+}
+
 export function Header({ onOpenSearch, onToggleSidebar }: HeaderProps) {
   const { theme, setTheme } = useTheme();
   const { user, logout, isDemoMode } = useAuth();
+  const [shortcutHint, setShortcutHint] = useState("Ctrl K");
+
+  useEffect(() => {
+    setShortcutHint(isApplePlatform() ? "⌘K" : "Ctrl K");
+  }, []);
 
   const themeItems = [
     { id: "light", label: "Light Theme", icon: <Sun className="h-3.5 w-3.5" />, onClick: () => setTheme("light") },
@@ -23,7 +33,6 @@ export function Header({ onOpenSearch, onToggleSidebar }: HeaderProps) {
   ];
 
   const userItems = [
-    { id: "profile", label: `${user?.name || "User"} (${user?.role || "Viewer"})`, onClick: () => {} },
     { id: "logout", label: "Sign Out", danger: true, onClick: () => logout() },
   ];
 
@@ -51,7 +60,7 @@ export function Header({ onOpenSearch, onToggleSidebar }: HeaderProps) {
             <span className="sm:hidden text-xs">Search...</span>
           </div>
           <kbd className="hidden rounded bg-card px-1.5 py-0.5 text-[10px] font-mono border border-border/60 sm:inline-block">
-            ⌘K
+            {shortcutHint}
           </kbd>
         </button>
 

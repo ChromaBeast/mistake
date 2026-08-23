@@ -8,7 +8,10 @@ export function KpiSummaryGrid({ kpi }: { kpi?: Partial<KpiSummary> }) {
   const highRiskOrders = kpi?.high_risk_orders_count ?? 0;
   const missingEvidence = kpi?.missing_evidence_count ?? 0;
   const valueProtected = kpi?.value_protected_minor ?? 0;
-  const resolutionRate = kpi?.resolution_rate_percent ?? 100;
+  const resolutionRate =
+    kpi?.resolution_rate_percent != null
+      ? `${Math.round(kpi.resolution_rate_percent)}%`
+      : "—";
 
   const metrics = [
     {
@@ -45,8 +48,8 @@ export function KpiSummaryGrid({ kpi }: { kpi?: Partial<KpiSummary> }) {
 
   return (
     <div className="rounded-xl border border-border overflow-hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-px bg-border">
-      {metrics.map((m, idx) => (
-        <div key={idx} className="p-4 space-y-1 bg-card">
+      {metrics.map((m) => (
+        <div key={m.title} className="p-4 space-y-1 bg-card">
           <div className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">
             {m.title}
           </div>

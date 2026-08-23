@@ -55,10 +55,13 @@ export function TeamRbacTable({ members, onOpenInvite }: TeamRbacTableProps) {
               <TableRow key={m.id}>
                 <TableCell className="font-semibold text-xs text-foreground">
                   <div className="flex items-center space-x-2">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-secondary text-[11px] font-bold text-foreground">
-                      {m.name.charAt(0)}
+                    <div
+                      aria-hidden="true"
+                      className="flex h-6 w-6 items-center justify-center rounded-full bg-secondary text-[11px] font-bold text-foreground"
+                    >
+                      {(m.name || "?").charAt(0).toUpperCase()}
                     </div>
-                    <span>{m.name}</span>
+                    <span>{m.name || "Unnamed user"}</span>
                   </div>
                 </TableCell>
                 <TableCell className="font-mono text-xs text-muted-foreground">
@@ -66,14 +69,12 @@ export function TeamRbacTable({ members, onOpenInvite }: TeamRbacTableProps) {
                 </TableCell>
                 <TableCell>{getRoleBadge(m.role)}</TableCell>
                 <TableCell>
-                  <Badge variant={m.status === "active" ? "success" : "default"} size="sm">
+                  <Badge variant={m.status === "active" ? "success" : "default"} size="sm" className="capitalize">
                     {m.status}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-right">
-                  <Button size="sm" variant="ghost" className="text-xs">
-                    Edit Role
-                  </Button>
+                <TableCell className="text-right font-mono text-[10px] uppercase tracking-wide text-muted-foreground/70">
+                  Role managed by Owner
                 </TableCell>
               </TableRow>
             ))}

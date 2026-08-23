@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { api } from "@/lib/api";
 import { DataSource, IngestionError } from "@/types";
 import { UploadDropzone } from "@/components/ingestion/UploadDropzone";
@@ -10,30 +10,73 @@ import { ErrorDiagnosticsCard } from "@/components/ingestion/ErrorDiagnosticsCar
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { IngestionSkeleton } from "@/components/ui/skeletons/IngestionSkeleton";
-import { FileUp, Layers, CheckCircle2 } from "lucide-react";
+import { FileUp, Layers, CheckCircle2, AlertTriangle } from "lucide-react";
+
+const TERMINAL_STATUSES = ["Completed", "Failed"];
 
 export default function IngestionPage() {
   const [dataSources, setDataSources] = useState<DataSource[]>([]);
   const [activeJob, setActiveJob] = useState<DataSource | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
+  }, []);
+
+  const startPolling = (id: string) => {
+    if (pollRef.current) clearInterval(pollRef.current);
+    pollRef.current = setInterval(async () => {
+      try {
+        const updated = await api.getDataSource(id);
+        if (!mountedRef.current) return;
+        setDataSources((prev) => prev.map((d) => (d.id === updated.id ? updated : d)));
+        setActiveJob((current) => (current?.id === updated.id ? updated : current));
+        if (TERMINAL_STATUSES.includes(updated.status)) {
+          if (pollRef.current) clearInterval(pollRef.current);
+          pollRef.current = null;
+        }
+      } catch {
+        if (pollRef.current) clearInterval(pollRef.current);
+        pollRef.current = null;
+      }
+    }, 2000);
+  };
 
   const loadSources = async () => {
+    setLoadError(null);
     try {
       const res = await api.getDataSources();
+      if (!mountedRef.current) return;
       const list = Array.isArray(res) ? res : [];
       setDataSources(list);
       const inProgress = list.find(
         (d) => d.status === "Processing" || d.status === "Extracting" || d.status === "Analyzing"
       );
-      if (inProgress) setActiveJob(inProgress);
-      else if (list.length > 0) setActiveJob(list[0]);
+      if (inProgress) {
+        setActiveJob(inProgress);
+        startPolling(inProgress.id);
+      } else if (list.length > 0 && !activeJob) {
+        setActiveJob(list[0]);
+      }
     } catch (err) {
       console.error(err);
-      setDataSources([]);
+      if (mountedRef.current) {
+        setDataSources([]);
+        setLoadError("Could not reach the ingestion service. Verify the backend is running and retry.");
+      }
     } finally {
-      setIsLoading(false);
+      if (mountedRef.current) setIsLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   };
 
   useEffect(() => {
@@ -42,27 +85,24 @@ export default function IngestionPage() {
 
   const handleUpload = async (file: File) => {
     setIsUploading(true);
+    setUploadError(null);
     try {
       const newDs = await api.uploadDataSource(file);
+      if (!mountedRef.current) return;
       setDataSources((prev) => [newDs, ...prev.filter((d) => d.id !== newDs.id)]);
       setActiveJob(newDs);
-
-      const intervalId = setInterval(async () => {
-        try {
-          const updated = await api.getDataSource(newDs.id);
-          setDataSources((prev) => prev.map((d) => (d.id === updated.id ? updated : d)));
-          setActiveJob((current) => (current?.id === updated.id ? updated : current));
-          if (updated.status === "Completed" || updated.status === "Failed") {
-            clearInterval(intervalId);
-          }
-        } catch {
-          clearInterval(intervalId);
-        }
-      }, 2000);
+      if (!TERMINAL_STATUSES.includes(newDs.status)) {
+        startPolling(newDs.id);
+      }
     } catch (err) {
       console.error("Upload failed:", err);
+      if (mountedRef.current) {
+        setUploadError(
+          err instanceof Error ? err.message : "The document could not be uploaded. Check the file format and retry."
+        );
+      }
     } finally {
-      setIsUploading(false);
+      if (mountedRef.current) setIsUploading(false);
     }
   };
 
@@ -71,6 +111,9 @@ export default function IngestionPage() {
       const retried = await api.retryDataSource(id);
       setDataSources((prev) => prev.map((d) => (d.id === id ? retried : d)));
       setActiveJob(retried);
+      if (!TERMINAL_STATUSES.includes(retried.status)) {
+        startPolling(retried.id);
+      }
     } catch (err) {
       console.error("Retry failed:", err);
     }
@@ -80,10 +123,10 @@ export default function IngestionPage() {
     return <IngestionSkeleton />;
   }
 
-  const failedSources = dataSources.filter((d) => d.status === "Failed" || !!d.error_message);
+  const failedSources = dataSources.filter((d) => d.status === "Failed");
   const diagnostics: IngestionError[] = failedSources.map((ds) => ({
     file_name: ds.file_name,
-    code: "INGEST_PARSE_ERROR",
+    code: ds.error_code || "INGEST_PARSE_ERROR",
     title: "Document Parsing / Extraction Variance",
     description: ds.error_message || "Encountered formatting or syntax error during OCR / tabular normalization.",
     recommended_action: "Verify file encoding, ensure headers match standard PO/Invoice formats, and re-upload.",
@@ -102,6 +145,26 @@ export default function IngestionPage() {
           </p>
         </div>
 
+        {loadError && (
+          <div role="alert" className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3">
+            <AlertTriangle className="h-4 w-4 mt-0.5 text-destructive shrink-0" />
+            <div className="text-xs text-destructive flex-1">{loadError}</div>
+            <button
+              onClick={loadSources}
+              className="text-xs font-semibold text-destructive underline underline-offset-2 hover:opacity-80"
+            >
+              Retry
+            </button>
+          </div>
+        )}
+
+        {uploadError && (
+          <div role="alert" className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3">
+            <AlertTriangle className="h-4 w-4 mt-0.5 text-destructive shrink-0" />
+            <div className="text-xs text-destructive">{uploadError}</div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             <UploadDropzone onUpload={handleUpload} isLoading={isUploading} />
@@ -114,7 +177,7 @@ export default function IngestionPage() {
                     <div>
                       <CardTitle className="text-xs font-semibold">{activeJob.file_name}</CardTitle>
                       <p className="text-[10px] text-muted-foreground font-mono">
-                        Pipeline Status: {activeJob.status} ({activeJob.progress_percent}%)
+                        Pipeline Status: {activeJob.status} ({activeJob.progress_percent ?? 0}%)
                       </p>
                     </div>
                   </div>
@@ -156,8 +219,8 @@ export default function IngestionPage() {
               </Card>
             ) : (
               <div className="space-y-3">
-                {diagnostics.map((err, i) => (
-                  <ErrorDiagnosticsCard key={i} error={err} />
+                {diagnostics.map((err) => (
+                  <ErrorDiagnosticsCard key={`${err.file_name}-${err.code}`} error={err} />
                 ))}
               </div>
             )}

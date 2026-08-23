@@ -40,22 +40,23 @@ export function MathBreakdownProof({ mathProof }: { mathProof?: MathProof }) {
             <span className="font-semibold text-rose-500">{mathProof.actual_quantity}</span>
           </div>
           <div className="p-2 rounded bg-card/60 border border-border">
-            <span className="text-muted-foreground text-[10px] block">Unit Price (Minor)</span>
+            <span className="text-muted-foreground text-[10px] block">Unit Price</span>
             <span className="font-semibold text-foreground">
               {formatPaiseToINR(mathProof.unit_price_minor)}
             </span>
           </div>
           <div className="p-2 rounded bg-card/60 border border-border">
-            <span className="text-muted-foreground text-[10px] block">Discrepancy Delta</span>
-            <span className="font-semibold text-rose-500">
-              +{mathProof.quantity_delta} Units
+            <span className="text-muted-foreground text-[10px] block">Quantity Delta</span>
+            <span className={`font-semibold ${mathProof.quantity_delta < 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-500"}`}>
+              {mathProof.quantity_delta > 0 ? "+" : ""}
+              {mathProof.quantity_delta} Units
             </span>
           </div>
         </div>
 
         <div className="flex items-center justify-between p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/20 font-mono tabular-nums">
           <span className="text-xs font-semibold text-rose-600 dark:text-rose-400">
-            Total Leakage (Paise):
+            Total Leakage (INR):
           </span>
           <span className="text-sm font-bold text-rose-600 dark:text-rose-400">
             {formatPaiseToINR(mathProof.financial_impact_minor)}

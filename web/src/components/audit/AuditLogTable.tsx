@@ -68,7 +68,7 @@ export function AuditLogTable({ logs = [], onViewDiff }: AuditLogTableProps) {
                   </div>
                 </TableCell>
                 <TableCell className="font-mono tabular-nums text-xs text-muted-foreground">
-                  {log.ip_address || "127.0.0.1"}
+                  {log.ip_address || "—"}
                 </TableCell>
                 <TableCell className="text-right">
                   <Button

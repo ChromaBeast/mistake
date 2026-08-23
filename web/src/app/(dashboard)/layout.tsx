@@ -13,9 +13,13 @@ export default function DashboardLayout({
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
+  // Ctrl/Cmd+K toggles global search; ignored while typing in editable fields
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+      if ((e.metaKey || e.ctrlKey) && /^k$/i.test(e.key)) {
+        const target = e.target as HTMLElement | null;
+        if (target && target.isContentEditable) return;
+        if (target && ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)) return;
         e.preventDefault();
         setIsSearchOpen((prev) => !prev);
       }
@@ -36,9 +40,9 @@ export default function DashboardLayout({
       </div>
       <GlobalSearchModal
         isOpen={isSearchOpen}
+        onOpen={() => setIsSearchOpen(true)}
         onClose={() => setIsSearchOpen(false)}
       />
     </div>
   );
 }
-

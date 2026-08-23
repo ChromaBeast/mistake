@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
-import { Mistake } from "@/types";
+import { Mistake, MistakeStatus } from "@/types";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/Table";
 import { Badge } from "@/components/ui/Badge";
 import { Tabs } from "@/components/ui/Tabs";
@@ -11,15 +11,25 @@ import { Select } from "@/components/ui/Select";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { formatPaiseToINR } from "@/lib/formatters/inr";
 import { formatDate } from "@/lib/formatters/date";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, Inbox } from "lucide-react";
+
+const STATUS_BADGE: Record<MistakeStatus, "default" | "info" | "warning" | "success" | "danger" | "outline"> = {
+  detected: "warning",
+  under_review: "info",
+  verified: "danger",
+  resolved: "success",
+  dismissed: "outline",
+};
 
 export default function WorkspaceListPage() {
   const [mistakes, setMistakes] = useState<Mistake[]>([]);
   const [activeTab, setActiveTab] = useState("all");
   const [severityFilter, setSeverityFilter] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
+  const requestSeqRef = useRef(0);
 
   useEffect(() => {
+    const seq = ++requestSeqRef.current;
     async function load() {
       setIsLoading(true);
       try {
@@ -27,12 +37,14 @@ export default function WorkspaceListPage() {
           status: activeTab,
           severity: severityFilter,
         });
+        if (seq !== requestSeqRef.current) return; // stale response
         setMistakes(Array.isArray(res) ? res : []);
       } catch (err) {
         console.error(err);
+        if (seq !== requestSeqRef.current) return;
         setMistakes([]);
       } finally {
-        setIsLoading(false);
+        if (seq === requestSeqRef.current) setIsLoading(false);
       }
     }
     load();
@@ -48,6 +60,9 @@ export default function WorkspaceListPage() {
   ];
 
   const safeMistakes = mistakes || [];
+  const isFiltered =
+    activeTab !== "all" ||
+    severityFilter !== "all";
 
   return (
     <div className="space-y-6">
@@ -63,6 +78,7 @@ export default function WorkspaceListPage() {
 
         <div className="w-44">
           <Select
+            aria-label="Filter findings by severity"
             value={severityFilter}
             onChange={(e) => setSeverityFilter(e.target.value)}
             options={[
@@ -70,6 +86,7 @@ export default function WorkspaceListPage() {
               { value: "critical", label: "Critical Only" },
               { value: "high", label: "High Only" },
               { value: "medium", label: "Medium Only" },
+              { value: "low", label: "Low Only" },
             ]}
           />
         </div>
@@ -84,13 +101,23 @@ export default function WorkspaceListPage() {
           <Skeleton className="h-10 w-full" />
         </div>
       ) : safeMistakes.length === 0 ? (
-        <div className="border border-border p-12 text-center space-y-3 bg-card">
-          <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto" />
-          <h3 className="text-sm font-semibold text-foreground">Zero Active Discrepancies Found</h3>
-          <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-            All ingested Purchase Orders, Invoices, and Gate Receipts are currently fully reconciled.
-          </p>
-        </div>
+        isFiltered ? (
+          <div className="border border-border p-12 text-center space-y-3 bg-card">
+            <Inbox className="w-8 h-8 text-muted-foreground/40 mx-auto" />
+            <h3 className="text-sm font-semibold text-foreground">No findings match these filters</h3>
+            <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+              Try a different status tab or severity level to widen the search.
+            </p>
+          </div>
+        ) : (
+          <div className="border border-border p-12 text-center space-y-3 bg-card">
+            <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto" />
+            <h3 className="text-sm font-semibold text-foreground">Zero Active Discrepancies Found</h3>
+            <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+              All ingested Purchase Orders, Invoices, and Gate Receipts are currently fully reconciled.
+            </p>
+          </div>
+        )
       ) : (
         <div className="border border-border bg-card overflow-hidden">
           <Table>
@@ -126,17 +153,20 @@ export default function WorkspaceListPage() {
                           ? "danger"
                           : m.severity === "high"
                           ? "warning"
-                          : "info"
+                          : m.severity === "medium"
+                          ? "info"
+                          : "outline"
                       }
                       size="sm"
+                      className="capitalize"
                     >
                       {m.severity}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <span className="text-xs font-mono uppercase text-muted-foreground">
-                      {m.status}
-                    </span>
+                    <Badge variant={STATUS_BADGE[m.status] ?? "default"} size="sm" className="capitalize font-mono text-[10px]">
+                      {m.status.replace(/_/g, " ")}
+                    </Badge>
                   </TableCell>
                   <TableCell className="font-mono text-xs font-bold text-rose-600 dark:text-rose-400">
                     {formatPaiseToINR(m.financial_impact_minor)}

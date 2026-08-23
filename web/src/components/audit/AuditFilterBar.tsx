@@ -1,5 +1,4 @@
 import React from "react";
-import { Search } from "lucide-react";
 import { Select } from "@/components/ui/Select";
 
 interface AuditFilterBarProps {
@@ -35,6 +34,7 @@ export function AuditFilterBar({
     <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 rounded-xl border border-border bg-card">
       <div className="w-full sm:w-56">
         <Select
+          aria-label="Filter audit log by action"
           options={actions}
           value={actionFilter}
           onChange={(e) => onActionChange(e.target.value)}
@@ -42,6 +42,7 @@ export function AuditFilterBar({
       </div>
       <div className="w-full sm:w-48">
         <Select
+          aria-label="Filter audit log by resource type"
           options={resources}
           value={resourceFilter}
           onChange={(e) => onResourceChange(e.target.value)}

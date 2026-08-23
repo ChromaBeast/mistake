@@ -10,21 +10,37 @@ import { Building2, Check } from "lucide-react";
 interface TenantProfileFormProps {
   tenant: Tenant;
   onSave: (data: Partial<Tenant>) => Promise<void>;
-  isLoading?: boolean;
 }
 
-export function TenantProfileForm({ tenant, onSave, isLoading }: TenantProfileFormProps) {
+export function TenantProfileForm({ tenant, onSave }: TenantProfileFormProps) {
   const [name, setName] = useState(tenant.name);
   const [legalName, setLegalName] = useState(tenant.legal_name || "");
   const [gstin, setGstin] = useState(tenant.gstin || "");
   const [industry, setIndustry] = useState(tenant.industry || "");
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // GSTIN: 15 chars — 2 digits + 10 char PAN + entity code + Z + checksum
+  const gstinValid = gstin === "" || /^\d{2}[A-Z0-9]{13}$/.test(gstin);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await onSave({ name, legal_name: legalName, gstin, industry });
-    setSavedSuccess(true);
-    setTimeout(() => setSavedSuccess(false), 3000);
+    if (!name.trim()) return;
+    if (!gstinValid) return;
+    setError(null);
+    setIsSaving(true);
+    try {
+      await onSave({ name: name.trim(), legal_name: legalName.trim(), gstin: gstin.trim(), industry: industry.trim() });
+      setSavedSuccess(true);
+      setTimeout(() => setSavedSuccess(false), 3000);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "The profile could not be saved. Try again."
+      );
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -37,6 +53,11 @@ export function TenantProfileForm({ tenant, onSave, isLoading }: TenantProfileFo
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
+          {error && (
+            <p role="alert" className="text-xs text-rose-500 px-1">
+              {error}
+            </p>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               label="Company Name"
@@ -54,6 +75,12 @@ export function TenantProfileForm({ tenant, onSave, isLoading }: TenantProfileFo
               value={gstin}
               onChange={(e) => setGstin(e.target.value.toUpperCase())}
               placeholder="27AAACT2727Q1ZW"
+              maxLength={15}
+              error={
+                !gstinValid
+                  ? "GSTIN must be 15 characters: 2 digits + PAN + entity code + Z + checksum."
+                  : undefined
+              }
             />
             <Input
               label="Industry Sector"
@@ -70,7 +97,7 @@ export function TenantProfileForm({ tenant, onSave, isLoading }: TenantProfileFo
               <span>Profile updated successfully</span>
             </span>
           )}
-          <Button size="sm" type="submit" isLoading={isLoading} className="ml-auto">
+          <Button size="sm" type="submit" isLoading={isSaving} disabled={!name.trim() || !gstinValid} className="ml-auto">
             Save Changes
           </Button>
         </CardFooter>

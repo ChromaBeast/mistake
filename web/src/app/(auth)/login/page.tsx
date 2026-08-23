@@ -1,36 +1,70 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/context/AuthContext";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { MfaStep } from "@/components/auth/MfaStep";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Eye, EyeOff } from "lucide-react";
+
+function isSafeRedirect(url: string | null): string | null {
+  if (!url) return null;
+  // Only allow same-origin relative paths (no protocol-relative or absolute URLs)
+  return url.startsWith("/") && !url.startsWith("//") ? url : null;
+}
 
 export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="space-y-6 animate-fade-in">
+          <div className="space-y-2">
+            <div className="h-8 w-56 rounded-md bg-secondary animate-pulse" />
+            <div className="h-4 w-72 rounded bg-secondary animate-pulse" />
+          </div>
+          <div className="h-10 w-full rounded-md bg-secondary animate-pulse" />
+          <div className="h-10 w-full rounded-md bg-secondary animate-pulse" />
+          <div className="h-10 w-full rounded-md bg-secondary animate-pulse" />
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [mfaToken, setMfaToken] = useState<string | null>(null);
   const { login } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email.trim() || !password) return;
     setIsLoading(true);
     setError(null);
     try {
-      const res = await login({ email, password });
+      const res = await login({ email: email.trim(), password });
+      const redirect = isSafeRedirect(searchParams.get("redirect"));
       if (res.requires_mfa && res.mfa_token) {
         setMfaToken(res.mfa_token);
       } else {
-        router.push("/dashboard");
+        router.push(redirect || "/dashboard");
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Invalid corporate credentials or unauthorized tenant");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Invalid corporate credentials or unauthorized tenant"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -49,7 +83,7 @@ export default function LoginPage() {
         </div>
         <MfaStep
           mfaToken={mfaToken}
-          onSuccess={() => router.push("/dashboard")}
+          onSuccess={() => router.push(isSafeRedirect(searchParams.get("redirect")) || "/dashboard")}
           onCancel={() => setMfaToken(null)}
         />
       </div>
@@ -69,9 +103,12 @@ export default function LoginPage() {
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         {error && (
-          <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs flex items-center gap-2">
+          <div
+            role="alert"
+            className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs flex items-center gap-2"
+          >
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -83,17 +120,39 @@ export default function LoginPage() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="name@company.in"
+          autoComplete="username"
           required
         />
 
-        <Input
-          label="Password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="••••••••"
-          required
-        />
+        <div className="relative">
+          <Input
+            label="Password"
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            autoComplete="current-password"
+            required
+            className="pr-10"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            className="absolute right-2.5 top-[30px] p-1 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
+
+        <div className="flex items-center justify-end">
+          <span
+            className="text-xs text-muted-foreground"
+            title="Contact your workspace administrator to reset your password"
+          >
+            Forgot password? Contact your admin
+          </span>
+        </div>
 
         <Button type="submit" className="w-full h-10 font-semibold" isLoading={isLoading}>
           Sign In

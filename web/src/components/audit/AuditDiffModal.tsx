@@ -36,19 +36,19 @@ export function AuditDiffModal({ isOpen, onClose, log }: AuditDiffModalProps) {
           <div className="space-y-2">
             <span className="font-semibold text-foreground block">Field-Level Modifications:</span>
             <div className="rounded-lg border border-border overflow-hidden">
-              {log.diff.map((d, i) => (
+              {log.diff.map((d) => (
                 <div
-                  key={i}
+                  key={d.field}
                   className="flex items-center justify-between p-2.5 bg-card border-b last:border-0 border-border text-xs font-mono"
                 >
                   <span className="font-semibold text-foreground">{d.field}</span>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-rose-500 bg-rose-500/10 px-1.5 py-0.5 rounded">
-                      {JSON.stringify(d.old_value)}
+                  <div className="flex items-center space-x-2 min-w-0">
+                    <span className="text-rose-500 bg-rose-500/10 px-1.5 py-0.5 rounded truncate max-w-[10rem] sm:max-w-[14rem]">
+                      {d.old_value === undefined || d.old_value === null ? "(none)" : JSON.stringify(d.old_value)}
                     </span>
-                    <span className="text-muted-foreground">→</span>
-                    <span className="text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded">
-                      {JSON.stringify(d.new_value)}
+                    <span className="text-muted-foreground shrink-0">→</span>
+                    <span className="text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded truncate max-w-[10rem] sm:max-w-[14rem]">
+                      {d.new_value === undefined || d.new_value === null ? "(none)" : JSON.stringify(d.new_value)}
                     </span>
                   </div>
                 </div>
