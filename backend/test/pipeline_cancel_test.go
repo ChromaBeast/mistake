@@ -4,7 +4,6 @@ import (
 	"context"
 	"mistake-backend/internal/domain"
 	"mistake-backend/internal/pipeline"
-	"mistake-backend/internal/seed"
 	"mistake-backend/internal/storage"
 	"testing"
 	"time"
@@ -19,7 +18,7 @@ func TestPipelineContextCancellation(t *testing.T) {
 		ID: tenantID, Name: "Cancel Test Org", Status: domain.TenantStatusActive,
 	})
 
-	csvData := seed.SampleCSVData()
+	csvData := sampleCSVData()
 	dsID := "ds-cancel-1"
 	_ = store.CreateDataSource(context.Background(), &domain.DataSource{
 		ID:         dsID,

@@ -8,7 +8,6 @@ import (
 	"mistake-backend/internal/handlers"
 	"mistake-backend/internal/pipeline"
 	"mistake-backend/internal/router"
-	"mistake-backend/internal/seed"
 	"mistake-backend/internal/storage"
 	"net/http"
 	"net/http/httptest"
@@ -26,7 +25,7 @@ func TestFullHTTPAPIIntegration(t *testing.T) {
 	defer workerPool.Stop()
 
 	// Seed tenant and users
-	_, owner, err := seed.SeedDatabase(context.Background(), store)
+	_, owner, err := seedFixtures(context.Background(), store)
 	if err != nil {
 		t.Fatalf("seed failed: %v", err)
 	}
@@ -36,7 +35,7 @@ func TestFullHTTPAPIIntegration(t *testing.T) {
 	// 1. Test Login
 	loginBody, _ := json.Marshal(map[string]string{
 		"email":    owner.Email,
-		"password": "Admin@123456",
+		"password": testOwnerPassword,
 	})
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/login", bytes.NewReader(loginBody))
 	req.Header.Set("Content-Type", "application/json")

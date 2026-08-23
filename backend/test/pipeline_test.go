@@ -4,7 +4,6 @@ import (
 	"context"
 	"mistake-backend/internal/domain"
 	"mistake-backend/internal/pipeline"
-	"mistake-backend/internal/seed"
 	"mistake-backend/internal/storage"
 	"testing"
 	"time"
@@ -19,7 +18,7 @@ func TestIngestionPipeline(t *testing.T) {
 	_ = store.CreateTenant(ctx, &domain.Tenant{ID: tenantID, Name: "Pipeline Test", Status: domain.TenantStatusActive})
 
 	// 1. Process CSV sample data
-	csvData := seed.SampleCSVData()
+	csvData := sampleCSVData()
 	dsID := "ds-csv-101"
 	ds := &domain.DataSource{
 		ID:         dsID,
@@ -69,7 +68,7 @@ func TestIngestionPipeline(t *testing.T) {
 	}
 
 	// 3. Test Email Parser
-	emailData := seed.SampleEmailData()
+	emailData := sampleEmailData()
 	dsEmailID := "ds-eml-201"
 	_ = store.CreateDataSource(ctx, &domain.DataSource{
 		ID:         dsEmailID,
