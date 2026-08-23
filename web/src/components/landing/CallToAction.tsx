@@ -18,7 +18,7 @@ export function CallToAction() {
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">
           <Button
-            href="/signup"
+            href="/#contact"
             size="lg"
             className="w-full sm:w-auto h-11 px-8 text-sm font-semibold gap-2"
           >
