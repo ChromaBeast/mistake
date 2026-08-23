@@ -12,6 +12,7 @@
     --popover-foreground: #0f172a;
     --primary: #0f172a;
     --primary-foreground: #ffffff;
+    --primary-hover: #27354b;
     --secondary: #f1f5f9;
     --secondary-foreground: #0f172a;
     --muted: #f1f5f9;
@@ -35,6 +36,7 @@
     --popover-foreground: #f8fafc;
     --primary: #f8fafc;
     --primary-foreground: #090d16;
+    --primary-hover: #dbe3ee;
     --secondary: #1e293b;
     --secondary-foreground: #f8fafc;
     --muted: #162032;
@@ -58,9 +60,14 @@ body {
   min-height: 100vh;
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 4.5rem;
+}
+
 h1, h2, .font-serif, .font-display {
   font-family: var(--font-fraunces), Georgia, serif;
-  font-variation-settings: "opsz" 36, "wght" 600;
+  font-variation-settings: "opsz" 40;
   letter-spacing: -0.02em;
 }
 
@@ -135,4 +142,53 @@ code, pre, .font-mono {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(148, 163, 184, 0.4);
+}
+
+/* Range slider (spend calculator) */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 18px;
+  width: 18px;
+  border-radius: 9999px;
+  background: var(--foreground);
+  border: 3px solid var(--background);
+  cursor: pointer;
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.45);
+  transition: transform 120ms ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+input[type="range"]::-moz-range-thumb {
+  height: 18px;
+  width: 18px;
+  border-radius: 9999px;
+  background: var(--foreground);
+  border: 3px solid var(--background);
+  cursor: pointer;
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.45);
+}
+
+input[type="range"]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 4px;
+  border-radius: 9999px;
+}
+
+/* Hide scrollbar but keep scrollability */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

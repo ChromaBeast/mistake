@@ -12,36 +12,48 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+function readStoredTheme(): Theme {
+  if (typeof window === "undefined") return "dark";
+  try {
+    const saved = localStorage.getItem("mistake_theme");
+    if (saved === "light" || saved === "dark" || saved === "system") return saved;
+  } catch {
+    /* storage unavailable */
+  }
+  return "dark";
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("dark");
   const [isDark, setIsDark] = useState(true);
 
   useEffect(() => {
-    const saved = localStorage.getItem("mistake_theme") as Theme | null;
-    if (saved) {
-      setThemeState(saved);
-    }
+    setThemeState(readStoredTheme());
   }, []);
 
   useEffect(() => {
-    const root = document.documentElement;
-    const isDarkActive =
-      theme === "dark" ||
-      (theme === "system" &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches);
-
-    setIsDark(isDarkActive);
-    if (isDarkActive) {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const apply = () => {
+      const isDarkActive =
+        theme === "dark" || (theme === "system" && media.matches);
+      setIsDark(isDarkActive);
+      document.documentElement.classList.toggle("dark", isDarkActive);
+    };
+    apply();
     localStorage.setItem("mistake_theme", theme);
+    const onManualChange = () => setThemeState(readStoredTheme());
+    window.addEventListener("mistake-theme-change", onManualChange);
+    if (theme === "system") {
+      media.addEventListener("change", apply);
+      return () => {
+        media.removeEventListener("change", apply);
+        window.removeEventListener("mistake-theme-change", onManualChange);
+      };
+    }
+    return () => window.removeEventListener("mistake-theme-change", onManualChange);
   }, [theme]);
 
-  const setTheme = (t: Theme) => {
-    setThemeState(t);
-  };
+  const setTheme = (t: Theme) => setThemeState(t);
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme, isDark }}>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import { cn } from "@/lib/utils/cn";
 
 export interface InputProps
@@ -10,7 +10,10 @@ export interface InputProps
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, label, error, helperText, type = "text", id, ...props }, ref) => {
-    const inputId = id || (label ? label.toLowerCase().replace(/\s+/g, "-") : undefined);
+    const generatedId = useId();
+    const inputId = id || generatedId;
+    const errorId = `${inputId}-error`;
+    const helperId = `${inputId}-helper`;
 
     return (
       <div className="w-full space-y-1.5">
@@ -23,6 +26,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           id={inputId}
           type={type}
           ref={ref}
+          aria-invalid={!!error || undefined}
+          aria-describedby={
+            error ? errorId : helperText ? helperId : undefined
+          }
           className={cn(
             "flex h-9 w-full rounded-md border border-input bg-card px-3 py-1 text-sm shadow-sm transition-colors",
             "file:border-0 file:bg-transparent file:text-sm file:font-medium",
@@ -34,8 +41,16 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           )}
           {...props}
         />
-        {error && <p className="text-xs text-destructive">{error}</p>}
-        {helperText && !error && <p className="text-xs text-muted-foreground">{helperText}</p>}
+        {error && (
+          <p id={errorId} role="alert" className="text-xs text-destructive">
+            {error}
+          </p>
+        )}
+        {helperText && !error && (
+          <p id={helperId} className="text-xs text-muted-foreground">
+            {helperText}
+          </p>
+        )}
       </div>
     );
   }
