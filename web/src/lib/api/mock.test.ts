@@ -21,7 +21,9 @@ describe("MockApiClient Unit Tests", () => {
     expect(single.entity_name).toBe(first.entity_name);
   });
 
-  it("updates mistake status and records transition", async () => {
+  it("updates mistake status through the legal state machine and records transitions", async () => {
+    // State machine: Detected → Under Review → Verified
+    await client.updateMistakeStatus("mst-001", "under_review");
     const updated = await client.updateMistakeStatus(
       "mst-001",
       "verified",
@@ -29,6 +31,19 @@ describe("MockApiClient Unit Tests", () => {
     );
     expect(updated.status).toBe("verified");
     expect(updated.transitions?.length).toBeGreaterThan(0);
+  });
+
+  it("rejects illegal status transitions and terminal updates without a reason", async () => {
+    // mst-002 starts at "under_review": jumping straight to resolved is illegal
+    await expect(
+      client.updateMistakeStatus("mst-002", "resolved")
+    ).rejects.toThrow(/Invalid status transition/);
+
+    // Move mst-002 legally: under_review → verified → resolved
+    await client.updateMistakeStatus("mst-002", "verified");
+    await expect(
+      client.updateMistakeStatus("mst-002", "resolved", "Vendor debit note DN-221 applied")
+    ).resolves.toBeDefined();
   });
 
   it("assigns mistake to user", async () => {

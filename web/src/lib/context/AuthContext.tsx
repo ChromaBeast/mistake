@@ -24,29 +24,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isDemoMode, setIsDemoMode] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
     async function loadSession() {
       try {
         const currentUser = await api.getCurrentUser();
         const currentTenant = await api.getTenant();
+        if (cancelled) return;
         setUser(currentUser);
         setTenant(currentTenant);
-        if (currentUser?.email?.includes("acmemfg.in") || currentUser?.id?.startsWith("usr-")) {
+        if ((currentUser as any)?.is_demo) {
           setIsDemoMode(true);
         }
       } catch (err) {
-        console.warn("No active session:", err);
+        console.warn("No active session:", err instanceof Error ? err.message : "unknown");
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     }
     loadSession();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const login = async (payload: LoginPayload): Promise<LoginResponse> => {
     const res = await api.login(payload);
     if (!res.requires_mfa) {
       setUser(res.user);
-      if ((res as any).is_demo || payload.email.includes("acmemfg.in")) {
+      if ((res as any).is_demo) {
         setIsDemoMode(true);
       }
       if (res.tenant) {
@@ -62,6 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const verifyMfa = async (payload: MfaVerifyPayload): Promise<LoginResponse> => {
     const res = await api.verifyMfa(payload);
     setUser(res.user);
+    if ((res as any).is_demo) setIsDemoMode(true);
     if (res.tenant) {
       setTenant(res.tenant);
     } else {
@@ -81,10 +87,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = async () => {
-    await api.logout();
-    setUser(null);
-    setTenant(null);
-    setIsDemoMode(false);
+    try {
+      await api.logout();
+    } finally {
+      setUser(null);
+      setTenant(null);
+      setIsDemoMode(false);
+    }
   };
 
   return (

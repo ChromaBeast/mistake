@@ -147,6 +147,23 @@ export class MockApiClient implements ApiClient {
   async updateMistakeStatus(id: string, status: MistakeStatus, reason?: string) {
     const m = await this.getMistake(id);
     const oldStatus = m.status;
+    // Enforce the documented state machine: Detected → Under Review → Verified → Resolved/Dismissed
+    const allowed: Record<MistakeStatus, MistakeStatus[]> = {
+      detected: ["under_review", "dismissed"],
+      under_review: ["verified", "dismissed"],
+      verified: ["resolved", "dismissed"],
+      resolved: [],
+      dismissed: [],
+    };
+    if (!(allowed[oldStatus] ?? []).includes(status)) {
+      throw new Error(
+        `Invalid status transition: "${oldStatus}" findings cannot move to "${status}".`
+      );
+    }
+    // Mandatory reason logging for terminal states
+    if ((status === "resolved" || status === "dismissed") && !reason?.trim()) {
+      throw new Error("A mandatory reason is required to resolve or dismiss a finding.");
+    }
     m.status = status;
     m.updated_at = new Date().toISOString();
     if (!m.transitions) m.transitions = [];

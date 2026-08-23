@@ -38,6 +38,14 @@ export async function POST(req: NextRequest) {
       return response;
     }
 
+    // Network-level failure: the backend is unreachable
+    if (backendResult.status === 0) {
+      return NextResponse.json(
+        { error: { code: "SERVICE_UNAVAILABLE", message: "Authentication service is unreachable" } },
+        { status: 503 }
+      );
+    }
+
     // Return backend error directly (e.g. 401 Invalid Credentials)
     const errorPayload = backendResult.data || {
       error: {
@@ -46,10 +54,10 @@ export async function POST(req: NextRequest) {
       },
     };
 
-    return NextResponse.json(errorPayload, { status: backendResult.status || 401 });
-  } catch (err: any) {
+    return NextResponse.json(errorPayload, { status: backendResult.status });
+  } catch {
     return NextResponse.json(
-      { error: { code: "SERVER_ERROR", message: err?.message || "Failed to reach authentication service" } },
+      { error: { code: "SERVER_ERROR", message: "Failed to reach authentication service" } },
       { status: 500 }
     );
   }
