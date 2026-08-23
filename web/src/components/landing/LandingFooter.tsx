@@ -26,22 +26,20 @@ export function LandingFooter() {
               Request Audit
             </Link>
             <a
-              href="https://github.com/ChromaBeast/mistake"
-              target="_blank"
-              rel="noreferrer"
+              href="mailto:audits@mistake.in"
               className="hover:text-foreground transition-colors"
             >
-              GitHub Source
+              Contact
             </a>
           </div>
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] font-mono">
           <div>
-            © {new Date().getFullYear()} Mistake Platform. Built with Exact INR Paise Arithmetic.
+            © 2026 Mistake Platform. Built with Exact INR Paise Arithmetic.
           </div>
-          <div className="text-muted-foreground">
-            SOC-2 Type II Ready • ISO 27001 Aligned • GSTR-2B Reconciled
+          <div className="text-muted-foreground text-center sm:text-right">
+            Controls aligned to SOC 2 &amp; ISO 27001 frameworks • GSTR-2B Reconciled
           </div>
         </div>
       </div>

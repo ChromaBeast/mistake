@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, CheckCircle2, Pause, Play } from "lucide-react";
 import { VERTICALS } from "./industryData";
 
 export function IndustrySolutionsSection() {
@@ -14,6 +14,7 @@ export function IndustrySolutionsSection() {
 
   useEffect(() => {
     if (isPaused) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const timer = setInterval(() => {
       setActiveIdx((prev) => (prev + 1) % VERTICALS.length);
     }, 7000);
@@ -26,11 +27,11 @@ export function IndustrySolutionsSection() {
   return (
     <section id="industries" className="py-20 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        
+
         {/* Header with Navigation Controls */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="max-w-2xl space-y-3">
-            <h2 className="text-3xl font-bold tracking-tight text-foreground">
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
               Built for heavy industrial operations.
             </h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
@@ -40,6 +41,13 @@ export function IndustrySolutionsSection() {
 
           <div className="flex items-center gap-2 shrink-0">
             <button
+              onClick={() => setIsPaused((p) => !p)}
+              className="p-2 rounded-lg border border-border/80 bg-card hover:bg-muted text-foreground transition-colors duration-75 active:scale-95"
+              aria-label={isPaused ? "Auto-rotate industries" : "Pause industry rotation"}
+            >
+              {isPaused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
+            </button>
+            <button
               onClick={() => handleSelect(activeIdx === 0 ? VERTICALS.length - 1 : activeIdx - 1)}
               className="p-2 rounded-lg border border-border/80 bg-card hover:bg-muted text-foreground transition-colors duration-75 active:scale-95"
               aria-label="Previous Industry"
@@ -47,7 +55,7 @@ export function IndustrySolutionsSection() {
               <ChevronLeft className="w-4 h-4" />
             </button>
             <span className="font-mono text-xs text-muted-foreground px-2 tabular-nums">
-              0{activeIdx + 1} / 0{VERTICALS.length}
+              {String(activeIdx + 1).padStart(2, "0")} / {String(VERTICALS.length).padStart(2, "0")}
             </span>
             <button
               onClick={() => handleSelect((activeIdx + 1) % VERTICALS.length)}
@@ -68,9 +76,10 @@ export function IndustrySolutionsSection() {
               <button
                 key={v.id}
                 onClick={() => handleSelect(i)}
+                aria-pressed={isActive}
                 className={`flex items-center gap-2.5 px-4 py-2.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors duration-75 ${
                   isActive
-                    ? "bg-foreground text-background font-semibold shadow-xs"
+                    ? "bg-foreground text-background font-semibold shadow-sm"
                     : "bg-muted/40 hover:bg-muted/80 text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -85,7 +94,7 @@ export function IndustrySolutionsSection() {
         <div
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
-          className="rounded-2xl border border-border/70 bg-card p-6 md:p-8 space-y-8 shadow-xs"
+          className="rounded-xl border border-border bg-card p-6 md:p-8 space-y-8 shadow-sm"
         >
           {/* Top Headline & Context Flow */}
           <div key={`header-${current.id}`} className="animate-fade-in flex flex-col lg:flex-row lg:items-center justify-between gap-6">

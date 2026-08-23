@@ -3,6 +3,7 @@ import { LandingNavbar } from "@/components/landing/LandingNavbar";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { ExecutiveSpendCalculator } from "@/components/landing/ExecutiveSpendCalculator";
 import { DetectionEngineShowcase } from "@/components/landing/DetectionEngineShowcase";
+import { LiveMetricsStats } from "@/components/landing/LiveMetricsStats";
 import { IndustrySolutionsSection } from "@/components/landing/IndustrySolutionsSection";
 import { EnterpriseArchitectureSection } from "@/components/landing/EnterpriseArchitectureSection";
 import { PaiseProofSection } from "@/components/landing/PaiseProofSection";
@@ -15,19 +16,14 @@ export default function LandingPage() {
     <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-foreground selection:text-background antialiased">
       <LandingNavbar />
       <main className="flex-1">
-        <div id="reconciliation">
-          <HeroSection />
-        </div>
+        <HeroSection />
         <ExecutiveSpendCalculator />
+        <LiveMetricsStats />
         <DetectionEngineShowcase />
-        <div id="industries">
-          <IndustrySolutionsSection />
-        </div>
+        <IndustrySolutionsSection />
         <EnterpriseArchitectureSection />
         <PaiseProofSection />
-        <div id="governance">
-          <FeatureGrid />
-        </div>
+        <FeatureGrid />
         <CallToAction />
       </main>
       <LandingFooter />
