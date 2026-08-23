@@ -9,6 +9,7 @@ import { EnterpriseArchitectureSection } from "@/components/landing/EnterpriseAr
 import { PaiseProofSection } from "@/components/landing/PaiseProofSection";
 import { FeatureGrid } from "@/components/landing/FeatureGrid";
 import { CallToAction } from "@/components/landing/CallToAction";
+import { ContactSection } from "@/components/landing/ContactSection";
 import { LandingFooter } from "@/components/landing/LandingFooter";
 
 export default function LandingPage() {
@@ -25,6 +26,7 @@ export default function LandingPage() {
         <PaiseProofSection />
         <FeatureGrid />
         <CallToAction />
+        <ContactSection />
       </main>
       <LandingFooter />
     </div>
