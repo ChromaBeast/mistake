@@ -18,17 +18,19 @@ export function MfaStep({ mfaToken, onSuccess, onCancel }: MfaStepProps) {
   const [error, setError] = useState<string | null>(null);
   const { verifyMfa } = useAuth();
 
+  const isComplete = /^\d{6}$/.test(code);
+
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!code.trim()) {
-      setError("Please enter the 6-digit verification code");
+    if (!isComplete) {
+      setError("Enter the complete 6-digit verification code.");
       return;
     }
 
     setIsLoading(true);
     setError(null);
     try {
-      await verifyMfa({ mfa_token: mfaToken, code: code.trim() });
+      await verifyMfa({ mfa_token: mfaToken, code });
       onSuccess();
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Invalid MFA verification code");
@@ -47,7 +49,10 @@ export function MfaStep({ mfaToken, onSuccess, onCancel }: MfaStepProps) {
       </div>
 
       {error && (
-        <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs">
+        <div
+          role="alert"
+          className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs"
+        >
           {error}
         </div>
       )}
@@ -57,17 +62,19 @@ export function MfaStep({ mfaToken, onSuccess, onCancel }: MfaStepProps) {
         type="text"
         inputMode="numeric"
         autoComplete="one-time-code"
+        pattern="\d{6}"
         maxLength={6}
         value={code}
         onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
         placeholder="000000"
+        error={code.length > 0 && !isComplete ? `${6 - code.length} digit${6 - code.length === 1 ? "" : "s"} remaining` : undefined}
         className="font-mono text-center tracking-widest text-lg"
         required
         autoFocus
       />
 
       <div className="space-y-2 pt-2">
-        <Button type="submit" className="w-full" isLoading={isLoading}>
+        <Button type="submit" className="w-full" isLoading={isLoading} disabled={!isComplete}>
           Verify & Sign In
         </Button>
         <Button

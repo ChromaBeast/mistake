@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { api } from "@/lib/api";
 import { AuditLog } from "@/types";
 import { AuditLogTable } from "@/components/audit/AuditLogTable";
 import { AuditDiffModal } from "@/components/audit/AuditDiffModal";
 import { AuditFilterBar } from "@/components/audit/AuditFilterBar";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { ShieldCheck, History } from "lucide-react";
+import { ShieldCheck, History, AlertTriangle } from "lucide-react";
 
 export default function AuditTrailPage() {
   const [logs, setLogs] = useState<AuditLog[]>([]);
@@ -16,15 +16,20 @@ export default function AuditTrailPage() {
   const [actionFilter, setActionFilter] = useState("all");
   const [resourceFilter, setResourceFilter] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const requestSeqRef = useRef(0);
 
   useEffect(() => {
+    const seq = ++requestSeqRef.current;
     async function load() {
       setIsLoading(true);
+      setLoadError(null);
       try {
         const res = await api.getAuditLogs({
           action: actionFilter === "all" ? undefined : actionFilter,
           resource_type: resourceFilter === "all" ? undefined : resourceFilter,
         });
+        if (seq !== requestSeqRef.current) return; // stale response
         let filtered = Array.isArray(res) ? res : [];
         if (actionFilter !== "all") {
           filtered = filtered.filter((l) => l.action === actionFilter);
@@ -35,9 +40,11 @@ export default function AuditTrailPage() {
         setLogs(filtered);
       } catch (err) {
         console.error(err);
+        if (seq !== requestSeqRef.current) return;
         setLogs([]);
+        setLoadError("Could not load the audit trail. Verify connectivity and retry.");
       } finally {
-        setIsLoading(false);
+        if (seq === requestSeqRef.current) setIsLoading(false);
       }
     }
     load();
@@ -73,6 +80,19 @@ export default function AuditTrailPage() {
         resourceFilter={resourceFilter}
         onResourceChange={setResourceFilter}
       />
+
+      {loadError && !isLoading && (
+        <div role="alert" className="flex items-center gap-3 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3">
+          <AlertTriangle className="h-4 w-4 text-destructive shrink-0" />
+          <span className="text-xs text-destructive flex-1">{loadError}</span>
+          <button
+            onClick={() => setResourceFilter((v) => v)}
+            className="text-xs font-semibold text-destructive underline underline-offset-2 hover:opacity-80"
+          >
+            Retry
+          </button>
+        </div>
+      )}
 
       {isLoading ? (
         <Skeleton className="h-64 w-full rounded-xl" />

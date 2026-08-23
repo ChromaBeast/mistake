@@ -17,6 +17,7 @@ export function UploadDropzone({ onUpload, isLoading }: UploadDropzoneProps) {
   const allowedExtensions = [".csv", ".xlsx", ".xls", ".pdf", ".eml"];
 
   const handleFiles = async (files: FileList | null) => {
+    if (isLoading) return;
     if (!files || files.length === 0) return;
     const file = files[0];
     const ext = "." + file.name.split(".").pop()?.toLowerCase();
@@ -37,9 +38,13 @@ export function UploadDropzone({ onUpload, isLoading }: UploadDropzoneProps) {
   return (
     <div className="space-y-3">
       <div
+        role="button"
+        tabIndex={0}
+        aria-label="Upload business document: drag and drop or press Enter to browse files"
+        aria-disabled={isLoading}
         onDragOver={(e) => {
           e.preventDefault();
-          setIsDragOver(true);
+          if (!isLoading) setIsDragOver(true);
         }}
         onDragLeave={() => setIsDragOver(false)}
         onDrop={(e) => {
@@ -47,17 +52,24 @@ export function UploadDropzone({ onUpload, isLoading }: UploadDropzoneProps) {
           setIsDragOver(false);
           handleFiles(e.dataTransfer.files);
         }}
-        onClick={() => fileInputRef.current?.click()}
-        className={`flex flex-col items-center justify-center p-8 rounded-xl border-2 border-dashed transition-all cursor-pointer ${
+        onClick={() => !isLoading && fileInputRef.current?.click()}
+        onKeyDown={(e) => {
+          if ((e.key === "Enter" || e.key === " ") && !isLoading) {
+            e.preventDefault();
+            fileInputRef.current?.click();
+          }
+        }}
+        className={`flex flex-col items-center justify-center p-8 rounded-xl border-2 border-dashed transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
           isDragOver
             ? "border-primary bg-primary/5"
             : "border-border hover:border-slate-400 bg-card"
-        }`}
+        } ${isLoading ? "opacity-60 pointer-events-none" : ""}`}
       >
         <input
           ref={fileInputRef}
           type="file"
           accept=".csv,.xlsx,.xls,.pdf,.eml"
+          aria-label="Select business document to ingest"
           className="hidden"
           onChange={(e) => handleFiles(e.target.files)}
         />
@@ -88,7 +100,7 @@ export function UploadDropzone({ onUpload, isLoading }: UploadDropzoneProps) {
       </div>
 
       {errorMessage && (
-        <div className="flex items-center space-x-2 p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs">
+        <div role="alert" className="flex items-center space-x-2 p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs">
           <AlertCircle className="h-4 w-4 shrink-0" />
           <span>{errorMessage}</span>
         </div>

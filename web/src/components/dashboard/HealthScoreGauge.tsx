@@ -5,8 +5,9 @@ import { Badge } from "@/components/ui/Badge";
 import { ShieldCheck, AlertTriangle, ShieldX } from "lucide-react";
 
 export function HealthScoreGauge({ healthScore }: { healthScore?: Partial<HealthScore> }) {
-  const score = healthScore?.score ?? 100;
-  const status = healthScore?.status ?? "healthy";
+  const hasData = healthScore?.score != null;
+  const score = Math.min(100, Math.max(0, Number(healthScore?.score) || 0));
+  const status = healthScore?.status ?? (hasData ? "healthy" : "healthy");
   const risk_drivers = healthScore?.risk_drivers ?? [];
 
   const statusConfig = {
@@ -44,49 +45,65 @@ export function HealthScoreGauge({ healthScore }: { healthScore?: Partial<Health
         <Badge variant={current.badgeVariant}>{current.label}</Badge>
       </CardHeader>
       <CardContent className="flex flex-col items-center justify-center pt-2 pb-6 space-y-4">
-        <div className="relative flex items-center justify-center">
-          <svg className="h-32 w-32 transform -rotate-90" viewBox="0 0 100 100">
-            <circle
-              className="text-secondary"
-              strokeWidth="8"
-              stroke="currentColor"
-              fill="transparent"
-              r={radius}
-              cx="50"
-              cy="50"
-            />
-            <circle
-              className="transition-all duration-1000 ease-out"
-              strokeWidth="8"
-              strokeDasharray={circumference}
-              strokeDashoffset={strokeDashoffset}
-              strokeLinecap="round"
-              stroke={current.color}
-              fill="transparent"
-              r={radius}
-              cx="50"
-              cy="50"
-            />
-          </svg>
-          <div className="absolute flex flex-col items-center">
-            <span className="text-3xl font-bold tracking-tight text-foreground font-mono">
-              {score}
-            </span>
-            <span className="text-[10px] text-muted-foreground uppercase font-semibold">/ 100</span>
+        {!hasData ? (
+          <div className="py-8 text-center">
+            <p className="text-xs text-muted-foreground">
+              Health score unavailable — no findings have been analyzed yet.
+            </p>
           </div>
-        </div>
+        ) : (
+          <>
+            <div
+              className="relative flex items-center justify-center"
+              role="img"
+              aria-label={`Health score ${score} of 100`}
+            >
+              <svg className="h-32 w-32 transform -rotate-90" viewBox="0 0 100 100" aria-hidden="true">
+                <circle
+                  className="text-secondary"
+                  strokeWidth="8"
+                  stroke="currentColor"
+                  fill="transparent"
+                  r={radius}
+                  cx="50"
+                  cy="50"
+                />
+                <circle
+                  className="transition-all duration-1000 ease-out"
+                  strokeWidth="8"
+                  strokeDasharray={circumference}
+                  strokeDashoffset={strokeDashoffset}
+                  strokeLinecap="round"
+                  stroke={current.color}
+                  fill="transparent"
+                  r={radius}
+                  cx="50"
+                  cy="50"
+                />
+              </svg>
+              <div className="absolute flex flex-col items-center">
+                <span className="text-3xl font-bold tracking-tight text-foreground font-mono">
+                  {score}
+                </span>
+                <span className="text-[10px] text-muted-foreground uppercase font-semibold">/ 100</span>
+              </div>
+            </div>
 
-        <div className="w-full space-y-1.5 pt-2 border-t border-border/60">
-          <p className="text-xs font-medium text-muted-foreground">Primary Risk Drivers:</p>
-          <ul className="space-y-1">
-            {risk_drivers.map((driver, i) => (
-              <li key={i} className="text-xs text-foreground flex items-center space-x-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-rose-500 shrink-0" />
-                <span className="truncate">{driver}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+            {risk_drivers.length > 0 && (
+              <div className="w-full space-y-1.5 pt-2 border-t border-border/60">
+                <p className="text-xs font-medium text-muted-foreground">Primary Risk Drivers:</p>
+                <ul className="space-y-1">
+                  {risk_drivers.map((driver) => (
+                    <li key={driver} className="text-xs text-foreground flex items-center space-x-1.5">
+                      <span className="h-1.5 w-1.5 rounded-full bg-rose-500 shrink-0" />
+                      <span className="truncate">{driver}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </>
+        )}
       </CardContent>
     </Card>
   );

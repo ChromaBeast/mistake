@@ -67,6 +67,13 @@ export function DataSourceList({ dataSources = [], onRetry, onSelect }: DataSour
               key={ds.id}
               onClick={() => onSelect?.(ds)}
               className="cursor-pointer"
+              tabIndex={onSelect ? 0 : undefined}
+              onKeyDown={(e) => {
+                if (onSelect && (e.key === "Enter" || e.key === " ")) {
+                  e.preventDefault();
+                  onSelect(ds);
+                }
+              }}
             >
               <TableCell className="font-medium">
                 <div className="flex items-center space-x-2.5">
@@ -74,14 +81,14 @@ export function DataSourceList({ dataSources = [], onRetry, onSelect }: DataSour
                   <div>
                     <p className="text-xs font-semibold text-foreground">{ds.file_name}</p>
                     <p className="text-[10px] text-muted-foreground font-mono tabular-nums">
-                      {(ds.file_size_bytes / (1024 * 1024)).toFixed(2)} MB • by {ds.uploaded_by_name || "User"}
+                      {(((ds.file_size_bytes ?? 0) as number) / (1024 * 1024)).toFixed(2)} MB • by {ds.uploaded_by_name || "User"}
                     </p>
                   </div>
                 </div>
               </TableCell>
               <TableCell>{getStatusBadge(ds.status)}</TableCell>
               <TableCell className="font-mono tabular-nums text-xs">
-                {ds.total_records_extracted.toLocaleString("en-IN")}
+                {(ds.total_records_extracted ?? 0).toLocaleString("en-IN")}
               </TableCell>
               <TableCell>
                 {ds.mistakes_found_count > 0 ? (
