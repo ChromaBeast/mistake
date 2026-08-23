@@ -16,6 +16,7 @@ export interface DropdownProps {
   items: DropdownItem[];
   align?: "left" | "right";
   className?: string;
+  triggerAriaLabel?: string;
 }
 
 export function Dropdown({
@@ -23,9 +24,11 @@ export function Dropdown({
   items,
   align = "right",
   className,
+  triggerAriaLabel,
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -40,15 +43,54 @@ export function Dropdown({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+        return;
+      }
+      if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+      const buttons = Array.from(
+        menuRef.current?.querySelectorAll<HTMLButtonElement>("button") ?? []
+      );
+      if (buttons.length === 0) return;
+      e.preventDefault();
+      const idx = buttons.indexOf(document.activeElement as HTMLButtonElement);
+      const next =
+        e.key === "ArrowDown"
+          ? buttons[(idx + 1 + buttons.length) % buttons.length]
+          : buttons[(idx - 1 + buttons.length) % buttons.length];
+      next.focus();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [isOpen]);
+
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
-      <div onClick={() => setIsOpen(!isOpen)} className="cursor-pointer">
+      <button
+        type="button"
+        aria-haspopup="menu"
+        aria-expanded={isOpen}
+        aria-label={triggerAriaLabel}
+        onClick={() => setIsOpen(!isOpen)}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowDown" && !isOpen) {
+            e.preventDefault();
+            setIsOpen(true);
+          }
+        }}
+        className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md inline-flex"
+      >
         {trigger}
-      </div>
+      </button>
       {isOpen && (
         <div
+          ref={menuRef}
+          role="menu"
           className={cn(
-            "absolute z-50 mt-2 w-52 rounded-lg border border-border bg-card p-1 shadow-lg animate-in fade-in-0 zoom-in-95",
+            "absolute z-50 mt-2 w-52 rounded-lg border border-border bg-card p-1 shadow-lg animate-fade-up",
             align === "right" ? "right-0" : "left-0",
             className
           )}
@@ -56,6 +98,7 @@ export function Dropdown({
           {items.map((item) => (
             <button
               key={item.id}
+              role="menuitem"
               onClick={() => {
                 item.onClick();
                 setIsOpen(false);

@@ -17,6 +17,7 @@ export function Tooltip({
   className,
 }: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const id = React.useId();
 
   const positions = {
     top: "bottom-full left-1/2 -translate-x-1/2 mb-2",
@@ -30,12 +31,17 @@ export function Tooltip({
       className="relative inline-flex"
       onMouseEnter={() => setIsVisible(true)}
       onMouseLeave={() => setIsVisible(false)}
+      onFocus={() => setIsVisible(true)}
+      onBlur={() => setIsVisible(false)}
+      aria-describedby={isVisible ? id : undefined}
     >
       {children}
       {isVisible && (
         <div
+          role="tooltip"
+          id={id}
           className={cn(
-            "absolute z-50 whitespace-nowrap rounded-md bg-slate-900 px-2.5 py-1 text-xs text-slate-100 shadow-md animate-in fade-in-0 zoom-in-95",
+            "pointer-events-none absolute z-50 whitespace-nowrap rounded-md bg-slate-900 px-2.5 py-1 text-xs text-slate-100 shadow-md animate-fade-in dark:bg-slate-700",
             positions[side],
             className
           )}

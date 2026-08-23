@@ -27,11 +27,26 @@ const ibmPlexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "Mistake — B2B Discrepancy & Financial Leakage Detection",
   description:
-    "Evidence-backed B2B discrepancy and financial leakage detection platform for manufacturers, distributors, and wholesalers.",
+    "Mistake audits every PO, GRN, and supplier invoice at integer-paise accuracy — catching rate escalations, short shipments, and missed SLA penalties before payment release. Built for Indian manufacturers, distributors, and wholesalers.",
+  openGraph: {
+    title: "Mistake — B2B Discrepancy & Financial Leakage Detection",
+    description:
+      "Evidence-backed leakage detection at paise-exact accuracy for Indian manufacturers, distributors, and wholesalers.",
+    type: "website",
+    siteName: "Mistake",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Mistake — B2B Discrepancy & Financial Leakage Detection",
+    description:
+      "Catch rate escalations, short shipments, and missed SLA penalties before payment release.",
+  },
   icons: {
     icon: "/favicon.svg",
   },
 };
+
+const themeInitScript = `(function(){try{var t=localStorage.getItem("mistake_theme")||"dark";var d=t==="dark"||(t==="system"&&window.matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.classList.toggle("dark",d);}catch(e){document.documentElement.classList.add("dark");}})();`;
 
 export default function RootLayout({
   children,
@@ -44,6 +59,9 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${fraunces.variable} ${inter.variable} ${ibmPlexMono.variable}`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="antialiased font-sans bg-background text-foreground">
         <ThemeProvider>
           <AuthProvider>{children}</AuthProvider>
