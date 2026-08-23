@@ -6,7 +6,7 @@ export function PaiseProofSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         <div className="max-w-3xl space-y-3">
-          <h2 className="text-3xl font-bold tracking-tight text-foreground">
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
             Why spreadsheets and legacy ERPs lose money.
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
@@ -14,7 +14,7 @@ export function PaiseProofSection() {
           </p>
         </div>
 
-        <div className="border border-border/60 rounded-2xl overflow-hidden grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border/50 bg-card shadow-xs">
+        <div className="border border-border rounded-xl overflow-hidden grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border/50 bg-card shadow-sm">
           
           {/* Legacy ERP Column */}
           <div className="p-6 md:p-8 space-y-4">
@@ -23,7 +23,7 @@ export function PaiseProofSection() {
               <h3 className="font-bold text-base text-foreground">Standard Floating-Point Calculation</h3>
             </div>
 
-            <ul className="text-xs text-muted-foreground space-y-3">
+            <ul className="text-sm text-muted-foreground space-y-3">
               <li className="space-y-0.5">
                 <strong className="text-foreground">Cumulative Tax Rounding Drift:</strong>
                 <p>Decimals rounded per line item vs at the invoice footer create statutory GST mismatches and write-offs.</p>
@@ -46,7 +46,7 @@ export function PaiseProofSection() {
               <h3 className="font-bold text-base text-foreground">Exact 64-Bit Integer Paise Math</h3>
             </div>
 
-            <ul className="text-xs text-muted-foreground space-y-3">
+            <ul className="text-sm text-muted-foreground space-y-3">
               <li className="space-y-0.5">
                 <strong className="text-foreground">Exact Paisa Integrity (₹0.01):</strong>
                 <p>Every transaction, tax slab, and freight cost is computed strictly in integer paise minor units without rounding drift.</p>

@@ -30,7 +30,7 @@ export function EnterpriseArchitectureSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         <div className="max-w-3xl space-y-3">
-          <h2 className="text-3xl font-bold tracking-tight text-foreground">
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
             Operates non-invasively with your ERP.
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
@@ -39,20 +39,20 @@ export function EnterpriseArchitectureSection() {
         </div>
 
         <div className="border-y border-border/50 grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border/50">
-          {PIPELINE_STAGES.map((s, i) => (
-            <div key={i} className="p-6 md:p-8 space-y-4">
+          {PIPELINE_STAGES.map((s) => (
+            <div key={s.name} className="p-6 md:p-8 space-y-4">
               <div className="space-y-1">
                 <h3 className="font-bold text-base text-foreground">{s.name}</h3>
                 <div className="text-xs text-muted-foreground">{s.role}</div>
               </div>
 
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 {s.details}
               </p>
 
               <div className="pt-3 border-t border-border/40 flex flex-wrap gap-1.5 font-mono text-[10px] text-muted-foreground">
-                {s.stack.map((tech, j) => (
-                  <span key={j} className="px-2 py-0.5 rounded border border-border/50 bg-muted/20">
+                {s.stack.map((tech) => (
+                  <span key={tech} className="px-2 py-0.5 rounded border border-border/50 bg-muted/20">
                     {tech}
                   </span>
                 ))}

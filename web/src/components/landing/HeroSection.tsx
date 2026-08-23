@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
@@ -71,31 +70,36 @@ export function HeroSection() {
         
         {/* Typographic Thesis Header - Pure Minimalist Title & Para */}
         <div className="max-w-3xl space-y-6">
-          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground leading-[1.1]">
+          <h1 className="text-5xl sm:text-6xl font-bold tracking-tight text-foreground leading-[1.05]">
             Catch vendor overbilling before payment release.
           </h1>
 
-          <p className="text-lg text-muted-foreground leading-relaxed">
-            Mistake continuously audits Purchase Orders, Warehouse Gate GRNs, and Supplier Invoices. 
+          <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
+            Mistake continuously audits Purchase Orders, Warehouse Gate GRNs, and Supplier Invoices.
             We identify rate variances, short shipments, and missed delay penalties with exact paisa precision.
           </p>
 
           <div className="flex flex-wrap items-center gap-3 pt-2">
-            <Link href="/signup">
-              <Button size="lg" className="h-10 px-5 text-xs font-semibold gap-1.5">
-                Request Spend Audit <ArrowRight className="w-3.5 h-3.5" />
-              </Button>
-            </Link>
-            <Link href="/login">
-              <Button variant="outline" size="lg" className="h-10 px-5 text-xs font-medium gap-1.5">
-                Open Workspace <ArrowUpRight className="w-3.5 h-3.5" />
-              </Button>
-            </Link>
+            <Button
+              href="/signup"
+              size="lg"
+              className="h-11 px-6 text-sm font-semibold gap-1.5"
+            >
+              Request Spend Audit <ArrowRight className="w-4 h-4" />
+            </Button>
+            <Button
+              href="/login"
+              variant="outline"
+              size="lg"
+              className="h-11 px-6 text-sm font-medium gap-1.5"
+            >
+              Open Workspace <ArrowUpRight className="w-4 h-4" />
+            </Button>
           </div>
         </div>
 
         {/* Minimalist Terminal / Ledger Console */}
-        <div className="border border-border/60 bg-card rounded-xl overflow-hidden shadow-xs">
+        <div className="border border-border/60 bg-card rounded-xl overflow-hidden shadow-sm">
           
           {/* Header Row */}
           <div className="flex flex-wrap items-center justify-between px-4 py-3 border-b border-border/50 bg-muted/20 text-xs">
@@ -106,7 +110,8 @@ export function HeroSection() {
                   <button
                     key={rec.id}
                     onClick={() => setActiveIdx(i)}
-                    className={`px-2 py-1 font-mono text-[11px] rounded transition-colors ${
+                    aria-pressed={activeIdx === i}
+                    className={`px-2.5 py-1.5 font-mono text-[11px] rounded transition-colors ${
                       activeIdx === i
                         ? "bg-foreground text-background font-semibold"
                         : "bg-background/80 text-muted-foreground border border-border/50 hover:text-foreground"

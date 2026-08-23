@@ -33,19 +33,19 @@ export function FeatureGrid() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         <div className="max-w-3xl space-y-3">
-          <h2 className="text-3xl font-bold tracking-tight text-foreground">
-            Enterprise separation of duties.
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
+            From factory gate to ledger entry, every action leaves proof.
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
             From factory dock receiving to CFO disbursement sign-off, Mistake enforces complete auditability at every step.
           </p>
         </div>
 
-        <div className="border-y border-border/50 grid sm:grid-cols-2 lg:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-border/50">
-          {GOVERNANCE_FEATURES.map((f, i) => (
-            <div key={i} className="p-6 md:p-8 space-y-2">
+        <div className="border-y border-border/50 grid sm:grid-cols-2 lg:grid-cols-3 divide-y sm:divide-y-0 divide-border/50">
+          {GOVERNANCE_FEATURES.map((f) => (
+            <div key={f.title} className="p-6 md:p-8 space-y-2 sm:border-b sm:border-border/40">
               <h3 className="font-bold text-base text-foreground">{f.title}</h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">{f.detail}</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">{f.detail}</p>
             </div>
           ))}
         </div>
