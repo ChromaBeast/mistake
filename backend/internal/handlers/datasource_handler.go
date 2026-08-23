@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"mistake-backend/internal/domain"
@@ -35,10 +36,16 @@ type CreateDataSourceRequest struct {
 	Content    string            `json:"content,omitempty"`
 }
 
+// maxUploadBytes caps any single document upload (25 MB).
+const maxUploadBytes = 25 << 20
+
 // Create accepts a file upload or raw JSON content and enqueues it for async processing.
 func (h *DataSourceHandler) Create(w http.ResponseWriter, r *http.Request) {
 	tenantID := middleware.GetTenantID(r.Context())
 	userID := middleware.GetUserID(r.Context())
+
+	// Hard-cap request body regardless of encoding (multipart or JSON).
+	r.Body = http.MaxBytesReader(w, r.Body, maxUploadBytes+(1<<20))
 
 	var filename string
 	var sourceType domain.SourceType
@@ -46,6 +53,11 @@ func (h *DataSourceHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	if strings.Contains(r.Header.Get("Content-Type"), "multipart/form-data") {
 		if err := r.ParseMultipartForm(32 << 20); err != nil {
+			var maxErr *http.MaxBytesError
+			if errors.As(err, &maxErr) {
+				RespondError(w, http.StatusRequestEntityTooLarge, "FILE_TOO_LARGE", "Upload exceeds the 25MB limit")
+				return
+			}
 			RespondError(w, http.StatusBadRequest, "PARSE_ERROR", "Failed to parse multipart form")
 			return
 		}
@@ -56,7 +68,11 @@ func (h *DataSourceHandler) Create(w http.ResponseWriter, r *http.Request) {
 		}
 		defer file.Close()
 		buf := new(bytes.Buffer)
-		_, _ = io.Copy(buf, file)
+		n, _ := io.Copy(buf, io.LimitReader(file, maxUploadBytes+1))
+		if n > maxUploadBytes {
+			RespondError(w, http.StatusRequestEntityTooLarge, "FILE_TOO_LARGE", "Upload exceeds the 25MB limit")
+			return
+		}
 		fileBytes = buf.Bytes()
 		filename = header.Filename
 		st, ok := guessSourceType(filename)

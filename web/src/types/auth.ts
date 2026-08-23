@@ -10,6 +10,8 @@ export interface User {
   role: UserRole;
   is_mfa_enabled?: boolean;
   avatar_url?: string;
+  /** True when served from the evaluation sandbox dataset. */
+  is_demo?: boolean;
   created_at: string;
   updated_at?: string;
 }
@@ -44,14 +46,17 @@ export interface MfaVerifyPayload {
 
 /** Response returned by the login endpoint. */
 export interface LoginResponse {
-  user: User;
-  tenant: Tenant;
+  /** Present once authentication is fully established (absent while MFA is pending). */
+  user?: User;
+  tenant?: Tenant;
   requires_mfa?: boolean;
   mfa_token?: string;
+  is_demo?: boolean;
 }
 
 /** Response returned by the signup endpoint. */
 export interface SignupResponse {
   user: User;
   tenant: Tenant;
+  is_demo?: boolean;
 }

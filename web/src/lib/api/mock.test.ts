@@ -56,7 +56,7 @@ describe("MockApiClient Unit Tests", () => {
       email: "aditya@bharatheavyeng.in",
       password: "password123",
     });
-    expect(res.user.email).toBe("aditya@bharatheavyeng.in");
-    expect(res.tenant.id).toBeDefined();
+    expect(res.user?.email).toBe("aditya@bharatheavyeng.in");
+    expect(res.tenant?.id).toBeDefined();
   });
 });

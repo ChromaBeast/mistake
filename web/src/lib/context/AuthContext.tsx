@@ -32,7 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (cancelled) return;
         setUser(currentUser);
         setTenant(currentTenant);
-        if ((currentUser as any)?.is_demo) {
+        if (currentUser?.is_demo) {
           setIsDemoMode(true);
         }
       } catch (err) {
@@ -50,8 +50,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (payload: LoginPayload): Promise<LoginResponse> => {
     const res = await api.login(payload);
     if (!res.requires_mfa) {
-      setUser(res.user);
-      if ((res as any).is_demo) {
+      if (res.user) {
+        setUser(res.user);
+      }
+      if (res.is_demo) {
         setIsDemoMode(true);
       }
       if (res.tenant) {
@@ -66,8 +68,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const verifyMfa = async (payload: MfaVerifyPayload): Promise<LoginResponse> => {
     const res = await api.verifyMfa(payload);
-    setUser(res.user);
-    if ((res as any).is_demo) setIsDemoMode(true);
+    if (res.user) {
+      setUser(res.user);
+    }
+    if (res.is_demo) setIsDemoMode(true);
     if (res.tenant) {
       setTenant(res.tenant);
     } else {
@@ -81,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const res = await api.signup(payload);
     setUser(res.user);
     setTenant(res.tenant);
-    if ((res as any).is_demo) {
+    if (res.is_demo) {
       setIsDemoMode(true);
     }
   };

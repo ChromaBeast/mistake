@@ -31,11 +31,11 @@ export function NumberTicker({
     const animate = (timestamp: number) => {
       if (!startTimeRef.current) startTimeRef.current = timestamp;
       const progress = Math.min((timestamp - startTimeRef.current) / durationMs, 1);
-      
+
       // Smooth ease-out cubic
       const easeOut = 1 - Math.pow(1 - progress, 3);
       const current = startValRef.current + (value - startValRef.current) * easeOut;
-      
+
       setDisplayValue(current);
 
       if (progress < 1) {
@@ -47,6 +47,9 @@ export function NumberTicker({
 
     animationFrameId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationFrameId);
+    // `displayValue` is intentionally read once per animation cycle as the
+    // tween's starting point; including it would restart the animation.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, durationMs]);
 
   const formatted = decimals > 0 ? displayValue.toFixed(decimals) : Math.round(displayValue).toLocaleString("en-IN");
