@@ -1,6 +1,9 @@
 package config
 
 import (
+	"crypto/rand"
+	"encoding/hex"
+	"log"
 	"os"
 	"strconv"
 )
@@ -33,14 +36,29 @@ func LoadConfig() *Config {
 		}
 	}
 
-	secret := os.Getenv("JWT_SECRET")
-	if secret == "" {
-		secret = "mistake-secure-jwt-secret-key-production-change-me"
+	// Accept both spellings; render.yaml sets ENVIRONMENT.
+	env := os.Getenv("ENVIRONMENT")
+	if env == "" {
+		env = os.Getenv("ENV")
 	}
-
-	env := os.Getenv("ENV")
 	if env == "" {
 		env = "development"
+	}
+
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		if env == "production" {
+			// A publicly-guessable signing key would let anyone mint valid
+			// session tokens. Refuse to boot rather than fall back silently.
+			log.Fatal("JWT_SECRET must be set when ENV=production")
+		}
+		// Development only: ephemeral random key so local runs never share a key.
+		b := make([]byte, 32)
+		if _, err := rand.Read(b); err != nil {
+			log.Fatal("Failed to generate ephemeral JWT secret: ", err)
+		}
+		secret = hex.EncodeToString(b)
+		log.Println("Warning: JWT_SECRET not set; using an ephemeral random secret (sessions will not survive restarts).")
 	}
 
 	storageDir := os.Getenv("STORAGE_DIR")

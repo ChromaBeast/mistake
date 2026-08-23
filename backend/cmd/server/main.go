@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,14 +13,10 @@ import (
 	"mistake-backend/internal/config"
 	"mistake-backend/internal/pipeline"
 	"mistake-backend/internal/router"
-	"mistake-backend/internal/seed"
 	"mistake-backend/internal/storage"
 )
 
 func main() {
-	seedFlag := flag.Bool("seed", true, "Seed database with sample B2B records on startup")
-	flag.Parse()
-
 	cfg := config.LoadConfig()
 	log.Printf("Starting Mistake Backend on port %d (%s)...", cfg.Port, cfg.Environment)
 
@@ -47,21 +42,6 @@ func main() {
 	workerPool := pipeline.NewWorkerPool(pipe, cfg.WorkerCount, 100)
 	workerPool.Start()
 	defer workerPool.Stop()
-
-	if *seedFlag {
-		log.Println("Checking database seed status...")
-		tenant, _ := store.GetTenant(context.Background(), "tenant-apex-101")
-		if tenant == nil {
-			log.Println("Seeding initial B2B sample data...")
-			if _, _, err := seed.SeedDatabase(context.Background(), store); err != nil {
-				log.Printf("Warning: Seeding failed: %v", err)
-			} else {
-				log.Println("Seeding completed successfully.")
-			}
-		} else {
-			log.Println("Seed tenant already exists, skipping initial seed.")
-		}
-	}
 
 	handler := router.SetupRouter(store, pipe, workerPool, cfg)
 
