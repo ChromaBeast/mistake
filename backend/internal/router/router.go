@@ -35,12 +35,15 @@ func SetupRouter(store storage.Store, p *pipeline.Pipeline, wp *pipeline.WorkerP
 		handlers.RespondJSON(w, http.StatusOK, map[string]string{"status": "ok", "service": "mistake-backend"})
 	})
 
-	// Public Auth endpoints
-	mux.HandleFunc("POST /api/v1/auth/signup", authH.Signup)
-	mux.HandleFunc("POST /api/v1/auth/login", authH.Login)
-	mux.HandleFunc("POST /api/v1/auth/mfa/verify", authH.MFAVerify)
-	mux.HandleFunc("POST /api/v1/auth/refresh", authH.RefreshToken)
-	mux.HandleFunc("POST /api/v1/auth/logout", authH.Logout)
+	// Public Auth endpoints — rate limited per client IP to blunt credential
+	// stuffing and token-guessing (login/MFA stricter than signup/refresh).
+	authLimiter := middleware.RateLimit(10)
+	tokenLimiter := middleware.RateLimit(60)
+	mux.Handle("POST /api/v1/auth/signup", authLimiter(http.HandlerFunc(authH.Signup)))
+	mux.Handle("POST /api/v1/auth/login", authLimiter(http.HandlerFunc(authH.Login)))
+	mux.Handle("POST /api/v1/auth/mfa/verify", authLimiter(http.HandlerFunc(authH.MFAVerify)))
+	mux.Handle("POST /api/v1/auth/refresh", tokenLimiter(http.HandlerFunc(authH.RefreshToken)))
+	mux.Handle("POST /api/v1/auth/logout", tokenLimiter(http.HandlerFunc(authH.Logout)))
 
 	// Protected API Router
 	authMiddleware := middleware.AuthMiddleware(cfg.JWTSecret, store)

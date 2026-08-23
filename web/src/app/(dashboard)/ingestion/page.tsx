@@ -20,6 +20,7 @@ export default function IngestionPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const mountedRef = useRef(true);
@@ -51,37 +52,38 @@ export default function IngestionPage() {
     }, 2000);
   };
 
-  const loadSources = async () => {
-    setLoadError(null);
-    try {
-      const res = await api.getDataSources();
-      if (!mountedRef.current) return;
-      const list = Array.isArray(res) ? res : [];
-      setDataSources(list);
-      const inProgress = list.find(
-        (d) => d.status === "Processing" || d.status === "Extracting" || d.status === "Analyzing"
-      );
-      if (inProgress) {
-        setActiveJob(inProgress);
-        startPolling(inProgress.id);
-      } else if (list.length > 0 && !activeJob) {
-        setActiveJob(list[0]);
-      }
-    } catch (err) {
-      console.error(err);
-      if (mountedRef.current) {
+  useEffect(() => {
+    const controller = new AbortController();
+    (async () => {
+      setLoadError(null);
+      setIsLoading(true);
+      try {
+        const res = await api.getDataSources();
+        if (controller.signal.aborted || !mountedRef.current) return;
+        const list = Array.isArray(res) ? res : [];
+        setDataSources(list);
+        const inProgress = list.find(
+          (d) => d.status === "Processing" || d.status === "Extracting" || d.status === "Analyzing"
+        );
+        if (inProgress) {
+          setActiveJob(inProgress);
+          startPolling(inProgress.id);
+        } else if (list.length > 0) {
+          setActiveJob((current) => current ?? list[0]);
+        }
+      } catch (err) {
+        console.error(err);
+        if (controller.signal.aborted || !mountedRef.current) return;
         setDataSources([]);
         setLoadError("Could not reach the ingestion service. Verify the backend is running and retry.");
+      } finally {
+        if (!controller.signal.aborted && mountedRef.current) setIsLoading(false);
       }
-    } finally {
-      if (mountedRef.current) setIsLoading(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  };
+    })();
+    return () => controller.abort();
+  }, [reloadKey]);
 
-  useEffect(() => {
-    loadSources();
-  }, []);
+  const retryLoad = () => setReloadKey((k) => k + 1);
 
   const handleUpload = async (file: File) => {
     setIsUploading(true);
@@ -150,7 +152,7 @@ export default function IngestionPage() {
             <AlertTriangle className="h-4 w-4 mt-0.5 text-destructive shrink-0" />
             <div className="text-xs text-destructive flex-1">{loadError}</div>
             <button
-              onClick={loadSources}
+              onClick={retryLoad}
               className="text-xs font-semibold text-destructive underline underline-offset-2 hover:opacity-80"
             >
               Retry

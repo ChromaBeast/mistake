@@ -27,6 +27,25 @@ type AssignRequest struct {
 	AssignedTo string `json:"assigned_to"`
 }
 
+// allowedMistakeTransitions enforces the documented finding lifecycle:
+// Detected -> Under Review -> Verified -> Resolved / Dismissed.
+var allowedMistakeTransitions = map[domain.MistakeStatus][]domain.MistakeStatus{
+	domain.MistakeStatusDetected:    {domain.MistakeStatusUnderReview, domain.MistakeStatusDismissed},
+	domain.MistakeStatusUnderReview: {domain.MistakeStatusVerified, domain.MistakeStatusDismissed},
+	domain.MistakeStatusVerified:    {domain.MistakeStatusResolved, domain.MistakeStatusDismissed},
+	domain.MistakeStatusResolved:    {},
+	domain.MistakeStatusDismissed:   {},
+}
+
+func isTransitionAllowed(from, to domain.MistakeStatus) bool {
+	for _, next := range allowedMistakeTransitions[from] {
+		if next == to {
+			return true
+		}
+	}
+	return false
+}
+
 func (h *MistakeTransitionHandler) UpdateStatus(w http.ResponseWriter, r *http.Request) {
 	tenantID := middleware.GetTenantID(r.Context())
 	userID := middleware.GetUserID(r.Context())
@@ -41,6 +60,24 @@ func (h *MistakeTransitionHandler) UpdateStatus(w http.ResponseWriter, r *http.R
 	// Reason required for dismiss / resolve per API spec & edge cases
 	if (req.Status == domain.MistakeStatusDismissed || req.Status == domain.MistakeStatusResolved) && strings.TrimSpace(req.Reason) == "" {
 		RespondError(w, http.StatusBadRequest, "REASON_REQUIRED", "Mandatory reason required when resolving or dismissing a mistake finding")
+		return
+	}
+
+	current, err := h.store.GetMistake(r.Context(), tenantID, id)
+	if err != nil {
+		RespondError(w, http.StatusNotFound, "NOT_FOUND", "Mistake not found")
+		return
+	}
+
+	if current.Status == req.Status {
+		m := current
+		RespondJSON(w, http.StatusOK, m)
+		return
+	}
+
+	if !isTransitionAllowed(current.Status, req.Status) {
+		RespondError(w, http.StatusConflict, "INVALID_TRANSITION",
+			fmt.Sprintf("Illegal status transition: a %q finding cannot move to %q", current.Status, req.Status))
 		return
 	}
 

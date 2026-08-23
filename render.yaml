@@ -46,6 +46,8 @@ services:
 
 databases:
   # 3. Render Managed PostgreSQL Database
+  # NOTE: free-tier databases expire after ~30 days and have no automated
+  # backups — export data regularly until upgrading to a persistent plan.
   - name: mistake-db
     plan: free
     region: oregon

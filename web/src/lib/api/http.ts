@@ -31,6 +31,18 @@ import { normalizeDashboardSummary } from "./adapters/dashboard-adapter";
 
 let refreshPromise: Promise<boolean> | null = null;
 
+const PROTECTED_PATH = /^\/(dashboard|workspace|entities|ingestion|search|audit|settings)/;
+
+function redirectToLogin(requestPath: string): void {
+  if (typeof window === "undefined") return;
+  const current = window.location.pathname;
+  // Only bounce from authenticated screens; the landing page and auth
+  // screens surface errors inline instead of redirecting.
+  if (!PROTECTED_PATH.test(current)) return;
+  const url = `/login?redirect=${encodeURIComponent(current)}&from=${encodeURIComponent(requestPath)}`;
+  window.location.assign(url);
+}
+
 function singleFlightRefresh(): Promise<boolean> {
   if (!refreshPromise) {
     refreshPromise = fetch("/api/auth/refresh", { method: "POST" })
@@ -51,7 +63,8 @@ export class HttpApiClient implements ApiClient {
   }
 
   // On a 401 from an expired short-lived access cookie, refresh the session
-  // once (single-flight) and retry the original request.
+  // once (single-flight) and retry the original request. If the refresh also
+  // fails on an authenticated screen, bounce to login with the return path.
   private async reqWithRefresh<T>(
     path: string,
     options: RequestInit = {},
@@ -63,8 +76,9 @@ export class HttpApiClient implements ApiClient {
       if (err instanceof HttpApiError && err.status === 401) {
         const refreshed = await singleFlightRefresh();
         if (refreshed) {
-          return this.reqWithRefresh<T>(path, options, serverToken);
+          return this.req<T>(path, options, serverToken);
         }
+        redirectToLogin(path);
       }
       throw err;
     }
