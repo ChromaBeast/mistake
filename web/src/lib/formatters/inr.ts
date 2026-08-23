@@ -52,9 +52,11 @@ export function formatPaiseToINR(
   } else {
     const numericPaise = paise as number;
     isNegative = numericPaise < 0;
-    const absPaise = Math.abs(numericPaise);
-    rupeesInt = BigInt(Math.floor(absPaise / 100));
-    paiseFrac = BigInt(Math.round(absPaise % 100));
+    // Round to the nearest whole paise first, then split — prevents
+    // fractional-paise inputs from rendering a bogus third decimal digit.
+    const wholePaise = Math.round(Math.abs(numericPaise));
+    rupeesInt = BigInt(Math.floor(wholePaise / 100));
+    paiseFrac = BigInt(wholePaise % 100);
   }
 
   const showDecimals = options?.showDecimals ?? true;
@@ -87,7 +89,7 @@ export function formatPaiseToCompactINR(
   paise: number | bigint | null | undefined,
   options?: { showSymbol?: boolean }
 ): string {
-  if (paise === null || paise === undefined) return "₹ 0";
+  if (paise === null || paise === undefined) return options?.showSymbol === false ? "0" : "₹ 0";
 
   const num = Number(paise);
   const isNegative = num < 0;

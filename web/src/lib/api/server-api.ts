@@ -24,32 +24,55 @@ export function getServerMock(): MockApiClient {
   return serverMockInstance;
 }
 
+export interface BackendRequest {
+  method?: string;
+  headers?: Record<string, string>;
+  body?: BodyInit | null;
+  /** Content-Type for the upstream request. Multipart bodies must NOT be overridden. */
+  contentType?: string | null;
+}
+
 export async function tryFetchBackend(
   path: string,
-  options: RequestInit = {},
+  options: BackendRequest = {},
   timeoutMs = 15000
-): Promise<{ ok: boolean; status: number; data: any; headers?: Headers }> {
+): Promise<{ ok: boolean; status: number; data: any }> {
   const baseUrl = getBackendUrl();
   const fullUrl = `${baseUrl}${path.startsWith("/") ? path : `/${path}`}`;
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
+  const headers: Record<string, string> = { ...(options.headers ?? {}) };
+  if (options.contentType) {
+    headers["Content-Type"] = options.contentType;
+  } else if (!options.body || typeof options.body === "string") {
+    // Default JSON only when there is no body or a plain-text body.
+    if (options.body) headers["Content-Type"] = headers["Content-Type"] || "application/json";
+  }
+
   try {
     const res = await fetch(fullUrl, {
-      ...options,
+      method: options.method ?? "GET",
+      headers,
+      body: options.body,
       signal: controller.signal,
-      headers: {
-        "Content-Type": "application/json",
-        ...(options.headers as Record<string, string>),
-      },
     });
     clearTimeout(timer);
 
-    const data = await res.json().catch(() => ({}));
-    return { ok: res.ok, status: res.status, data, headers: res.headers };
-  } catch (err) {
+    const text = await res.text();
+    let data: any = null;
+    if (text) {
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = { raw: text };
+      }
+    }
+    return { ok: res.ok, status: res.status, data };
+  } catch {
     clearTimeout(timer);
-    return { ok: false, status: 503, data: null };
+    // status 0 => network-level failure (unreachable, timeout, aborted)
+    return { ok: false, status: 0, data: null };
   }
 }

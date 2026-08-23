@@ -29,7 +29,11 @@ export interface ReviewQueueItem {
   id: string;
   tenant_id: string;
   entity_type: EntityType;
+  /** The unresolved duplicate/alias name extracted from a source document. */
   incoming_name: string;
+  /** Entity representing the incoming duplicate; merged into the candidate on confirm. */
+  incoming_entity_id?: string;
+  /** Canonical entity suggested as the merge target. */
   candidate_entity_id: string;
   candidate_entity_name: string;
   similarity_score: number;

@@ -16,7 +16,7 @@ export function formatDate(
       day: "numeric",
       month: "short",
       year: "numeric",
-    }) + " (Date only)";
+    });
   }
 
   if (options?.showTime) {
@@ -52,6 +52,9 @@ export function formatRelativeTime(dateInput: string | Date | null | undefined):
 
   if (diffDay > 30) {
     return formatDate(date);
+  }
+  if (diffDay < 0) {
+    return `in ${Math.abs(diffDay)}d`;
   }
   if (diffDay > 0) {
     return `${diffDay}d ago`;

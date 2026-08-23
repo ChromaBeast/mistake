@@ -38,6 +38,13 @@ export async function POST(req: NextRequest) {
       return response;
     }
 
+    if (backendResult.status === 0) {
+      return NextResponse.json(
+        { error: { code: "SERVICE_UNAVAILABLE", message: "Authentication service is unreachable" } },
+        { status: 503 }
+      );
+    }
+
     const errorPayload = backendResult.data || {
       error: {
         code: "MFA_FAILED",
@@ -45,10 +52,10 @@ export async function POST(req: NextRequest) {
       },
     };
 
-    return NextResponse.json(errorPayload, { status: backendResult.status || 401 });
-  } catch (err: any) {
+    return NextResponse.json(errorPayload, { status: backendResult.status });
+  } catch {
     return NextResponse.json(
-      { error: { code: "SERVER_ERROR", message: err?.message || "Failed to verify MFA" } },
+      { error: { code: "SERVER_ERROR", message: "Failed to verify MFA" } },
       { status: 500 }
     );
   }

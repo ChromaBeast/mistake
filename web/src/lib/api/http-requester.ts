@@ -1,3 +1,25 @@
+export class HttpApiError extends Error {
+  status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "HttpApiError";
+    this.status = status;
+  }
+}
+
+export function buildQuery(
+  params?: Record<string, string | number | undefined | null>
+): string {
+  if (!params) return "";
+  const search = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined || value === null || value === "") continue;
+    search.set(key, String(value));
+  }
+  const qs = search.toString();
+  return qs ? `?${qs}` : "";
+}
+
 export async function httpJsonRequest<T>(
   baseUrl: string,
   path: string,
@@ -18,7 +40,8 @@ export async function httpJsonRequest<T>(
       typeof errorData?.error === "string"
         ? errorData.error
         : errorData?.error?.message || errorData?.message || `HTTP ${res.status}: ${res.statusText}`;
-    throw new Error(msg);
+    throw new HttpApiError(msg, res.status);
   }
-  return res.json();
+  const text = await res.text();
+  return text ? JSON.parse(text) : (undefined as T);
 }
