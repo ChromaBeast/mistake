@@ -67,18 +67,18 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   }, [isOpen, onClose]);
 
   const mainNav = [
-    { href: "/dashboard", label: "Executive Overview", icon: <LayoutDashboard className="h-3.5 w-3.5" /> },
+    { href: "/dashboard", label: "Overview", icon: <LayoutDashboard className="h-4 w-4" /> },
     {
       href: "/workspace",
-      label: "3-Way Investigation",
-      icon: <FileSearch className="h-3.5 w-3.5" />,
-      badge: activeCount !== null && activeCount > 0 ? `${activeCount} Active` : undefined,
+      label: "Findings",
+      icon: <FileSearch className="h-4 w-4" />,
+      badge: activeCount !== null && activeCount > 0 ? activeCount : undefined,
     },
-    { href: "/ingestion", label: "Ingestion Pipeline", icon: <FileUp className="h-3.5 w-3.5" /> },
-    { href: "/entities", label: "Entity Directory", icon: <Users className="h-3.5 w-3.5" /> },
-    { href: "/search", label: "Search & Lookup", icon: <Search className="h-3.5 w-3.5" /> },
-    { href: "/audit", label: "Statutory Audit Log", icon: <History className="h-3.5 w-3.5" /> },
-    { href: "/settings", label: "Admin & Settings", icon: <Settings className="h-3.5 w-3.5" /> },
+    { href: "/ingestion", label: "Documents", icon: <FileUp className="h-4 w-4" /> },
+    { href: "/entities", label: "Vendors", icon: <Users className="h-4 w-4" /> },
+    { href: "/search", label: "Search", icon: <Search className="h-4 w-4" /> },
+    { href: "/audit", label: "Audit log", icon: <History className="h-4 w-4" /> },
+    { href: "/settings", label: "Settings", icon: <Settings className="h-4 w-4" /> },
   ];
 
   return (
@@ -95,18 +95,18 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       <aside
         aria-label="Primary navigation"
         className={cn(
-          "fixed top-0 z-50 flex h-screen w-60 flex-col border-r border-border bg-card transition-transform duration-200 ease-in-out lg:translate-x-0 lg:z-40",
+          "dashboard-sidebar fixed top-0 z-50 flex h-screen w-60 flex-col border-r border-border bg-card transition-transform duration-200 ease-in-out lg:translate-x-0 lg:z-40",
           isOpen ? "translate-x-0 left-0" : "-translate-x-full left-0 lg:translate-x-0"
         )}
       >
-        <div className="flex h-14 items-center justify-between border-b border-border px-4">
+        <div className="flex h-16 items-center justify-between border-b border-border px-4">
           <Link href="/dashboard" className="flex items-center space-x-2" onClick={onClose}>
-            <div className="flex h-6 w-6 items-center justify-center rounded bg-foreground text-background font-black text-xs">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/25 bg-primary/10 text-primary font-bold text-sm">
               M
             </div>
             <div className="flex flex-col">
-              <span className="text-xs font-bold tracking-tight text-foreground uppercase">Mistake</span>
-              <span className="text-[9px] text-muted-foreground font-mono">Enterprise Audit</span>
+              <span className="text-sm font-bold tracking-tight text-foreground">Mistake</span>
+              <span className="text-[10px] text-muted-foreground">Finance operations</span>
             </div>
           </Link>
           {onClose && (
@@ -125,23 +125,14 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         </div>
 
         <nav className="flex-1 overflow-y-auto px-2 py-3 space-y-0.5" onClick={onClose}>
-          <div className="px-2 py-1 text-[9px] font-mono uppercase tracking-widest text-muted-foreground">
-            Platform Navigation
+          <div className="px-3 pb-2 pt-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+            Workspace
           </div>
           {mainNav.map((item) => (
             <NavItem key={item.href} {...item} />
           ))}
         </nav>
 
-        <div className="border-t border-border p-3">
-          <div className="p-2 border border-border bg-muted/20 text-xs">
-            <div className="flex items-center justify-between font-mono text-[10px]">
-              <span className="font-semibold text-foreground">ENTERPRISE TIER</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-bold">ACTIVE</span>
-            </div>
-            <p className="text-[10px] text-muted-foreground font-mono mt-1">Paise-Precision Matching</p>
-          </div>
-        </div>
       </aside>
     </>
   );

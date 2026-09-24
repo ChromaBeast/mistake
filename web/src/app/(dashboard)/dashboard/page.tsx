@@ -12,7 +12,7 @@ import { RecentFindingsList } from "@/components/dashboard/RecentFindingsList";
 import { Button } from "@/components/ui/Button";
 import { DashboardSkeleton } from "@/components/ui/skeletons/DashboardSkeleton";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
-import { RefreshCw, AlertTriangle } from "lucide-react";
+import { RefreshCw, AlertTriangle, CalendarDays } from "lucide-react";
 
 export default function DashboardPage() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -48,27 +48,32 @@ export default function DashboardPage() {
 
   return (
     <ErrorBoundary fallbackTitle="Could not load business health dashboard">
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="mx-auto max-w-[1440px] space-y-7">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-foreground">
-              Business Health Dashboard
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+              Overview
             </h1>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Real-time financial leakage, contradiction risks, and PO-invoice reconciliation overview.
+            <p className="text-sm text-muted-foreground mt-1">
+              Spend at risk and the latest findings.
             </p>
           </div>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={loadData}
-            isLoading={isLoading}
-            disabled={isLoading}
-            className="flex items-center space-x-1.5 self-start sm:self-auto"
-          >
-            <RefreshCw className="h-3.5 w-3.5" />
-            <span>Refresh Metrics</span>
-          </Button>
+          <div className="flex items-center gap-3">
+            <span className="hidden sm:inline-flex items-center gap-2 text-xs text-muted-foreground">
+              <CalendarDays className="h-3.5 w-3.5" /> Current overview
+            </span>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={loadData}
+              isLoading={isLoading}
+              disabled={isLoading}
+              className="flex items-center gap-2 self-start sm:self-auto"
+            >
+              <RefreshCw className="h-3.5 w-3.5" />
+              <span>Refresh</span>
+            </Button>
+          </div>
         </div>
 
         {error && !isLoading && (
@@ -107,10 +112,10 @@ export default function DashboardPage() {
 
 function DashboardData({ summary }: { summary: DashboardSummary }) {
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       <KpiSummaryGrid kpi={summary.kpi_summary} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-1">
           <HealthScoreGauge healthScore={summary.health_score} />
         </div>
@@ -119,7 +124,7 @@ function DashboardData({ summary }: { summary: DashboardSummary }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <DiscrepancyTrendChart data={summary.trend_data} />
         <RecentFindingsList findings={summary.recent_findings} />
       </div>

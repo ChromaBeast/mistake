@@ -29,14 +29,14 @@ export default function DashboardLayout({
   }, []);
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="dashboard-shell min-h-screen bg-background flex">
       <Sidebar isOpen={isMobileNavOpen} onClose={() => setIsMobileNavOpen(false)} />
       <div className="flex-1 flex flex-col pl-0 lg:pl-60 min-w-0">
         <Header
           onOpenSearch={() => setIsSearchOpen(true)}
           onToggleSidebar={() => setIsMobileNavOpen((prev) => !prev)}
         />
-        <main className="flex-1 p-4 sm:p-6 overflow-y-auto">{children}</main>
+        <main className="dashboard-main flex-1 min-w-0 p-4 sm:p-6 xl:p-8 overflow-y-auto">{children}</main>
       </div>
       <GlobalSearchModal
         isOpen={isSearchOpen}

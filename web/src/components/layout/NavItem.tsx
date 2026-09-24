@@ -21,14 +21,14 @@ export function NavItem({ href, label, icon, badge, exact = false }: NavItemProp
     <Link
       href={href}
       className={cn(
-        "group flex items-center justify-between rounded-lg px-3 py-2 text-xs font-medium transition-all",
+        "group flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
         isActive
-          ? "bg-primary text-primary-foreground shadow-sm"
+          ? "bg-primary/10 text-primary"
           : "text-muted-foreground hover:bg-secondary hover:text-foreground"
       )}
     >
       <div className="flex items-center space-x-2.5">
-        <span className={cn("h-4 w-4 transition-colors", isActive ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground")}>
+        <span className={cn("h-4 w-4 transition-colors", isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")}>
           {icon}
         </span>
         <span>{label}</span>
@@ -38,7 +38,7 @@ export function NavItem({ href, label, icon, badge, exact = false }: NavItemProp
           className={cn(
             "px-1.5 py-0.5 text-[10px] font-semibold rounded-full font-mono",
             isActive
-              ? "bg-white/20 text-white"
+              ? "bg-primary/15 text-primary"
               : "bg-secondary text-secondary-foreground border border-border/40"
           )}
         >

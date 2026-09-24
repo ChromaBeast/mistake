@@ -27,9 +27,9 @@ export function Header({ onOpenSearch, onToggleSidebar }: HeaderProps) {
   }, []);
 
   const themeItems = [
-    { id: "light", label: "Light Theme", icon: <Sun className="h-3.5 w-3.5" />, onClick: () => setTheme("light") },
-    { id: "dark", label: "Dark Theme", icon: <Moon className="h-3.5 w-3.5" />, onClick: () => setTheme("dark") },
-    { id: "system", label: "System Default", icon: <Laptop className="h-3.5 w-3.5" />, onClick: () => setTheme("system") },
+    { id: "light", label: "Light", icon: <Sun className="h-3.5 w-3.5" />, onClick: () => setTheme("light") },
+    { id: "dark", label: "Dark", icon: <Moon className="h-3.5 w-3.5" />, onClick: () => setTheme("dark") },
+    { id: "system", label: "System", icon: <Laptop className="h-3.5 w-3.5" />, onClick: () => setTheme("system") },
   ];
 
   const userItems = [
@@ -37,7 +37,7 @@ export function Header({ onOpenSearch, onToggleSidebar }: HeaderProps) {
   ];
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 w-full items-center justify-between border-b border-border/50 bg-card/90 px-4 sm:px-6 backdrop-blur-sm">
+    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-border bg-card/95 px-4 sm:px-6 backdrop-blur-sm">
       <div className="flex items-center space-x-3 sm:space-x-4">
         {onToggleSidebar && (
           <button
@@ -51,7 +51,7 @@ export function Header({ onOpenSearch, onToggleSidebar }: HeaderProps) {
         )}
         <button
           onClick={onOpenSearch}
-          className="flex items-center space-x-2 rounded-lg border border-border/60 bg-muted/40 px-2.5 sm:px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors w-28 xs:w-36 sm:w-60 md:w-72 justify-between"
+          className="flex items-center space-x-2 rounded-lg border border-border bg-background px-2.5 sm:px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors w-28 xs:w-36 sm:w-60 md:w-72 justify-between"
           aria-label="Global search shortcut"
         >
           <div className="flex items-center space-x-2 min-w-0">
@@ -68,18 +68,18 @@ export function Header({ onOpenSearch, onToggleSidebar }: HeaderProps) {
         {isDemoMode ? (
           <div
             title="Evaluation dataset active. Connected to simulated multi-vendor transaction store."
-            className="hidden sm:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 font-mono text-[11px] select-none"
+            className="hidden sm:flex items-center gap-2 border-l border-border pl-4 text-muted-foreground text-xs select-none"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
-            <span>Evaluation Sandbox</span>
+            <span>Demo data</span>
           </div>
         ) : (
           <div
-            title="Connected to production PostgreSQL database."
-            className="hidden sm:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-mono text-[11px] select-none"
+            title="Connected to production database."
+            className="hidden sm:flex items-center gap-2 border-l border-border pl-4 text-muted-foreground text-xs select-none"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-            <span>Live Database</span>
+            <span>Connected</span>
           </div>
         )}
       </div>
@@ -91,7 +91,7 @@ export function Header({ onOpenSearch, onToggleSidebar }: HeaderProps) {
             <button
               type="button"
               aria-label="Toggle theme"
-              className="rounded p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+              className="rounded-lg p-2 text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
             >
               {theme === "dark" ? <Moon className="h-3.5 w-3.5 text-foreground" /> : <Sun className="h-3.5 w-3.5 text-foreground" />}
             </button>
@@ -107,7 +107,7 @@ export function Header({ onOpenSearch, onToggleSidebar }: HeaderProps) {
           align="right"
           trigger={
             <div className="flex items-center space-x-2 cursor-pointer rounded p-1 hover:bg-muted transition-colors">
-              <div className="flex h-6 w-6 items-center justify-center rounded bg-foreground text-background text-[11px] font-bold">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full border border-primary/25 bg-primary/10 text-primary text-xs font-semibold">
                 {user?.name ? user.name.charAt(0).toUpperCase() : "A"}
               </div>
               <div className="hidden text-left sm:block">
