@@ -10,10 +10,8 @@ function GitHubMark({ className }: { className?: string }) {
 }
 
 const PRODUCT_LINKS = [
-  { href: "/#features", label: "Leak Vectors" },
-  { href: "/#calculator", label: "Spend Calculator" },
-  { href: "/#industries", label: "Industries" },
-  { href: "/#architecture", label: "ERP Integration" },
+  { href: "/#features", label: "What it catches" },
+  { href: "/#architecture", label: "How it works" },
 ];
 
 const COMPANY_LINKS = [
@@ -44,7 +42,7 @@ export function LandingFooter() {
               </span>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed max-w-[26ch]">
-              Evidence-backed B2B financial leakage detection at paise-exact accuracy.
+              Find invoice errors before payment.
             </p>
             <a
               href="https://github.com/ChromaBeast/mistake"
@@ -115,10 +113,7 @@ export function LandingFooter() {
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] font-mono text-muted-foreground">
-          <div>© 2026 Mistake Platform. Built with Exact INR Paise Arithmetic.</div>
-          <div className="text-center sm:text-right">
-            Controls aligned to SOC 2 &amp; ISO 27001 frameworks • GSTR-2B Reconciled
-          </div>
+          <div>© 2026 Mistake</div>
         </div>
       </div>
     </footer>

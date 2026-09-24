@@ -6,11 +6,9 @@ import { ArrowRight, Menu, Moon, Sun, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 const NAV_LINKS = [
-  { href: "#features", label: "Leak Vectors" },
-  { href: "#calculator", label: "Spend Calculator" },
-  { href: "#industries", label: "Industry Solutions" },
-  { href: "#architecture", label: "ERP Integration" },
-  { href: "#governance", label: "Governance" },
+  { href: "#features", label: "What it catches" },
+  { href: "#architecture", label: "How it works" },
+  { href: "#contact", label: "Contact" },
 ];
 
 export function LandingNavbar() {
@@ -78,11 +76,11 @@ export function LandingNavbar() {
             Sign In
           </Button>
           <Button
-            href="/signup"
+            href="/#contact"
             size="sm"
             className="h-8 text-xs font-semibold gap-1"
           >
-            Request Spend Audit <ArrowRight className="w-3 h-3" />
+            Get started <ArrowRight className="w-3 h-3" />
           </Button>
         </div>
       </div>

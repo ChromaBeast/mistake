@@ -71,21 +71,20 @@ export function HeroSection() {
         {/* Typographic Thesis Header - Pure Minimalist Title & Para */}
         <div className="max-w-3xl space-y-6">
           <h1 className="text-5xl sm:text-6xl font-bold tracking-tight text-foreground leading-[1.05]">
-            Catch vendor overbilling before payment release.
+            Catch invoice errors before you pay.
           </h1>
 
           <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
-            Mistake continuously audits Purchase Orders, Warehouse Gate GRNs, and Supplier Invoices.
-            We identify rate variances, short shipments, and missed delay penalties with exact paisa precision.
+            Compare purchase orders, receipts, and invoices in one place. Spot overcharges, short deliveries, and missed penalties with the evidence to act.
           </p>
 
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <Button
-              href="/signup"
+              href="#contact"
               size="lg"
               className="h-11 px-6 text-sm font-semibold gap-1.5"
             >
-              Request Spend Audit <ArrowRight className="w-4 h-4" />
+              Request an audit <ArrowRight className="w-4 h-4" />
             </Button>
             <Button
               href="/login"
@@ -93,7 +92,7 @@ export function HeroSection() {
               size="lg"
               className="h-11 px-6 text-sm font-medium gap-1.5"
             >
-              Open Workspace <ArrowUpRight className="w-4 h-4" />
+              Sign in <ArrowUpRight className="w-4 h-4" />
             </Button>
           </div>
         </div>
@@ -104,7 +103,7 @@ export function HeroSection() {
           {/* Header Row */}
           <div className="flex flex-wrap items-center justify-between px-4 py-3 border-b border-border/50 bg-muted/20 text-xs">
             <div className="flex items-center gap-2">
-              <span className="font-mono text-muted-foreground uppercase text-[11px]">Audit Case:</span>
+              <span className="font-mono text-muted-foreground uppercase text-[11px]">Example finding</span>
               <div className="flex items-center gap-1">
                 {AUDIT_RECORDS.map((rec, i) => (
                   <button
@@ -123,7 +122,7 @@ export function HeroSection() {
               </div>
             </div>
             <div className="font-mono text-xs text-rose-600 dark:text-rose-400 font-bold">
-              Detected Leakage: {current.variance}
+              Potential overcharge: {current.variance}
             </div>
           </div>
 
@@ -131,23 +130,22 @@ export function HeroSection() {
           <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border/50 p-4 md:p-6 gap-4 md:gap-0">
             {/* Step 1: PO Terms */}
             <div className="md:pr-6 space-y-2">
-              <div className="text-[11px] font-mono text-muted-foreground uppercase">1. Master Purchase Order</div>
+              <div className="text-[11px] font-mono text-muted-foreground uppercase">Purchase order</div>
               <div className="font-bold text-sm text-foreground">{current.vendor}</div>
-              <div className="font-mono text-xs text-muted-foreground">GSTIN: {current.gstin}</div>
+              <div className="font-mono text-xs text-muted-foreground">{current.item}</div>
               <div className="pt-2 border-t border-border/40 text-xs font-mono text-foreground">{current.poTerms}</div>
             </div>
 
             {/* Step 2: Gate GRN / Physical Receipts */}
             <div className="md:px-6 space-y-2">
-              <div className="text-[11px] font-mono text-muted-foreground uppercase">2. Warehouse Gate Entry (GRN)</div>
-              <div className="font-bold text-sm text-foreground">{current.item}</div>
-              <div className="font-mono text-xs text-muted-foreground">HSN: {current.hsn}</div>
+              <div className="text-[11px] font-mono text-muted-foreground uppercase">Goods received</div>
+              <div className="font-bold text-sm text-foreground">{current.vendor}</div>
               <div className="pt-2 border-t border-border/40 text-xs font-mono text-foreground">{current.grnGate}</div>
             </div>
 
             {/* Step 3: Billed Invoice & Discrepancy */}
             <div className="md:pl-6 space-y-2">
-              <div className="text-[11px] font-mono text-rose-600 dark:text-rose-400 uppercase">3. Supplier Invoice Discrepancy</div>
+              <div className="text-[11px] font-mono text-rose-600 dark:text-rose-400 uppercase">Invoice difference</div>
               <div className="font-mono text-xs font-bold text-foreground">{current.invoiceBilled}</div>
               <div className="text-xs text-rose-600 dark:text-rose-400 font-medium">{current.finding}</div>
               <div className="pt-2 border-t border-border/40 text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold">

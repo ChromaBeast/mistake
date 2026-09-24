@@ -46,6 +46,7 @@ export function ContactSection() {
           }),
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        setSubmitted(true);
       } else {
         // No intake endpoint configured — fall back to the visitor's mail client
         const subject = encodeURIComponent(`Spend Audit Request — ${company.trim()}`);
@@ -54,7 +55,6 @@ export function ContactSection() {
         );
         window.location.href = `mailto:hello@sheershjaiswal.in?subject=${subject}&body=${body}`;
       }
-      setSubmitted(true);
     } catch {
       setError("The request could not be sent. Please email hello@sheershjaiswal.in directly.");
     } finally {
@@ -68,23 +68,13 @@ export function ContactSection() {
         {/* Pitch column */}
         <div className="space-y-4 max-w-lg">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground leading-[1.15]">
-            Request your sample audit.
+            Request an audit
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Share a few details and we will run the reconciliation pipeline on a sample batch of
-            your historical POs and supplier invoices. You receive an evidence-backed summary of
-            recoverable capital within 48 hours — no commitment.
+            Tell us where to reach you. We’ll discuss a sample of your purchase orders and invoices.
           </p>
-          <div className="space-y-2.5 pt-2 text-sm text-muted-foreground">
+          <div className="text-sm text-muted-foreground">
             <div className="flex items-center gap-2.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-              <span>Paise-exact line-by-line findings, not a summary PDF</span>
-            </div>
-            <div className="flex items-center gap-2.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-              <span>Your documents purged after the evaluation window</span>
-            </div>
-            <div className="flex items-center gap-2.5 pt-3 border-t border-border/50 mt-4">
               <Mail className="w-4 h-4 text-primary shrink-0" />
               <span>
                 Prefer email?{" "}
@@ -93,8 +83,7 @@ export function ContactSection() {
                   className="text-foreground underline underline-offset-2 hover:opacity-80"
                 >
                   hello@sheershjaiswal.in
-                </a>{" "}
-                — replies within one business day.
+                </a>
               </span>
             </div>
           </div>
@@ -168,13 +157,13 @@ export function ContactSection() {
               </div>
               <label className="block space-y-1.5">
                 <span className="block text-xs font-medium text-foreground">
-                  What should we look at first? <span className="text-muted-foreground">(optional)</span>
+                  Anything we should know? <span className="text-muted-foreground">(optional)</span>
                 </span>
                 <textarea
                   rows={3}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  placeholder="E.g., Supplier invoices for the Pune plant FY24; suspected duplicate rate escalations."
+                  placeholder="For example, invoices from one supplier or site"
                   className="w-full rounded-md border border-input bg-card p-2.5 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
                 />
               </label>
@@ -205,13 +194,10 @@ export function ContactSection() {
                   </>
                 ) : (
                   <>
-                    Request Sample Audit <Send className="w-4 h-4" />
+                    Request audit <Send className="w-4 h-4" />
                   </>
                 )}
               </button>
-              <p className="text-[11px] text-muted-foreground text-center font-mono">
-                Sample batch only · Purged post-evaluation · No payment required
-              </p>
             </form>
           )}
         </div>
